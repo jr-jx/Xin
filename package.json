@@ -1,0 +1,67 @@
+{
+  "name": "xin",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.15.0",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "lint:fix": "eslint --fix && stylelint '**/*.{vue,scss}' --fix",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare && simple-git-hooks",
+    "prepare": "simple-git-hooks"
+  },
+  "dependencies": {
+    "@nuxt/content": "catalog:content",
+    "@nuxt/eslint": "catalog:quality",
+    "@nuxt/icon": "catalog:ui",
+    "@nuxt/image": "catalog:ui",
+    "@nuxt/scripts": "catalog:util",
+    "@nuxtjs/color-mode": "catalog:ui",
+    "@pinia/nuxt": "catalog:util",
+    "@shikijs/colorized-brackets": "catalog:content",
+    "@types/node": "catalog:framework",
+    "@vueuse/core": "catalog:util",
+    "@zinkawaii/stylelint-config": "catalog:quality",
+    "aplayer": "catalog:util",
+    "ci-info": "catalog:util",
+    "date-fns": "catalog:util",
+    "nuxt": "catalog:framework",
+    "nuxt-aos": "catalog:ui",
+    "nuxt-content-twoslash": "catalog:content",
+    "parse-domain": "catalog:util",
+    "plain-shiki": "catalog:content",
+    "radash": "catalog:util",
+    "sass-embedded": "catalog:framework",
+    "stylelint": "catalog:quality",
+    "unplugin-yaml": "catalog:util",
+    "vue": "catalog:framework",
+    "vue-router": "catalog:framework",
+    "vue-tippy": "catalog:ui"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:quality",
+    "@iconify/json": "catalog:ui",
+    "better-sqlite3": "catalog:content",
+    "eslint": "catalog:quality",
+    "lint-staged": "catalog:",
+    "rehype-katex": "catalog:content",
+    "remark-math": "catalog:content",
+    "remark-reading-time": "catalog:content",
+    "simple-git-hooks": "catalog:",
+    "typescript": "catalog:framework"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "eslint --fix"
+    ],
+    "*.{scss,vue}": [
+      "stylelint --fix"
+    ]
+  }
+}

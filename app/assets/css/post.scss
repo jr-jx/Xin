@@ -1,0 +1,207 @@
+.post-content {
+	padding: 0 1.5rem 2rem;
+	font-family: var(--font-serif, "Georgia", serif);
+	line-height: 1.8;
+	color: var(--font-color);
+
+	// 基础段落样式
+	p {
+		margin: 0.5em 0;
+	}
+
+	> *, > p {
+		margin: 1rem 0;
+	}
+
+	// 标题样式
+	:where(h1, h2, h3, h4, h5, h6) {
+		position: relative;
+		margin: 1.5rem 0;
+		font-family: var(--font-creative, "Inter", sans-serif);
+		font-weight: 700;
+		line-height: 1.3;
+		color: var(--font-color);
+		scroll-margin: var(--space-12);
+	}
+
+	h2 {
+		padding-bottom: 0.5rem;
+		border-bottom: 2px solid var(--border, #E5E7EB);
+		font-size: var(--text-2xl);
+
+		> a {
+			color: var(--font-color);
+		}
+	}
+
+	h3 {
+		font-size: var(--text-xl);
+
+		> a {
+			color: var(--font-color);
+		}
+	}
+
+	h4, h5, h6 {
+		font-size: var(--text-lg);
+		color: var(--font-color-2, #6B7280);
+
+		> a {
+			color: var(--font-color-2);
+		}
+	}
+
+	// 列表样式
+	:where(menu, ol, ul):not([class]) {
+		margin: 1.5rem 0;
+		padding: 0 0 0 1.5rem;
+		font-size: var(--text-base);
+
+		> li {
+			position: relative;
+			margin: 0.75rem 0;
+			padding-left: 0.5rem;
+			line-height: 1.6;
+
+			&::marker {
+				content: "•";
+				font-weight: 600;
+				color: var(--font-color-3, #94A3B8);
+			}
+		}
+
+		// 嵌套列表
+		:where(ol, ul) {
+			margin: 0.5rem 0 0.5rem 1.5rem;
+		}
+	}
+
+	// 有序列表特殊样式
+	ol {
+		counter-reset: list-counter;
+
+		> li {
+			counter-increment: list-counter;
+
+			&::marker {
+				content: counter(list-counter) ".";
+				font-weight: 700;
+				color: var(--main-color, #3B82F6);
+			}
+		}
+	}
+
+	// 引用块样式
+	blockquote {
+		position: relative;
+		margin: 2rem 0;
+		padding: 0.5rem 1rem;
+		border: var(--border);
+		border-left: 4px solid var(--main-color, #3B82F6);
+		border-radius: 0.5rem;
+		background: var(--c-bg-2, #F9FAFB);
+		font-size: var(--text-base);
+		font-style: italic;
+
+		> p {
+			margin: 0;
+			text-indent: 0;
+		}
+
+		// 引用块内的代码块
+		> .codeblock {
+			margin: 1rem -1rem -0.5rem;
+			border-radius: 0.25rem;
+		}
+	}
+
+	// 图片样式
+	img {
+		max-width: 100%;
+
+		&.icon {
+			height: 1.4em;
+			vertical-align: middle;
+			transform: translateY(-0.1em);
+		}
+
+		&:not([class]), &.image {
+			display: block;
+			margin: 1rem auto;
+			border-radius: 0.5rem;
+		}
+	}
+
+	// 分割线样式
+	hr {
+		opacity: 0.6;
+		width: 80%;
+		height: 2px;
+		margin: 3rem auto;
+		border: none;
+		border-radius: 1px;
+		background: linear-gradient(90deg, transparent, var(--main-color, #3B82F6), transparent);
+	}
+
+	// 强调文本样式
+	strong {
+		background: linear-gradient(var(--main-color-soft), var(--main-color-soft)) no-repeat center bottom / 100% 30%;
+	}
+
+	// 删除线样式
+	del {
+		opacity: 0.6;
+		text-decoration: line-through;
+		text-decoration-color: var(--font-color-2, #6B7280);
+		text-decoration-thickness: 2px;
+	}
+
+	// 链接样式
+	a {
+		border-bottom: 1px dashed transparent;
+		text-decoration: none;
+		color: var(--main-color, #3B82F6);
+		transition: all 0.3s ease;
+
+		&:hover {
+			color: var(--main-color-dark, #1D4ED8);
+		}
+	}
+
+	// 代码样式
+	code {
+		padding: 0.2em 0.4em;
+		border: var(--border, #E5E7EB);
+		border-radius: 0.25rem;
+		background: var(--c-bg-2, #F3F4F6);
+		font-family: "Fira Code", Monaco, Consolas, monospace;
+		font-size: 0.9em;
+		color: var(--font-color, #1F2937);
+	}
+
+	// 技术文档样式
+	&.md-tech {
+		h1, h2, h3, h4, h5, h6 {
+			font-weight: 700;
+		}
+	}
+
+	// 故事文档样式
+	&.md-story {
+		h1, h2, h3, h4, h5, h6, .title-like {
+			position: relative;
+			font-family: var(--font-serif, "Georgia", serif);
+			font-weight: 700;
+			text-wrap: balance;
+
+			&::before {
+				display: none;
+			}
+		}
+
+		> p, :not([class]) > p {
+			margin: 1.5rem 0;
+			text-indent: 2em;
+		}
+	}
+}

@@ -1,0 +1,110 @@
+// =============================================================================
+// 浅色主题配色方案
+// =============================================================================
+:root,
+.light {
+	// ========== 主色调系统 ==========
+	--main-color: #425AEF;
+	--main-color-bg: rgb(66 90 239 / 10%);
+	--main-color-hover: #3B4FD8;
+	--main-color-soft: rgb(66 90 239 / 20%);
+
+	// ========== 背景色系统 ==========
+	--main-site-background: #F8FAFC;
+	--card-bg: #FFF;
+	--c-bg-1: #FFF;
+	--c-bg-2: #F1F5F9;
+	--c-bg-3: #E2E8F0;
+
+	// ========== 文字颜色系统 ==========
+	--font-color: #212428;
+	--font-color-2: #64748B;
+	--font-color-3: #94A3B8;
+	--font-color-muted: #CBD5E1;
+
+	// ========== 毛玻璃效果系统 ==========
+	--glass-bg: rgb(255 255 255 / 10%);
+	--glass-border: rgb(255 255 255 / 20%);
+	--glass-bg-hover: rgb(255 255 255 / 20%);
+	--glass-border-hover: rgb(255 255 255 / 35%);
+
+	// ========== 边框系统 ==========
+	--border-color: #E2E8F0;
+	--c-border: #E2E8F0;
+	--border: 1px solid var(--border-color);
+	--border-always: 1px solid transparent;
+
+	// ========== 字体系统 ==========
+	--font-serif: "Times New Roman", times, serif;
+
+	// ========== 基础颜色调色板 ==========
+	--white: #FFF;
+	--black: #000;
+	--red: #EF4444;
+	--green: #10B981;
+	--blue: #3B82F6;
+	--yellow: #F59E0B;
+	--purple: #8B5CF6;
+	--orange: #F97316;
+	--gray: #6B7280;
+	--light-gray: #D1D5DB;
+	--dark-gray: #374151;
+
+	// ========== 状态颜色系统 ==========
+	--success: var(--green);
+	--warning: var(--yellow);
+	--error: var(--red);
+	--info: var(--blue);
+
+	// ========== 阴影系统 ==========
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 5%);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%);
+	--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 10%);
+
+	// ========== 透明度系统 ==========
+	--opacity-10: 0.1;
+	--opacity-20: 0.2;
+	--opacity-30: 0.3;
+	--opacity-40: 0.4;
+	--opacity-50: 0.5;
+	--opacity-60: 0.6;
+	--opacity-70: 0.7;
+	--opacity-80: 0.8;
+	--opacity-90: 0.9;
+}
+
+// =============================================================================
+// 深色主题配色方案
+// =============================================================================
+.dark {
+	// ========== 主色调系统 ==========
+	--main-color: #DFAC46;
+	--main-color-bg: rgb(223 172 70 / 10%);
+	--main-color-hover: #C99A3D;
+	--main-color-soft: rgb(223 172 70 / 20%);
+
+	// ========== 背景色系统 ==========
+	--main-site-background: #0F172A;
+	--card-bg: #1E293B;
+	--c-bg-1: #1E293B;
+	--c-bg-2: #334155;
+	--c-bg-3: #475569;
+
+	// ========== 文字颜色系统 ==========
+	--font-color: #F8FAFC;
+	--font-color-2: #CBD5E1;
+	--font-color-3: #94A3B8;
+	--font-color-muted: #64748B;
+
+	// ========== 边框系统 ==========
+	--border-color: #334155;
+	--c-border: #334155;
+	--border: 1px solid var(--border-color);
+
+	// ========== 阴影系统 ==========
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 40%);
+	--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 40%);
+}

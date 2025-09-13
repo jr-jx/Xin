@@ -1,0 +1,277 @@
+// =============================================================================
+// 基础变量定义
+// =============================================================================
+:root {
+	// 字体系统
+	--font-family: "Inter", "Noto Sans SC-Local", "Noto Sans SC", system-ui, sans-serif;
+	--font-serif: "Noto Serif SC-Local", "Noto Serif SC", "华文中宋", "Times New Roman", serif;
+	--font-creative: "Inter", "Noto Sans SC-Local", "Noto Sans SC", system-ui, sans-serif;
+	--font-monospace: "JetBrains Mono-Local", "JetBrains Mono", "SFMono-Regular", "Cascadia Code", "Fira Code", "Menlo", "Monaco", "Consolas", "Noto Sans Mono", "monospace", var(--font-family), monospace;
+
+	// 尺寸系统
+	--radius: 0.5rem;
+	--radius-sm: 0.25rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+
+	// 布局尺寸
+	--header-height: 4rem;
+	--sidebar-width: 20rem;
+
+	// 间距系统
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.25rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+	--space-10: 2.5rem;
+	--space-12: 3rem;
+
+	// 字体大小
+	--text-xs: 0.75rem;
+	--text-sm: 0.875rem;
+	--text-base: 1rem;
+	--text-lg: 1.125rem;
+	--text-xl: 1.25rem;
+	--text-2xl: 1.5rem;
+	--text-3xl: 1.875rem;
+
+	// 行高
+	--leading-none: 1;
+	--leading-tight: 1.25;
+	--leading-snug: 1.375;
+	--leading-normal: 1.5;
+	--leading-relaxed: 1.625;
+	--leading-loose: 2;
+
+	// 过渡动画
+	--transition-fast: 0.15s ease;
+	--transition-normal: 0.3s ease;
+	--transition-slow: 0.5s ease;
+
+	// Z-index 层级
+	--z-dropdown: 1000;
+	--z-sticky: 1020;
+	--z-fixed: 1030;
+	--z-modal-backdrop: 1040;
+	--z-modal: 1050;
+	--z-popover: 1060;
+	--z-tooltip: 1070;
+}
+
+// =============================================================================
+// 字体加载
+// =============================================================================
+@font-face {
+	font-family: "Noto Sans SC-Local";
+	src: local("Noto Sans SC");
+}
+
+@font-face {
+	font-family: "Noto Serif SC-Local";
+	src: local("Noto Serif SC");
+}
+
+// =============================================================================
+// 全局重置
+// =============================================================================
+* {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+*, ::before, ::after {
+	box-sizing: border-box;
+}
+
+// =============================================================================
+// 根元素样式
+// =============================================================================
+:root {
+	background-color: var(--main-site-background);
+	font: var(--text-base) / var(--leading-normal) sans-serif;
+	font-family: var(--font-family);
+	font-synthesis: style;
+	word-wrap: break-word;
+	text-size-adjust: none;
+	color: var(--font-color);
+	transition: color var(--transition-fast), background-color var(--transition-normal);
+	scroll-behavior: smooth;
+	scroll-padding: var(--space-8);
+	scrollbar-color: var(--font-color-3) transparent;
+	-webkit-tap-highlight-color: var(--card-bg);
+
+	@media (max-resolution: 1.4dppx) {
+		--font-family: system-ui, sans-serif;
+	}
+}
+
+// =============================================================================
+// 选择器样式
+// =============================================================================
+::selection {
+	background-color: var(--main-color-bg);
+	color: var(--main-color);
+}
+
+// =============================================================================
+// 基础元素样式
+// =============================================================================
+a {
+	text-decoration: none;
+	color: currentcolor;
+	transition: color var(--transition-fast);
+
+	&:hover {
+		color: var(--main-color);
+	}
+}
+
+code, pre {
+	font-family: var(--font-monospace);
+}
+
+menu, ol, ul {
+	list-style: none;
+}
+
+button {
+	border: none;
+	background: none;
+	font: inherit;
+	color: currentcolor;
+	transition: all var(--transition-fast);
+	cursor: pointer;
+
+	.iconify:only-child {
+		display: block;
+	}
+}
+
+input, textarea {
+	border: none;
+	outline: none;
+	background: none;
+	font: inherit;
+	color: currentcolor;
+}
+
+// =============================================================================
+// 图标样式
+// =============================================================================
+:where(.iconify) {
+	display: inline-block;
+	flex-shrink: 0;
+	font-size: 1.2em;
+	vertical-align: sub;
+}
+
+// =============================================================================
+// 图片样式
+// =============================================================================
+img {
+	display: inline-block;
+	overflow: hidden;
+	overflow: clip;
+	height: auto;
+	max-width: 100%;
+	transform: scale(1);
+
+	&::before {
+		content: attr(alt);
+		display: grid;
+		place-content: center;
+		position: absolute;
+		overflow: visible;
+		inset: 0;
+		padding: 0.5em;
+		background-color: var(--border-color);
+		font: bold 1.5rem/1.2 var(--font-serif);
+		word-break: normal;
+		text-align: center;
+		text-shadow: none;
+		color: var(--card-bg);
+	}
+}
+
+// =============================================================================
+// 工具提示样式
+// =============================================================================
+.tippy-box {
+	padding: 0.3em 0.6em;
+	border-radius: 0.5em;
+	box-shadow: var(--shadow-md);
+	background-color: var(--card-bg);
+	font-size: 0.8rem;
+	line-height: 1.4;
+	color: var(--font-color-2);
+	animation: float-in 0.2s;
+
+	&[data-state="hidden"] {
+		opacity: 0;
+	}
+
+	> .tippy-svg-arrow {
+		fill: var(--card-bg);
+	}
+}
+
+// =============================================================================
+// 动画定义
+// =============================================================================
+@keyframes float-in {
+	from {
+		opacity: 0;
+		transform: translateY(4px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slide-up {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// =============================================================================
+// 响应式工具类
+// =============================================================================
+@media (max-width: 640px) {
+	:root {
+		--space-4: 0.75rem;
+		--space-6: 1.25rem;
+		--space-8: 1.5rem;
+	}
+}
+
+@media (max-width: 768px) {
+	:root {
+		--text-base: 0.9375rem;
+		--text-lg: 1rem;
+		--text-xl: 1.125rem;
+	}
+}
