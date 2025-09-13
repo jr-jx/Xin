@@ -23,7 +23,7 @@ const ciPlatform = computed(() => {
 
 const service = computed(() => ([
 	...ci ? [{ label: '构建平台', value: ciPlatform }] : [],
-	{ label: '图片存储', value: () => [h('img', { src: 'https://www.lightxi.com/favicon.ico', alt: '' }), '晞云云存储'] },
+	{ label: '图片存储', value: () => [h('img', { src: 'https://www.lightxi.com/favicon.ico', alt: '' }), ' 晞云云存储'] },
 	{ label: '软件协议', value: 'MIT' },
 	{ label: '文章许可', value: appConfig.license.name },
 	{ label: '规范域名', value: getDomain(appConfig.site.url) },
