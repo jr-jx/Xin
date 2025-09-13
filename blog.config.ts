@@ -22,7 +22,7 @@ const blogConfig = {
 	profile: {
 		name: '伍拾柒',
 		bio: '分享设计与科技生活，产品、交互、设计、开发',
-		avatar: 'https://blog.efu.me/images/logo/logo.avif',
+		avatar: 'https://wsrv.nl/?url=github.com/everfu.png',
 	},
 
 	// 导航菜单
