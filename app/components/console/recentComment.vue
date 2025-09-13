@@ -10,6 +10,8 @@ const props = withDefaults(defineProps<DanmakuProps>(), {
 	maxTextLength: 50,
 })
 
+const consoleStore = useConsoleStore()
+
 const commentsStore = useCommentsStore()
 const { comments, loading } = storeToRefs(commentsStore)
 
@@ -43,6 +45,10 @@ onErrorCaptured((error) => {
 	console.error('Comment component error:', error)
 	return false
 })
+
+function handlePostClick() {
+	consoleStore.showConsole = !consoleStore.showConsole
+}
 </script>
 
 <template>
@@ -117,6 +123,7 @@ onErrorCaptured((error) => {
 				class="danmaku-text"
 				:aria-label="`查看评论详情：${truncateText(danmaku.commentText)}`"
 				tabindex="0"
+				@click="handlePostClick"
 			>
 				{{ truncateText(danmaku.commentText) }}
 				<div
