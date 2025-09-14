@@ -55,7 +55,6 @@ function handlePostClick() {
 <div
 	v-if="!hasComments && !loading"
 	class="danmaku-empty"
-	role="status"
 	aria-live="polite"
 >
 	<Icon name="mdi:comment-text-outline" class="empty-icon" />
@@ -65,21 +64,6 @@ function handlePostClick() {
 </div>
 
 <div
-	v-if="loading"
-	class="danmaku-loading"
-	aria-live="polite"
->
-	<div
-		class="loading-spinner"
-		aria-hidden="true"
-	/>
-	<div class="loading-text">
-		加载评论中...
-	</div>
-</div>
-
-<div
-	v-if="hasComments"
 	class="danmaku-area"
 	aria-label="评论列表"
 >
@@ -140,7 +124,6 @@ function handlePostClick() {
 .danmaku-area {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	grid-template-rows: repeat(3, 1fr);
 	gap: 0.5rem;
 	width: 100%;
 	min-height: 180px;
@@ -329,7 +312,7 @@ function handlePostClick() {
 
 	.danmaku-area {
 		grid-template-columns: repeat(2, 1fr);
-		grid-template-rows: repeat(5, 1fr);
+		grid-template-rows: auto;
 		gap: 0.4rem;
 		min-height: 140px;
 		padding: 0.25rem;
@@ -374,7 +357,6 @@ function handlePostClick() {
 
 	.danmaku-area {
 		grid-template-columns: 1fr;
-		grid-template-rows: repeat(9, 1fr);
 		gap: 0.3rem;
 		padding: 0.2rem;
 	}
