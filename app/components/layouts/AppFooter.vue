@@ -49,7 +49,7 @@ import blogConfig from '~~/blog.config'
 	display: flex;
 	overflow: hidden;
 	margin-top: 1rem;
-	padding: 1rem 0;
+	padding: 0.5rem 0 1rem;
 	border-top: 1px solid var(--border-color);
 	background-color: var(--card-bg);
 	transition:
@@ -69,7 +69,7 @@ import blogConfig from '~~/blog.config'
 		margin: 0 auto;
 		padding: 0 1rem;
 		line-height: 1;
-		color: var(--main-font-color);
+		color: var(--font-color);
 
 		.copyright {
 			display: flex;
@@ -169,6 +169,7 @@ import blogConfig from '~~/blog.config'
 		}
 
 		@media (max-width: 768px) {
+			flex-direction: column;
 			font-size: 14px;
 
 			.meta {
