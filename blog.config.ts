@@ -25,6 +25,14 @@ const blogConfig = {
 		url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
 	},
 
+	beian: [
+		// {
+		// 	name: '浙ICP备2023001234号',
+		// 	link: 'https://beian.miit.gov.cn/',
+		// 	icon: '/images/icp-icon.png',
+		// },
+	],
+
 	// 个人资料
 	profile: {
 		name: '伍拾柒',
