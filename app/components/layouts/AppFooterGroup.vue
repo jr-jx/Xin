@@ -194,8 +194,7 @@ function scrollTop() {
 }
 
 .group-links a:hover {
-	border-color: var(--main-color);
-	background-color: var(--main-color);
-	color: var(--white);
+	background-color: var(--main-color-bg);
+	color: var(--main-color);
 }
 </style>
