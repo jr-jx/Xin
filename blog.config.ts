@@ -1,14 +1,21 @@
+import type { FeedEntry } from '~/types/feed'
+
 export { zhCN as dateLocale } from 'date-fns/locale/zh-CN'
 
 const blogConfig = {
 	// 默认分类
 	defaultCategory: ['未分类'],
 
+	favicon: '/favicon.ico',
+	language: 'zh-CN',
+
 	// 站点基本信息
 	site: {
 		title: '伍拾柒',
+		subtitle: '分享设计与科技生活',
 		description: '分享设计与科技生活，产品、交互、设计、开发',
 		url: 'https://blog.efu.me',
+		timeEstablished: '2023-04-20',
 	},
 
 	// 许可证信息
@@ -22,7 +29,9 @@ const blogConfig = {
 	profile: {
 		name: '伍拾柒',
 		bio: '分享设计与科技生活，产品、交互、设计、开发',
+		email: 'o@efu.me',
 		avatar: 'https://wsrv.nl/?url=github.com/everfu.png',
+		homepage: 'https://efu.me',
 	},
 
 	// 导航菜单
@@ -86,13 +95,21 @@ const blogConfig = {
 				label: '导航',
 				links: [
 					{
-						label: '全部文章',
-						link: '/articles',
+						label: '归档',
+						link: '/archives',
+					},
+					{
+						label: '标签',
+						link: '/tags',
+					},
+					{
+						label: '分类',
+						link: '/categories',
 					},
 				],
 			},
 			{
-				label: '隐私协议',
+				label: '协议',
 				links: [
 					{
 						label: '隐私协议',
@@ -114,6 +131,27 @@ const blogConfig = {
 		envId: 'https://tk.efu.me/',
 		preload: 'https://tk.efu.me/',
 	},
+
+	// RSS 订阅配置
+	feed: {
+		enableStyle: true,
+		limit: 10, // 默认限制为10条
+	},
+}
+
+/** 用于生成 OPML 和友链页面配置 */
+export const myFeed: FeedEntry = {
+	author: blogConfig.profile.name,
+	sitenick: '伍拾柒',
+	title: blogConfig.site.title,
+	desc: blogConfig.site.subtitle || blogConfig.site.description,
+	link: blogConfig.site.url,
+	feed: new URL('/atom.xml', blogConfig.site.url).toString(),
+	icon: blogConfig.favicon,
+	avatar: blogConfig.profile.avatar,
+	archs: ['Nuxt', 'Vercel'],
+	date: blogConfig.site.timeEstablished,
+	comment: '这是我自己',
 }
 
 export default blogConfig

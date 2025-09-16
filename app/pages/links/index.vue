@@ -1,32 +1,11 @@
 <script setup lang="ts">
+import satisfies from '~/feeds'
 import { getArchIcon } from '~/utils/icon'
-import links from './links'
-
-// 定义链接类型
-interface LinkItem {
-	name: string
-	url: string
-	logo: string
-	description: string
-	framework?: string
-	platform?: string
-}
-
-interface LinkCategory {
-	name: string
-	description: string
-	links: LinkItem[]
-}
 
 // SEO 设置
 useSeoMeta({
 	title: `友情链接`,
 	description: '我的朋友们和帮助过我的人',
-})
-
-// 直接使用新的数据结构
-const linkCategories = computed((): LinkCategory[] => {
-	return links as LinkCategory[]
 })
 </script>
 
@@ -41,7 +20,7 @@ const linkCategories = computed((): LinkCategory[] => {
 	<div class="container">
 		<!-- 链接分组 -->
 		<div
-			v-for="(category, categoryIndex) in linkCategories"
+			v-for="(category, categoryIndex) in satisfies"
 			:key="category.name"
 			class="category-section"
 			data-aos="fade-up"
@@ -53,16 +32,16 @@ const linkCategories = computed((): LinkCategory[] => {
 					{{ category.name }}
 				</h2>
 				<p class="category-description">
-					{{ category.description }}
+					{{ category.desc }}
 				</p>
 			</div>
 
 			<!-- 该分组的链接网格 -->
 			<div class="links-grid">
 				<a
-					v-for="(link, linkIndex) in category.links"
-					:key="link.name"
-					:href="link.url"
+					v-for="(link, linkIndex) in category.entries"
+					:key="link.sitenick"
+					:href="link.link"
 					target="_blank"
 					rel="noopener noreferrer"
 					class="link-card"
@@ -72,29 +51,25 @@ const linkCategories = computed((): LinkCategory[] => {
 					<div class="link-header">
 						<div class="link-avatar">
 							<img
-								:src="link.logo"
-								:alt="link.name"
+								:src="link.icon"
+								:alt="link.author"
 								loading="lazy"
-								@error="(event) => { (event.target as HTMLImageElement).src = '/favicon.ico' }"
 							>
 						</div>
 						<div class="link-info">
 							<div class="link-name">
-								{{ link.name }}
+								{{ link.sitenick || link.author }}
 							</div>
 							<div class="link-meta">
-								<span v-if="link.framework" class="meta-tag framework">
-									<Icon v-tip="link.framework" :name="getArchIcon(link.framework as any)" />
-								</span>
-								<span v-if="link.platform" class="meta-tag platform">
-									<Icon v-tip="link.platform" :name="getArchIcon(link.platform as any)" />
+								<span v-for:="arch in link.archs" class="meta-tag framework">
+									<Icon v-tip="arch" :name="getArchIcon(arch as any)" />
 								</span>
 							</div>
 						</div>
 					</div>
 					<div class="link-content">
 						<div class="link-description">
-							{{ link.description }}
+							{{ link.desc }}
 						</div>
 					</div>
 				</a>
@@ -102,7 +77,7 @@ const linkCategories = computed((): LinkCategory[] => {
 		</div>
 
 		<!-- 空状态 -->
-		<div v-if="linkCategories.length === 0" class="empty-state">
+		<div v-if="satisfies.length === 0" class="empty-state">
 			<p>暂无友情链接</p>
 		</div>
 

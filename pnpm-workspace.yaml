@@ -38,6 +38,7 @@ catalogs:
     aplayer: ^1.10.1
     ci-info: ^4.3.0
     date-fns: ^4.1.0
+    fast-xml-parser: ^5.2.5
     parse-domain: ^8.2.2
     pinia: ^3.0.3
     radash: ^12.1.1

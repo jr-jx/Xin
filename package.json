@@ -39,7 +39,8 @@
     "unplugin-yaml": "catalog:util",
     "vue": "catalog:framework",
     "vue-router": "catalog:framework",
-    "vue-tippy": "catalog:ui"
+    "vue-tippy": "catalog:ui",
+    "fast-xml-parser": "catalog:util"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:quality",

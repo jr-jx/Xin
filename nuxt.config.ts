@@ -65,6 +65,12 @@ export default defineNuxtConfig({
 		},
 	},
 
+	routeRules: {
+		'/atom.xml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
+		'/favicon.ico': { redirect: { to: blogConfig.favicon } },
+		'/efu.opml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
+	},
+
 	nitro: {
 		compressPublicAssets: true,
 	},
