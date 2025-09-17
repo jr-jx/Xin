@@ -48,7 +48,6 @@ import blogConfig from '~~/blog.config'
 .main-footer {
 	display: flex;
 	overflow: hidden;
-	margin-top: 1rem;
 	padding: 0.5rem 0 1rem;
 	border-top: 1px solid var(--border-color);
 	background-color: var(--card-bg);
