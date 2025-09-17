@@ -44,7 +44,7 @@ const techstack = computed(() => ([
 <template>
 <widget title="技术信息" grid icon="carbon:tool-kit">
 	<UDLGroup :items="service" />
-	<UExpand name="技术栈">
+	<UExpand in-place name="技术栈">
 		<UDLGroup size="small" :items="techstack" />
 	</UExpand>
 </widget>

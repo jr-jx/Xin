@@ -40,6 +40,7 @@ export default defineNuxtConfig({
 		'~/assets/css/color.scss',
 		'~/assets/css/post.scss',
 		'~/assets/css/reusable.scss',
+		'~/assets/css/animation.scss',
 	],
 	modules: ['nuxt-content-twoslash', '@nuxt/content', '@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@nuxtjs/color-mode', '@pinia/nuxt', '@nuxt/icon', 'unplugin-yaml/nuxt', 'nuxt-aos'],
 
