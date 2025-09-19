@@ -56,7 +56,7 @@ function scrollTop() {
 	gap: 0.75rem;
 	min-height: 15rem;
 	max-width: 1250px;
-	margin: 0 auto;
+	margin: 1rem auto;
 	padding: 0 0.5rem 1rem;
 
 	@media screen and (max-width: 1250px) {
