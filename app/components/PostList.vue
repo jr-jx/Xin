@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Directive } from 'vue'
 import type { Article } from '~/types/article'
 import { storeToRefs } from 'pinia'
 import { useContentLoader } from '~/composables/useContentLoader'
@@ -76,35 +75,6 @@ const pageNumbers = computed<(number | string)[]>(() => {
 
 	return pages
 })
-
-// 自定义指令：进入视口渐显
-const vFadeIn: Directive<HTMLElement, void> = {
-	mounted(el) {
-		// 初始状态：不可见
-		el.classList.add('reveal-card')
-
-		const io = new IntersectionObserver((entries) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					el.classList.add('is-visible')
-					// 只触发一次
-					io.unobserve(el)
-				}
-			})
-		}, {
-			threshold: 0.1,
-		})
-
-		io.observe(el)
-
-		// 存起来，卸载时断开
-		;(el as any)._fadeIo = io
-	},
-	unmounted(el) {
-		const io: IntersectionObserver | undefined = (el as any)._fadeIo
-		io?.disconnect()
-	},
-}
 </script>
 
 <template>
@@ -131,9 +101,9 @@ const vFadeIn: Directive<HTMLElement, void> = {
 		<div
 			v-for="(post, index) in paginatedPosts"
 			:key="post.path"
-			v-fade-in
-			class="reveal-card"
-			:style="{ transitionDelay: `${index * 50}ms` }"
+			data-aos="fade-up"
+			:data-aos-delay="index * 50"
+			class="post-card"
 		>
 			<ArticleCard :post="post" />
 		</div>
@@ -195,19 +165,6 @@ const vFadeIn: Directive<HTMLElement, void> = {
 	@media (min-width: 1024px) {
 		grid-template-columns: repeat(2, 1fr);
 	}
-}
-
-/* 渐显动画：初始不可见，进入视口后淡入上移 */
-.reveal-card {
-	opacity: 0;
-	transform: translateY(12px);
-	transition: opacity 0.4s ease, transform 0.4s ease;
-	will-change: opacity, transform;
-}
-
-.reveal-card.is-visible {
-	opacity: 1;
-	transform: translateY(0);
 }
 
 .skeleton-card {
