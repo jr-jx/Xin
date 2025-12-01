@@ -28,6 +28,7 @@
     "aplayer": "catalog:util",
     "ci-info": "catalog:util",
     "date-fns": "catalog:util",
+    "fast-xml-parser": "catalog:util",
     "nuxt": "catalog:framework",
     "nuxt-aos": "catalog:ui",
     "nuxt-content-twoslash": "catalog:content",
@@ -40,10 +41,14 @@
     "vue": "catalog:framework",
     "vue-router": "catalog:framework",
     "vue-tippy": "catalog:ui",
-    "fast-xml-parser": "catalog:util"
+    "zod": "catalog:content",
+    "zod-to-json-schema": "catalog:content"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:quality",
+    "@iconify-json/ant-design": "catalog:ui",
+    "@iconify-json/icon-park-solid": "catalog:ui",
+    "@iconify-json/solar": "catalog:ui",
     "@iconify/json": "catalog:ui",
     "better-sqlite3": "catalog:content",
     "eslint": "catalog:quality",

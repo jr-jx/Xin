@@ -134,7 +134,7 @@ function buildAtomFeed(entries: AtomEntry[]): AtomFeed {
 		generator: {
 			$uri: 'https://github.com/L33Z22L11/blog-v3',
 			$version: version,
-			_: 'Zhilu Blog',
+			_: 'Xin Blog',
 		},
 		icon: blogConfig.favicon,
 		logo: blogConfig.profile.avatar, // 推荐比例 2:1

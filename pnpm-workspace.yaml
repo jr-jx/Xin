@@ -11,6 +11,8 @@ catalogs:
     rehype-katex: ^7.0.1
     remark-math: ^6.0.0
     remark-reading-time: ^2.0.2
+    zod: ^3.23.8
+    zod-to-json-schema: ^3.23.5
   framework:
     '@types/node': ^24.3.1
     nuxt: ^4.0.3
@@ -25,6 +27,9 @@ catalogs:
     eslint: ^9.34.0
     stylelint: ^16.23.1
   ui:
+    '@iconify-json/ant-design': ^1.2.5
+    '@iconify-json/icon-park-solid': ^1.2.4
+    '@iconify-json/solar': ^1.2.5
     '@iconify/json': ^2.2.380
     '@nuxt/icon': ^2.0.0
     '@nuxt/image': ^1.11.0

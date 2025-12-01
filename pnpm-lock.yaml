@@ -30,6 +30,12 @@ catalogs:
     remark-reading-time:
       specifier: ^2.0.2
       version: 2.0.2
+    zod:
+      specifier: ^3.23.8
+      version: 3.25.76
+    zod-to-json-schema:
+      specifier: ^3.23.5
+      version: 3.24.6
   default:
     lint-staged:
       specifier: ^15.2.9
@@ -73,6 +79,15 @@ catalogs:
       specifier: ^16.23.1
       version: 16.23.1
   ui:
+    '@iconify-json/ant-design':
+      specifier: ^1.2.5
+      version: 1.2.5
+    '@iconify-json/icon-park-solid':
+      specifier: ^1.2.4
+      version: 1.2.4
+    '@iconify-json/solar':
+      specifier: ^1.2.5
+      version: 1.2.5
     '@iconify/json':
       specifier: ^2.2.380
       version: 2.2.380
@@ -219,10 +234,25 @@ importers:
       vue-tippy:
         specifier: catalog:ui
         version: 6.7.1(patch_hash=a5b8695e6e2864d3ba0e4cc167583ea25a40e18809de4c7c074b1d13c1181df4)(vue@3.5.21(typescript@5.9.2))
+      zod:
+        specifier: catalog:content
+        version: 3.25.76
+      zod-to-json-schema:
+        specifier: catalog:content
+        version: 3.24.6(zod@3.25.76)
     devDependencies:
       '@antfu/eslint-config':
         specifier: catalog:quality
         version: 5.2.1(@vue/compiler-sfc@3.5.21)(eslint@9.34.0(jiti@2.5.1))(typescript@5.9.2)
+      '@iconify-json/ant-design':
+        specifier: catalog:ui
+        version: 1.2.5
+      '@iconify-json/icon-park-solid':
+        specifier: catalog:ui
+        version: 1.2.4
+      '@iconify-json/solar':
+        specifier: catalog:ui
+        version: 1.2.5
       '@iconify/json':
         specifier: catalog:ui
         version: 2.2.380
@@ -763,6 +793,15 @@ packages:
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
+
+  '@iconify-json/ant-design@1.2.5':
+    resolution: {integrity: sha512-SYxhrx1AFq2MBcXk77AERYz2mPhLQes1F0vtvG64+dJZWyge9studXo7MiR8PPeLjRjZdWRrReRbxiwdRMf70Q==}
+
+  '@iconify-json/icon-park-solid@1.2.4':
+    resolution: {integrity: sha512-030MChSP6lCY7N+U5J5R7YguHTGcm7qQEI/ivBjk77El/i8yJatoj568cwwXGM8c6HEU/kIxEE4m3O/6w0WBGg==}
+
+  '@iconify-json/solar@1.2.5':
+    resolution: {integrity: sha512-WMAiNwchU8zhfrySww6KQBRIBbsQ6SvgIu2yA+CHGyMima/0KQwT5MXogrZPJGoQF+1Ye3Qj6K+1CiyNn3YkoA==}
 
   '@iconify/collections@1.0.590':
     resolution: {integrity: sha512-QEbIchT89ktf1Uiy7aM5G3fDZkkfTauLszZlYXQiec9QUugDWYhyZzKFJJaBVq7vf8aeWgK2+TWAsN89Bi5pqg==}
@@ -6550,6 +6589,18 @@ snapshots:
   '@humanwhocodes/retry@0.3.1': {}
 
   '@humanwhocodes/retry@0.4.3': {}
+
+  '@iconify-json/ant-design@1.2.5':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/icon-park-solid@1.2.4':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/solar@1.2.5':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify/collections@1.0.590':
     dependencies:
