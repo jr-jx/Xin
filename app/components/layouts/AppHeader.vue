@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import blogConfig from '~~/blog.config'
 import { useConsoleStore } from '~/stores/console'
+import { useSearchStore } from '~/stores/search'
 
 // 定义组件名称
 defineOptions({ name: 'AppHeader' })
@@ -10,6 +11,9 @@ const { menu, site } = blogConfig
 
 // 使用控制台状态管理
 const consoleStore = useConsoleStore()
+
+// 使用搜索状态管理
+const searchStore = useSearchStore()
 
 // 右侧按钮菜单配置
 const btnMenu = ref([
@@ -26,8 +30,8 @@ const btnMenu = ref([
 		icon: 'ph:magnifying-glass-bold',
 		to: '',
 		target: '',
-		tip: '搜索一下',
-		function: () => {},
+		tip: '搜索文章内容 (Ctrl+K)',
+		function: () => searchStore.openSearch(),
 	},
 ])
 
@@ -118,14 +122,27 @@ const handleScroll = throttle(() => {
 	isScrolled.value = scrollTop > 20
 }, 16)
 
+/**
+ * 处理键盘快捷键
+ */
+function handleKeydown(event: KeyboardEvent) {
+	// Ctrl+K 或 Cmd+K 打开搜索
+	if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+		event.preventDefault()
+		searchStore.openSearch()
+	}
+}
+
 // 组件挂载时设置事件监听器
 onMounted(() => {
 	window.addEventListener('scroll', handleScroll, { passive: true })
+	window.addEventListener('keydown', handleKeydown)
 })
 
 // 组件卸载时清理事件监听器和定时器
 onUnmounted(() => {
 	window.removeEventListener('scroll', handleScroll)
+	window.removeEventListener('keydown', handleKeydown)
 	if (closeTimeout) {
 		clearTimeout(closeTimeout)
 	}
@@ -234,6 +251,11 @@ onUnmounted(() => {
 			</div>
 		</div>
 	</div>
+
+	<!-- 搜索模态框 -->
+	<ClientOnly>
+		<SearchModal />
+	</ClientOnly>
 </header>
 </template>
 
