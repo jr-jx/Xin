@@ -143,40 +143,54 @@ export const useSearchStore = defineStore('search', () => {
 	}
 
 	// 搜索函数
-	const searchPosts = async (query: string) => {
-		if (!query.trim()) {
-			searchResults.value = []
-			searchTime.value = 0
-			return
-		}
-
-		isSearching.value = true
-		const startTime = performance.now()
-
-		try {
-			// 如果还没有加载所有文章，先加载
-			if (allPosts.value.length === 0) {
-				const response = await $fetch<{ data: Article[] }>('/api/search/posts')
-				allPosts.value = response.data || []
-			}
-
-			// 执行搜索
-			const results = performSearch(query, allPosts.value)
-			searchResults.value = results
-
-			// 计算搜索时间
-			const endTime = performance.now()
-			searchTime.value = Math.round(endTime - startTime)
-		}
-		catch (error) {
-			console.error('搜索失败:', error)
-			searchResults.value = []
-			searchTime.value = 0
-		}
-		finally {
-			isSearching.value = false
-		}
+const searchPosts = async (query: string) => {
+	if (!query.trim()) {
+		searchResults.value = []
+		searchTime.value = 0
+		return
 	}
+
+	isSearching.value = true
+	const startTime = performance.now()
+
+	try {
+		// 如果还没有加载所有文章，先加载
+		if (allPosts.value.length === 0) {
+			const response = await $fetch<{ data: Article[], total: number }>('/api/search/posts')
+			allPosts.value = response.data || []
+		}
+
+		// 确保allPosts有数据
+		if (allPosts.value.length === 0) {
+			// 降级方案：尝试从content store获取文章数据
+			try {
+				const { useContentStore } = await import('~/stores/content')
+				const contentStore = useContentStore()
+				if (contentStore.posts && contentStore.posts.length > 0) {
+					allPosts.value = contentStore.posts
+				}
+			} catch (importError) {
+				console.warn('无法加载content store:', importError)
+			}
+		}
+
+		// 执行搜索
+		const results = performSearch(query, allPosts.value)
+		searchResults.value = results
+
+		// 计算搜索时间
+		const endTime = performance.now()
+		searchTime.value = Math.round(endTime - startTime)
+	}
+	catch (error) {
+		console.error('搜索失败:', error)
+		searchResults.value = []
+		searchTime.value = 0
+	}
+	finally {
+		isSearching.value = false
+	}
+}
 
 	// 防抖搜索
 	let debounceTimer: NodeJS.Timeout | null = null
