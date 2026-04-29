@@ -65,4 +65,8 @@ patchedDependencies:
   '@vue/shared': patches/@vue__shared.patch
   vue-tippy: patches/vue-tippy.patch
 
+peerDependencyRules:
+  allowedVersions:
+    floating-vue>@nuxt/kit: ^4.4.2
+
 shamefullyHoist: true
