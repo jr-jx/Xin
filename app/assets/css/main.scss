@@ -94,11 +94,11 @@
 // 根元素样式
 // =============================================================================
 :root {
+	overflow-wrap: break-word;
 	background-color: var(--main-site-background);
 	font: var(--text-base) / var(--leading-normal) sans-serif;
 	font-family: var(--font-family);
 	font-synthesis: style;
-	word-wrap: break-word;
 	text-size-adjust: none;
 	color: var(--font-color);
 	transition: color var(--transition-fast), background-color var(--transition-normal);

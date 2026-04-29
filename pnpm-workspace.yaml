@@ -1,53 +1,57 @@
 packages:
   - packages/*
 
+catalog:
+  lint-staged: ^16.4.0
+  simple-git-hooks: ^2.13.1
+
 catalogs:
   content:
-    '@nuxt/content': ^3.6.3
-    '@shikijs/colorized-brackets': ^3.12.0
-    better-sqlite3: ^12.2.0
-    nuxt-content-twoslash: ^0.1.2
-    plain-shiki: ^0.3.0
+    '@nuxt/content': ^3.13.0
+    '@shikijs/colorized-brackets': ^4.0.2
+    better-sqlite3: ^12.9.0
+    nuxt-content-twoslash: ^0.4.0
+    plain-shiki: ^0.3.2
     rehype-katex: ^7.0.1
     remark-math: ^6.0.0
-    remark-reading-time: ^2.0.2
-    zod: ^3.23.8
-    zod-to-json-schema: ^3.23.5
+    remark-reading-time: ^2.1.0
+    zod: ^4.3.6
+    zod-to-json-schema: ^3.25.2
   framework:
-    '@types/node': ^24.3.1
-    nuxt: ^4.0.3
-    sass-embedded: ^1.91.0
-    typescript: ^5.9.2
-    vue: ^3.5.20
-    vue-router: ^4.5.1
+    '@types/node': ^25.6.0
+    nuxt: ^4.4.2
+    sass-embedded: ^1.99.0
+    typescript: ^6.0.3
+    vue: ^3.5.33
+    vue-router: ^5.0.6
   quality:
-    '@antfu/eslint-config': ^5.2.1
-    '@nuxt/eslint': ^1.9.0
-    '@zinkawaii/stylelint-config': ^0.3.3
-    eslint: ^9.34.0
-    stylelint: ^16.23.1
+    '@antfu/eslint-config': ^8.2.0
+    '@nuxt/eslint': ^1.15.2
+    '@zinkawaii/stylelint-config': ^0.4.0
+    eslint: ^9.39.4
+    stylelint: ^17.9.1
   ui:
     '@iconify-json/ant-design': ^1.2.5
     '@iconify-json/icon-park-solid': ^1.2.4
     '@iconify-json/solar': ^1.2.5
-    '@iconify/json': ^2.2.380
-    '@nuxt/icon': ^2.0.0
-    '@nuxt/image': ^1.11.0
-    '@nuxtjs/color-mode': ^3.5.2
-    nuxt-aos: ^1.2.5
+    '@iconify/json': ^2.2.467
+    '@nuxt/icon': ^2.2.1
+    '@nuxt/image': ^2.0.0
+    '@nuxtjs/color-mode': ^4.0.0
+    nuxt-aos: ^1.2.6
     vue-tippy: ^6.7.1
   util:
-    '@nuxt/scripts': ^0.11.13
-    '@pinia/nuxt': ^0.11.2
-    '@vueuse/core': ^13.8.0
+    '@nuxt/scripts': ^1.0.4
+    '@pinia/nuxt': ^0.11.3
+    '@vueuse/core': ^14.2.1
     aplayer: ^1.10.1
-    ci-info: ^4.3.0
+    ci-info: ^4.4.0
     date-fns: ^4.1.0
-    fast-xml-parser: ^5.2.5
-    parse-domain: ^8.2.2
-    pinia: ^3.0.3
+    fast-xml-parser: ^5.7.2
+    parse-domain: ^8.3.0
+    pinia: ^3.0.4
     radash: ^12.1.1
-    unplugin-yaml: ^3.0.5
+    unplugin-yaml: ^4.2.0
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
@@ -62,6 +66,3 @@ patchedDependencies:
   vue-tippy: patches/vue-tippy.patch
 
 shamefullyHoist: true
-catalog:
-  lint-staged: ^15.2.9
-  simple-git-hooks: ^2.11.1

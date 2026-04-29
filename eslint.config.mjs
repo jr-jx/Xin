@@ -6,9 +6,10 @@ export default antfu({
 		indent: 'tab',
 	},
 	pnpm: true,
+}, {
+	files: ['**/*.vue'],
 	// @keep-sorted
 	rules: {
-		'jsonc/indent': ['error', 2],
 		'vue/block-lang': ['warn', {
 			script: { lang: ['ts', 'tsx'] },
 			style: { lang: ['scss'] },
@@ -17,13 +18,18 @@ export default antfu({
 			allow: ['scoped'],
 		}],
 		'vue/html-indent': ['error', 'tab', { baseIndent: 0 }],
-		'yaml/indent': ['error', 2],
 	},
 }, {
 	files: ['**/*.json'],
 	ignores: ['content/**'],
 	rules: {
+		'jsonc/indent': ['error', 2],
 		'style/eol-last': ['warn', 'never'],
+	},
+}, {
+	files: ['**/*.{yaml,yml}'],
+	rules: {
+		'yaml/indent': ['error', 2],
 	},
 }, {
 	files: ['content/**'],
@@ -31,7 +37,6 @@ export default antfu({
 	rules: {
 		'antfu/consistent-list-newline': 'off',
 		'eqeqeq': 'off',
-		'jsonc/comma-dangle': ['warn', 'always'],
 		'no-irregular-whitespace': 'off',
 		'no-sequences': 'off',
 		'prefer-arrow-callback': 'off',

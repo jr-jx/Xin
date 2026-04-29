@@ -33,6 +33,7 @@
     "nuxt-aos": "catalog:ui",
     "nuxt-content-twoslash": "catalog:content",
     "parse-domain": "catalog:util",
+    "pinia": "catalog:util",
     "plain-shiki": "catalog:content",
     "radash": "catalog:util",
     "sass-embedded": "catalog:framework",

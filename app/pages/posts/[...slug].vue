@@ -239,10 +239,10 @@ function copyShare() {
 		max-width: 100%;
 
 		pre {
+			overflow-wrap: break-word;
 			overflow-x: auto;
 			max-width: 100%;
 			white-space: pre;
-			word-wrap: break-word;
 
 			&.wrap {
 				white-space: pre-wrap;

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { Icon, UDLGroup } from '#components'
 import { packageManager, version } from '~~/package.json'
 import pnpmWorkspace from '~~/pnpm-workspace.yaml'
+import { Icon, UDLGroup } from '#components'
 
 const appConfig = useAppConfig()
 const { public: { arch, ci, nodeVersion, platform } } = useRuntimeConfig()
