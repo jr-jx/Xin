@@ -54,7 +54,7 @@ function handlePostClick() {
 <template>
 <div
 	v-if="!hasComments && !loading"
-	class="danmaku-empty"
+	class="comment-empty"
 	aria-live="polite"
 >
 	<Icon name="mdi:comment-text-outline" class="empty-icon" />
@@ -64,357 +64,116 @@ function handlePostClick() {
 </div>
 
 <div
-	class="danmaku-area"
+	v-else
+	class="comment-grid"
 	aria-label="评论列表"
 >
-	<!-- 弹幕项 -->
-	<div
-		v-for="danmaku in limitedComments"
-		:key="danmaku.id"
-		class="danmaku-item"
-		:data-comment-id="danmaku.id"
-		:aria-label="`评论由 ${danmaku.nick} 发布`"
+	<NuxtLink
+		v-for="item in limitedComments"
+		:key="item.id"
+		:to="`${item.url}#${item.id}`"
+		class="comment-card"
+		@click="handlePostClick"
 	>
-		<div class="danmaku-avatar-section">
-			<div class="danmaku-avatar">
-				<img
-					:src="danmaku.avatar"
-					:alt="`${danmaku.nick} 的头像`"
-					loading="lazy"
-				>
-			</div>
-		</div>
-
-		<div class="danmaku-content-section">
-			<header class="danmaku-header">
-				<h4 class="danmaku-title">
-					{{ danmaku.nick }}
-				</h4>
-				<time
-					class="danmaku-date"
-					:datetime="danmaku.created?.toString() || ''"
-				>
-					{{ formatDate(new Date(danmaku.created || '')) }}
-				</time>
-			</header>
-
-			<!-- 中间分割线 -->
-			<hr class="danmaku-divider" aria-hidden="true">
-
-			<!-- 下部：评论内容 -->
-			<NuxtLink
-				:to="`${danmaku.url}#${danmaku.id}`"
-				class="danmaku-text"
-				:aria-label="`查看评论详情：${truncateText(danmaku.commentText)}`"
-				tabindex="0"
-				@click="handlePostClick"
+		<div class="comment-header">
+			<img
+				class="comment-avatar"
+				:src="item.avatar"
+				:alt="item.nick"
+				loading="lazy"
 			>
-				{{ truncateText(danmaku.commentText) }}
-				<div
-					class="danmaku-text-border"
-					aria-hidden="true"
-				/>
-			</NuxtLink>
+			<span class="comment-nick">{{ item.nick }}</span>
+			<time class="comment-date">{{ formatDate(new Date(item.created || '')) }}</time>
 		</div>
-	</div>
+		<p class="comment-text">
+			{{ truncateText(item.commentText) }}
+		</p>
+	</NuxtLink>
 </div>
 </template>
 
 <style lang="scss" scoped>
-.danmaku-area {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 0.5rem;
-	width: 100%;
-	min-height: 180px;
-	padding: 0.5rem;
+.comment-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
 }
 
-.danmaku-item {
+.comment-card {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
 	gap: 0.5rem;
-	position: relative;
-	padding: 0.5rem;
-	border-radius: 4px;
-	transition: all 0.3s ease;
-
-	.danmaku-divider {
-		transition: all 0.5s ease;
-	}
+	padding: 0.75rem;
+	border-radius: var(--radius);
+	text-decoration: none;
+	color: inherit;
+	transition: background-color 0.2s ease;
 
 	&:hover {
-		.danmaku-divider {
-			width: 0;
-			margin-left: 100%;
-		}
+		background-color: var(--c-bg-2);
 
-		.danmaku-title {
+		.comment-nick {
 			color: var(--main-color);
 		}
 	}
 }
 
-.danmaku-avatar-section {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 40px;
-	padding: 0.15rem;
-	border-radius: 4px;
-	transition: all 0.3s ease;
-}
-
-.danmaku-divider {
-	position: relative;
-	width: 100%;
-	height: 1px;
-	margin: 0.25rem 0;
-	border-radius: 1px;
-	background: var(--main-color-bg);
-}
-
-.danmaku-content-section {
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-	gap: 0.25rem;
-}
-
-.danmaku-header {
+.comment-header {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+}
+
+.comment-avatar {
+	width: 2rem;
+	height: 2rem;
+	border-radius: var(--radius-full);
+	object-fit: cover;
+}
+
+.comment-nick {
 	font-size: 0.8rem;
-	font-weight: 700;
-}
-
-.danmaku-title {
 	font-weight: 600;
-	line-height: 1.2;
 	color: var(--font-color);
-	transition: color 0.3s ease;
+	transition: color 0.2s ease;
 }
 
-.danmaku-date {
+.comment-date {
+	margin-left: auto;
 	font-size: 0.7rem;
-	font-weight: 500;
 	color: var(--font-color-3);
 }
 
-.danmaku-text {
-	position: relative;
-	width: auto;
-	padding: 0.25rem 0;
-	font-size: 0.8rem;
-	line-height: 1.4;
-	color: var(--font-color);
-	transition: all 0.2s ease;
-	cursor: pointer;
-
-	&:hover {
-		color: var(--main-color);
-
-		.danmaku-text-border {
-			width: 100%;
-		}
-	}
-}
-
-.danmaku-text-border {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 0;
-	height: 1px;
-	border-radius: 1px;
-	background: var(--main-color-bg);
-	transition: width 0.3s ease;
-
-	&.active {
-		width: 100%;
-	}
-}
-
-.danmaku-avatar {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+.comment-text {
+	display: -webkit-box;
 	overflow: hidden;
-	width: 60px;
-	height: 60px;
-	padding: 0.1rem;
-	border: 1px solid var(--main-color-bg);
-	border-radius: 50%;
-	background: var(--c-bg-2);
-
-	img {
-		width: calc(100% - 0.2rem);
-		height: calc(100% - 0.2rem);
-		border-radius: 50%;
-		transition: all 0.2s ease;
-		object-fit: cover;
-	}
+	margin: 0;
+	font-size: 0.8rem;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	line-height: 1.5;
+	color: var(--font-color-2);
+	-webkit-box-orient: vertical;
 }
 
-.danmaku-empty,
-.danmaku-loading {
+.comment-empty {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	min-width: 120px;
-	padding: 1rem;
-	border: var(--border);
-	border-radius: 4px;
-	background: var(--card-bg);
+	gap: 0.5rem;
+	padding: 2rem;
 	text-align: center;
 	color: var(--font-color-3);
-	transform: translate(-50%, -50%);
 }
 
 .empty-icon {
-	opacity: 0.7;
-	margin-bottom: 0.5rem;
-	font-size: 1.5rem;
+	opacity: 0.5;
+	width: 2rem;
+	height: 2rem;
 }
 
-.empty-text,
-.loading-text {
-	margin: 0;
+.empty-text {
 	font-size: 0.875rem;
-	font-weight: 500;
-}
-
-.loading-spinner {
-	width: 20px;
-	height: 20px;
-	margin-bottom: 0.5rem;
-	border: 2px solid var(--border-color);
-	border-top: 2px solid var(--main-color);
-	border-radius: 50%;
-	animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-}
-
-@media (max-width: 768px) {
-	.danmaku-container {
-		min-height: 160px;
-		padding: 0.75rem;
-	}
-
-	.danmaku-area {
-		grid-template-columns: repeat(2, 1fr);
-		grid-template-rows: auto;
-		gap: 0.4rem;
-		min-height: 140px;
-		padding: 0.25rem;
-	}
-
-	.danmaku-item {
-		padding: 0.3rem;
-	}
-
-	.danmaku-header {
-		font-size: 0.7rem;
-	}
-
-	.danmaku-title {
-		font-size: 0.75rem;
-	}
-
-	.danmaku-date {
-		font-size: 0.65rem;
-	}
-
-	.danmaku-text {
-		font-size: 0.75rem;
-	}
-
-	.danmaku-avatar {
-		width: 32px;
-		height: 32px;
-	}
-
-	.danmaku-avatar-section {
-		min-width: 36px;
-		padding: 0.1rem;
-	}
-}
-
-@media (max-width: 480px) {
-	.danmaku-container {
-		min-height: 140px;
-		padding: 0.5rem;
-	}
-
-	.danmaku-area {
-		grid-template-columns: 1fr;
-		gap: 0.3rem;
-		padding: 0.2rem;
-	}
-
-	.danmaku-item {
-		align-items: flex-start;
-		gap: 0.5rem;
-		padding: 0.25rem;
-	}
-
-	.danmaku-content-section {
-		width: 100%;
-	}
-
-	.danmaku-header {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.25rem;
-		font-size: 0.65rem;
-	}
-
-	.danmaku-title {
-		font-size: 0.7rem;
-	}
-
-	.danmaku-date {
-		font-size: 0.6rem;
-	}
-
-	.danmaku-text {
-		padding: 0.2rem 0;
-		font-size: 0.7rem;
-	}
-
-	.danmaku-avatar {
-		width: 28px;
-		height: 28px;
-	}
-
-	.danmaku-avatar-section {
-		align-self: flex-start;
-		min-width: auto;
-		padding: 0.08rem;
-	}
-}
-
-@media (prefers-contrast: high) {
-	.danmaku-item {
-		border: 2px solid var(--font-color);
-	}
-
-	.danmaku-avatar-section {
-		border: 2px solid var(--main-color);
-	}
-
-	.danmaku-divider {
-		height: 2px;
-		background: var(--font-color);
-	}
 }
 </style>

@@ -108,7 +108,7 @@ function handlePostClick() {
 </template>
 
 <style lang="scss" scoped>
-$p-border-radius: 4px;
+$p-border-radius: var(--radius-sm);
 $p-transition-fast: 0.2s ease;
 $p-transition-normal: 0.3s ease;
 
@@ -185,7 +185,7 @@ $p-transition-normal: 0.3s ease;
 	width: 8px;
 	height: 8px;
 	border: 2px solid var(--card-bg);
-	border-radius: 50%;
+	border-radius: var(--radius-full);
 	background: var(--main-color);
 	transition: all $p-transition-fast;
 	z-index: 2;

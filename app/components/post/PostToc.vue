@@ -133,7 +133,7 @@ function hasActiveChild(entry: TocLink, activeId: string | null): boolean {
 		left: 0.5rem;
 		margin: 0.2rem 0;
 		padding: 0.6rem 1.5px;
-		border-radius: 1rem;
+		border-radius: var(--radius-xl);
 		background-color: var(--main-color);
 	}
 }

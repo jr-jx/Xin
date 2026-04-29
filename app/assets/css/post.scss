@@ -98,7 +98,7 @@
 		padding: 0.5rem 1rem;
 		border: var(--border);
 		border-left: 4px solid var(--main-color, #3B82F6);
-		border-radius: 0.5rem;
+		border-radius: var(--radius);
 		background: var(--c-bg-2, #F9FAFB);
 		font-size: var(--text-base);
 		font-style: italic;
@@ -111,7 +111,7 @@
 		// 引用块内的代码块
 		> .codeblock {
 			margin: 1rem -1rem -0.5rem;
-			border-radius: 0.25rem;
+			border-radius: var(--radius-sm);
 		}
 	}
 
@@ -128,7 +128,7 @@
 		&:not([class]), &.image {
 			display: block;
 			margin: 1rem auto;
-			border-radius: 0.5rem;
+			border-radius: var(--radius);
 		}
 	}
 
@@ -172,7 +172,7 @@
 	code {
 		padding: 0.2em 0.4em;
 		border: var(--border, #E5E7EB);
-		border-radius: 0.25rem;
+		border-radius: var(--radius-sm);
 		background: var(--c-bg-2, #F3F4F6);
 		font-family: "Fira Code", Monaco, Consolas, monospace;
 		font-size: 0.9em;

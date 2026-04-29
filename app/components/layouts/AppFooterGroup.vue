@@ -82,7 +82,7 @@ function scrollTop() {
 	width: 2.5rem;
 	height: 2.5rem;
 	border: var(--border);
-	border-radius: 50%;
+	border-radius: var(--radius-full);
 	font-size: 1rem;
 	color: var(--font-color-2);
 	transition: all 0.3s ease;
@@ -110,7 +110,7 @@ function scrollTop() {
 	width: 3.5rem;
 	height: 3.5rem;
 	border: var(--border);
-	border-radius: 50%;
+	border-radius: var(--radius-full);
 	background: var(--card-bg);
 	transition: all 0.3s ease;
 
@@ -129,7 +129,7 @@ function scrollTop() {
 	display: block;
 	width: 100%;
 	height: 100%;
-	border-radius: 50%;
+	border-radius: var(--radius-full);
 	transition: opacity 0.3s ease;
 	object-fit: cover;
 }

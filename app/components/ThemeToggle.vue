@@ -26,12 +26,12 @@ const colorMode = useColorMode()
 	width: fit-content;
 	padding: 2px;
 	border: 1px solid var(--border);
-	border-radius: 1rem;
+	border-radius: var(--radius-xl);
 	background-color: var(--card-bg);
 
 	> button {
 		padding: 4px 1rem;
-		border-radius: 1rem;
+		border-radius: var(--radius-xl);
 		transition: all 0.1s;
 
 		&:hover {

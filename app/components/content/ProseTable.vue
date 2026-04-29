@@ -50,7 +50,7 @@ const scroll = ref(false)
 		gap: 0.25rem;
 		padding: 0.375rem 0.5rem;
 		border: var(--border);
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		background: var(--c-bg-1);
 		font-size: 0.75rem;
 		color: var(--font-color-2);
@@ -71,7 +71,7 @@ const scroll = ref(false)
 		margin-top: 0.25rem;
 		padding: 0.25rem 0.5rem;
 		border: var(--border);
-		border-radius: 3px;
+		border-radius: var(--radius-sm);
 		background: var(--c-bg-3);
 		font-size: 0.7rem;
 		white-space: nowrap;
@@ -88,7 +88,7 @@ const scroll = ref(false)
 	width: 100%;
 	border: var(--border);
 	border-collapse: collapse;
-	border-radius: 6px;
+	border-radius: var(--radius);
 	box-shadow: var(--shadow-sm);
 	background: var(--c-bg-1);
 

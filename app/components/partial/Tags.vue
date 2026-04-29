@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 defineProps<{
 	tags: TagStat[]
-	card?: boolean
 }>()
 </script>
 
 <template>
-<div class="tags-container" :class="{ card }">
+<div class="tags-container">
 	<NuxtLink
 		v-for="tag in tags"
 		:key="tag.name"
@@ -24,32 +23,21 @@ defineProps<{
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
-	padding: 0.5rem;
-
-	&.card {
-		border: var(--border);
-		border-radius: var(--radius);
-		background-color: var(--card-bg);
-		transition: all 0.3s ease;
-		will-change: background-color, color, border-color;
-	}
 }
 
 .tag-item {
 	display: inline-block;
-	padding: 0.25rem 0.5rem;
-	border: var(--border);
-	border-radius: var(--radius);
-	background-color: var(--card-bg);
-	font-size: 0.875rem;
+	padding: 0.25rem 0.625rem;
+	border-radius: var(--radius-pill);
+	background-color: var(--c-bg-2);
+	font-size: 0.8rem;
 	text-decoration: none;
 	color: var(--font-color-2);
-	transition: all 0.2s ease;
-	will-change: transform, color, border-color;
+	transition: background-color 0.2s ease, color 0.2s ease;
 	cursor: pointer;
 
 	&:hover {
-		border-color: var(--main-color);
+		background-color: var(--main-color-bg);
 		color: var(--main-color);
 	}
 }

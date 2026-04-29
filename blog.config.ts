@@ -39,6 +39,7 @@ const blogConfig = {
 		bio: '分享设计与科技生活，产品、交互、设计、开发',
 		email: 'o@efu.me',
 		avatar: 'https://wsrv.nl/?url=github.com/everfu.png',
+		cover: 'https://wsrv.nl/?url=s2.loli.net/2024/12/28/h3fDJgAl4GBiPTq.webp',
 		homepage: 'https://efu.me',
 	},
 
@@ -127,6 +128,28 @@ const blogConfig = {
 			},
 		],
 	},
+
+	// 应用盒子（导航栏 Logo 旁悬停弹出）
+	appBox: [
+		{
+			title: '博客',
+			items: [
+				{ label: '主页', icon: 'ph:house-bold', link: '/' },
+				{ label: '归档', icon: 'ph:archive-bold', link: '/archives' },
+				{ label: '标签', icon: 'ph:tag-bold', link: '/tags' },
+				{ label: '分类', icon: 'ph:folder-bold', link: '/categories' },
+			],
+		},
+		{
+			title: '社交',
+			items: [
+				{ label: 'GitHub', icon: 'mdi:github', link: 'https://github.com/everfu' },
+				{ label: 'LinkedIn', icon: 'mdi:linkedin', link: 'https://www.linkedin.com/in/everfu/' },
+				{ label: 'Bilibili', icon: 'ant-design:bilibili-filled', link: 'https://space.bilibili.com/1234567890' },
+				{ label: 'Email', icon: 'mdi:email', link: 'mailto:everfu@gmail.com' },
+			],
+		},
+	],
 
 	// 外部脚本
 	scripts: [

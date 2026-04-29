@@ -152,7 +152,7 @@ async function refreshComments() {
 	height: 120px;
 	padding: 0.725rem;
 	border: var(--border);
-	border-radius: 8px;
+	border-radius: var(--radius-md);
 	box-shadow: var(--shadow-sm);
 	background: var(--card-bg);
 	text-decoration: none;
@@ -189,7 +189,7 @@ async function refreshComments() {
 	width: 32px;
 	height: 32px;
 	border: 1px solid var(--border-color);
-	border-radius: 50%;
+	border-radius: var(--radius-full);
 	transition: border-color 0.3s ease;
 	will-change: border-color;
 
@@ -260,7 +260,7 @@ async function refreshComments() {
 		margin-bottom: 1rem;
 		border: 3px solid var(--border-color);
 		border-top: 3px solid var(--main-color);
-		border-radius: 50%;
+		border-radius: var(--radius-full);
 		animation: spin 1s linear infinite;
 	}
 
@@ -293,7 +293,7 @@ async function refreshComments() {
 	.retry-button {
 		padding: 0.5rem 1rem;
 		border: none;
-		border-radius: 6px;
+		border-radius: var(--radius);
 		background: var(--main-color);
 		font-size: 0.9rem;
 		color: white;

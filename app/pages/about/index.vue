@@ -188,7 +188,7 @@ useSeoMeta({
 		width: 100px;
 		height: 100px;
 		border: var(--border);
-		border-radius: 50%;
+		border-radius: var(--radius-full);
 		box-shadow: var(--shadow-sm);
 		object-fit: cover;
 	}

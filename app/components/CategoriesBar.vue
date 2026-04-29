@@ -189,7 +189,7 @@ watch(categories, () => {
 .category-nav {
 	padding: 0.5rem;
 	border: var(--border);
-	border-radius: var(--radius);
+	border-radius: var(--radius-lg);
 	background-color: var(--card-bg);
 	transition: all 0.3s ease;
 
@@ -305,7 +305,7 @@ watch(categories, () => {
 	height: 1rem;
 	border: 2px solid var(--c-border);
 	border-top: 2px solid var(--main-color);
-	border-radius: 50%;
+	border-radius: var(--radius-full);
 	animation: spin 1s linear infinite;
 }
 

@@ -42,7 +42,7 @@ const techstack = computed(() => ([
 </script>
 
 <template>
-<widget title="技术信息" grid icon="carbon:tool-kit">
+<widget title="技术信息" card icon="carbon:tool-kit">
 	<UDLGroup :items="service" />
 	<UExpand in-place name="技术栈">
 		<UDLGroup size="small" :items="techstack" />

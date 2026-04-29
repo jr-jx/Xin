@@ -23,10 +23,10 @@
 	--font-color-muted: #CBD5E1;
 
 	// ========== 毛玻璃效果系统 ==========
-	--glass-bg: rgb(255 255 255 / 10%);
-	--glass-border: rgb(255 255 255 / 20%);
-	--glass-bg-hover: rgb(255 255 255 / 20%);
-	--glass-border-hover: rgb(255 255 255 / 35%);
+	--glass-bg: rgb(255 255 255 / 78%);
+	--glass-border: rgb(255 255 255 / 70%);
+	--glass-bg-hover: rgb(255 255 255 / 88%);
+	--glass-border-hover: rgb(255 255 255 / 85%);
 
 	// ========== 边框系统 ==========
 	--border-color: #E2E8F0;
@@ -96,6 +96,12 @@
 	--font-color-2: #CBD5E1;
 	--font-color-3: #94A3B8;
 	--font-color-muted: #64748B;
+
+	// ========== 毛玻璃效果系统 ==========
+	--glass-bg: rgb(15 23 42 / 70%);
+	--glass-border: rgb(255 255 255 / 10%);
+	--glass-bg-hover: rgb(15 23 42 / 82%);
+	--glass-border-hover: rgb(255 255 255 / 18%);
 
 	// ========== 边框系统 ==========
 	--border-color: #334155;

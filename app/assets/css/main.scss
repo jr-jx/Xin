@@ -8,12 +8,14 @@
 	--font-creative: "Inter", "Noto Sans SC-Local", "Noto Sans SC", system-ui, sans-serif;
 	--font-monospace: "JetBrains Mono-Local", "JetBrains Mono", "SFMono-Regular", "Cascadia Code", "Fira Code", "Menlo", "Monaco", "Consolas", "Noto Sans Mono", "monospace", var(--font-family), monospace;
 
-	// 尺寸系统
-	--radius: 0.5rem;
-	--radius-sm: 0.25rem;
-	--radius-md: 0.5rem;
-	--radius-lg: 0.75rem;
-	--radius-xl: 1rem;
+	// 尺寸系统 - 圆角
+	--radius-sm: 0.25rem;  // 4px  小元素 / 标签
+	--radius: 0.5rem;      // 8px  默认（=md）
+	--radius-md: 0.5rem;   // 8px  按钮 / 输入框 / 卡片内元素
+	--radius-lg: 0.75rem;  // 12px 卡片 / 容器
+	--radius-xl: 1rem;     // 16px 大型容器 / 弹窗
+	--radius-pill: 999px;  // 胶囊
+	--radius-full: 50%;    // 圆形（头像 / 圆点）
 
 	// 布局尺寸
 	--header-height: 4rem;

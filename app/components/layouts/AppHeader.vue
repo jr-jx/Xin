@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import blogConfig from '~~/blog.config'
+import AppBox from '~/components/layouts/AppBox.vue'
 import { useConsoleStore } from '~/stores/console'
 import { useSearchStore } from '~/stores/search'
 
@@ -37,10 +38,29 @@ const btnMenu = ref([
 
 // 滚动状态管理
 const isScrolled = ref(false)
+const headerScrolled = computed(() => isScrolled.value || consoleStore.showConsole)
 
 // 下拉菜单激活状态
 const activeDropdown = ref<string | null>(null)
 let closeTimeout: ReturnType<typeof setTimeout> | null = null
+
+// 应用盒子悬停状态
+const showAppBox = ref(false)
+let appBoxTimeout: ReturnType<typeof setTimeout> | null = null
+
+function handleAppBoxEnter() {
+	if (appBoxTimeout) {
+		clearTimeout(appBoxTimeout)
+		appBoxTimeout = null
+	}
+	showAppBox.value = true
+}
+
+function handleAppBoxLeave() {
+	appBoxTimeout = setTimeout(() => {
+		showAppBox.value = false
+	}, 150)
+}
 
 /**
  * 节流函数 - 限制函数执行频率
@@ -150,11 +170,36 @@ onUnmounted(() => {
 </script>
 
 <template>
-<header class="header" :class="{ 'header-scrolled': isScrolled }" role="banner">
+<header class="header" :class="{ 'header-scrolled': headerScrolled }" role="banner">
 	<div class="header-container">
 		<div class="header-content">
 			<!-- Logo 区域 -->
 			<div class="logo-container">
+				<!-- 应用盒子触发按钮 -->
+				<div
+					class="app-box-trigger"
+					@mouseenter="handleAppBoxEnter"
+					@mouseleave="handleAppBoxLeave"
+				>
+					<button
+						v-tip="'应用盒子'"
+						class="app-box-btn"
+						aria-label="应用盒子"
+					>
+						<Icon name="ph:squares-four-bold" />
+					</button>
+					<Transition name="app-box">
+						<div
+							v-show="showAppBox"
+							class="app-box-panel"
+							@mouseenter="handleAppBoxEnter"
+							@mouseleave="handleAppBoxLeave"
+						>
+							<AppBox />
+						</div>
+					</Transition>
+				</div>
+
 				<NuxtLink
 					to="/"
 					class="logo-link"
@@ -303,13 +348,56 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	transition: background-color $transition-normal;
 	z-index: 50;
 
-	// 滚动时的样式变化
+	// 滚动时的样式变化：header 保持透明，左/中/右三块各自变为药丸胶囊
 	&.header-scrolled {
-		border-bottom-color: var(--border-color);
-		box-shadow: var(--shadow-sm);
-		background-color: var(--card-bg);
-		transition: all $transition-normal;
-		will-change: background-color, border-bottom-color, box-shadow;
+		.logo-container,
+		.right-section {
+			border: 1px solid var(--glass-border, rgb(255 255 255 / 18%));
+			border-radius: var(--radius-pill);
+			box-shadow: var(--shadow-sm);
+			background-color: var(--glass-bg, rgb(255 255 255 / 12%));
+			backdrop-filter: blur(16px) saturate(180%);
+		}
+
+		// nav-menu 用 ::before 实现毛玻璃，避免在自身建立 backdrop-filter 上下文
+		// 否则其子节点 .dropdown-menu 的 backdrop-filter 会读取已被过滤的背景
+		.nav-menu {
+			position: relative;
+			border-radius: var(--radius-pill);
+			isolation: isolate;
+
+			&::before {
+				content: "";
+				position: absolute;
+				inset: 0;
+				border: 1px solid var(--glass-border, rgb(255 255 255 / 18%));
+				border-radius: inherit;
+				box-shadow: var(--shadow-sm);
+				background-color: var(--glass-bg, rgb(255 255 255 / 12%));
+				backdrop-filter: blur(16px) saturate(180%);
+				pointer-events: none;
+				z-index: -1;
+			}
+		}
+
+		.logo-container,
+		.nav-menu,
+		.right-section {
+			align-items: center;
+			height: 2.75rem;
+		}
+
+		.logo-container {
+			padding: 0 0.75rem;
+		}
+
+		.nav-menu {
+			padding: 0 1rem;
+		}
+
+		.right-section {
+			padding: 0 0.25rem;
+		}
 
 		// 滚动状态下的交互元素样式调整
 		.nav-button {
@@ -352,6 +440,16 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 .logo-container {
 	display: inline-flex;
 	flex-shrink: 0;
+	align-items: center;
+	gap: 0.375rem;
+	width: fit-content;
+	border: 1px solid transparent;
+	border-radius: var(--radius-pill);
+	transition: background-color $transition-normal, border-color $transition-normal, box-shadow $transition-normal, padding $transition-normal;
+
+	@include responsive(lg) {
+		justify-self: start;
+	}
 }
 
 .logo-link {
@@ -362,7 +460,7 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	overflow: hidden;
 	height: 2rem;
 	padding: 0 0.25rem;
-	border-radius: var(--radius-md);
+	border-radius: var(--radius-pill);
 	text-decoration: none;
 	color: inherit;
 	transition: all $transition-smooth;
@@ -383,7 +481,7 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 		left: 50%;
 		width: 1.5rem;
 		height: 1.5rem;
-		border-radius: var(--radius);
+		border-radius: var(--radius-pill);
 		color: var(--white);
 		transform: translate(-50%, -50%) scale(0.8);
 		transition: all $transition-smooth;
@@ -414,11 +512,72 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 }
 
+// 应用盒子
+.app-box-trigger {
+	position: relative;
+
+	@include responsive(mobile) {
+		display: none;
+	}
+}
+
+.app-box-btn {
+	@include flex-center;
+
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border: none;
+	border-radius: var(--radius-pill);
+	outline: none;
+	background: none;
+	font-size: 1.125rem;
+	text-decoration: none;
+	color: var(--font-color-2);
+	transition: all $transition-normal;
+	cursor: pointer;
+
+	&:hover {
+		background-color: var(--main-color-bg);
+		color: var(--font-color);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--main-color);
+		outline-offset: 2px;
+	}
+}
+
+.app-box-panel {
+	position: absolute;
+	top: calc(100% + 0.5rem);
+	left: 0;
+	border: 1px solid var(--glass-border);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-md);
+	background-color: var(--card-bg);
+	z-index: 100;
+}
+
+.app-box-enter-active,
+.app-box-leave-active {
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.app-box-enter-from,
+.app-box-leave-to {
+	opacity: 0;
+	transform: translateY(-0.5rem);
+}
+
 // 导航菜单样式
 .nav-menu {
 	@include flex-center;
 
 	gap: 2rem;
+	border: 1px solid transparent;
+	border-radius: var(--radius-pill);
+	transition: background-color $transition-normal, border-color $transition-normal, box-shadow $transition-normal, padding $transition-normal;
 
 	@include responsive(mobile) {
 		display: none;
@@ -435,7 +594,7 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	justify-content: center;
 	height: 2rem;
 	padding: 0 0.8rem 0 1rem;
-	border-radius: var(--radius);
+	border-radius: var(--radius-pill);
 	font-weight: 500;
 	letter-spacing: 0.2rem;
 	line-height: 2rem;
@@ -453,25 +612,33 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
+	gap: 0.25rem;
 	position: absolute;
 	visibility: hidden;
 	opacity: 0;
-	top: 120%;
+	top: calc(100% + 0.5rem);
 	left: 50%;
 	width: max-content;
-	height: 3rem;
-	min-width: 8rem;
-	padding: 0.5rem;
-	border: var(--border);
-	border-radius: var(--radius);
-	background-color: var(--card-bg);
-	backdrop-filter: blur(12px);
-	transform: translateX(-50%) translateY(0.5rem);
-	transition: all $transition-normal;
+	padding: 0.375rem;
+	border: 1px solid var(--glass-border);
+	border-radius: var(--radius-pill);
+	box-shadow: var(--shadow-sm);
+	background-color: var(--glass-bg);
+	backdrop-filter: blur(16px) saturate(180%);
+	transform: translateX(-50%) translateY(-0.5rem);
+	transition: opacity $transition-normal, transform $transition-normal, visibility $transition-normal;
 	pointer-events: none;
 	z-index: 100;
+
+	// 顶部小箭头指向触发项
+	&::before {
+		content: "";
+		position: absolute;
+		top: -0.5rem;
+		left: 0;
+		width: 100%;
+		height: 0.5rem;
+	}
 
 	&.dropdown-menu-active {
 		visibility: visible;
@@ -482,33 +649,38 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dropdown-item {
-	width: 100%;
-	height: 100%;
+	display: flex;
 }
 
 .dropdown-link {
-	@include flex-center;
-
-	gap: 0.5rem;
-	height: 100%;
-	padding: 0.5rem 1rem;
-	border-radius: var(--radius);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.5rem 0.875rem;
+	border-radius: var(--radius-pill);
 	text-decoration: none;
-	color: var(--font-color);
-	transition: all $transition-normal;
+	color: var(--font-color-2);
+	transition: background-color $transition-fast, color $transition-fast;
 
-	&:hover {
+	&:hover,
+	&:focus-visible {
+		outline: none;
 		background-color: var(--main-color-bg);
 		color: var(--main-color);
+
+		.dropdown-icon {
+			opacity: 1;
+			transform: scale(1.05);
+		}
 	}
 }
 
 .dropdown-icon {
 	flex-shrink: 0;
-	opacity: 0.7;
+	opacity: 0.6;
 	width: 1rem;
 	height: 1rem;
-	transition: opacity $transition-normal;
+	transition: opacity $transition-fast, transform $transition-fast;
 }
 
 .dropdown-text {
@@ -525,6 +697,9 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	@include flex-center;
 
 	gap: 0.5rem;
+	border: 1px solid transparent;
+	border-radius: var(--radius-pill);
+	transition: background-color $transition-normal, border-color $transition-normal, box-shadow $transition-normal, padding $transition-normal;
 
 	@include responsive(lg) {
 		justify-self: end;
@@ -538,7 +713,7 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	width: 2.5rem;
 	height: 2.5rem;
 	border: none;
-	border-radius: var(--radius);
+	border-radius: var(--radius-pill);
 	outline: none;
 	background: none;
 	text-decoration: none;

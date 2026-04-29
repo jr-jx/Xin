@@ -90,7 +90,7 @@ useSeoMeta({
 	margin-bottom: 1rem;
 	border: 2px solid var(--c-border);
 	border-top: 2px solid var(--main-color);
-	border-radius: 50%;
+	border-radius: var(--radius-full);
 	animation: spin 1s linear infinite;
 }
 

@@ -73,7 +73,7 @@ defineProps<BannerProps>()
 	min-height: 300px;
 	margin: 0 0.5rem;
 	padding: 2rem;
-	border-radius: 12px;
+	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-md);
 	background-position: center;
 	background-repeat: no-repeat;

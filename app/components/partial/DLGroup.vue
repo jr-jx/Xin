@@ -58,8 +58,8 @@ withDefaults(defineProps<{
 .dl-group.medium {
 	> dl {
 		display: grid;
-		grid-template-columns: 1fr 2fr;
-		gap: 3em;
+		grid-template-columns: auto 1fr;
+		gap: 1em;
 		padding: 0.2em 0;
 
 		>dt {

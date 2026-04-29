@@ -464,7 +464,7 @@ function copyShare() {
 }
 
 ::-webkit-scrollbar-thumb {
-	border-radius: 3px;
+	border-radius: var(--radius-sm);
 	background: rgb(156 163 175 / 50%);
 
 	&:hover {

@@ -137,7 +137,7 @@ useSeoMeta({
 	height: 1.5rem;
 	min-width: 1.5rem;
 	padding: 0 0.5rem;
-	border-radius: 50%;
+	border-radius: var(--radius-full);
 	background-color: var(--c-bg-2);
 	font-size: 0.75rem;
 	font-weight: 600;

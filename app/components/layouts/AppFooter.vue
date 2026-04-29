@@ -82,7 +82,7 @@ import blogConfig from '~~/blog.config'
 					width: 20px;
 					height: 20px;
 					margin-right: 4px;
-					border-radius: 50%;
+					border-radius: var(--radius-full);
 				}
 			}
 		}
@@ -142,7 +142,7 @@ import blogConfig from '~~/blog.config'
 			height: 38px;
 			margin: 0 2px;
 			padding: 8px;
-			border-radius: 12px;
+			border-radius: var(--radius-lg);
 			font-weight: bold;
 			white-space: nowrap;
 			text-overflow: ellipsis;

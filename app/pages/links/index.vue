@@ -200,7 +200,7 @@ useSeoMeta({
 	height: 140px;
 	padding: 1rem;
 	border: 1px solid var(--c-border);
-	border-radius: 12px;
+	border-radius: var(--radius-lg);
 	box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
 	background: var(--card-bg);
 	text-decoration: none;
@@ -268,7 +268,7 @@ useSeoMeta({
 	width: 40px;
 	height: 40px;
 	border: 2px solid var(--c-border);
-	border-radius: 12px;
+	border-radius: var(--radius-lg);
 	box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: transform, border-color;
@@ -315,7 +315,7 @@ useSeoMeta({
 	gap: 0.25rem;
 	padding: 0.25rem 0.5rem;
 	border: 1px solid var(--c-border);
-	border-radius: 8px;
+	border-radius: var(--radius-md);
 	background: var(--c-bg-2);
 	font-size: 0.7rem;
 	font-weight: 600;

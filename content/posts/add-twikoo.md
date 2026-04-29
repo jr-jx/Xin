@@ -5,6 +5,7 @@ categories: [经验分享]
 date: 2025-08-02
 description: 本文详细介绍了如何在宝塔面板环境下部署 Twikoo 评论系统，包括 Node 环境配置、项目初始化、依赖安装、脚本配置、项目添加与启动、端口和域名设置等完整流程，适合有建站和评论系统需求的用户参考。
 image: https://cdn.lightxi.com/cloudreve/uploads/2025/08/02/5WUC8w1g_fa439908-0c1b-430c-99ab-e367939468af.png
+featured: true
 
 references:
   - title: 使用宝塔面板轻松部署Twikoo评论系统

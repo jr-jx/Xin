@@ -66,7 +66,7 @@ onMounted(() => {
 	}
 
 	pre {
-		border-radius: 0.5rem;
+		border-radius: var(--radius);
 		font-size: 0.8125rem;
 	}
 
@@ -93,7 +93,7 @@ onMounted(() => {
 		margin: 0.5em 0;
 		padding: 0.2em 0.5em;
 		border-left: 4px solid var(--glass-border);
-		border-radius: 4px;
+		border-radius: var(--radius-sm);
 		background-color: var(--glass-bg);
 		font-size: 0.9rem;
 
@@ -118,7 +118,7 @@ onMounted(() => {
 	}
 
 	.tk-expand {
-		border-radius: 0.5rem;
+		border-radius: var(--radius);
 		transition: background-color 0.1s;
 	}
 }

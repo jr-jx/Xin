@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import type { ArticleCardProps } from '~/types/article'
-import { formatDate } from '~/utils'
+import { getPostDate } from '~/utils/date'
 
 defineOptions({ name: 'ArticleCard' })
 
 const { post } = defineProps<ArticleCardProps>()
+
+// 顶部 meta：取前两个分类
+const metaItems = computed<string[]>(() => (post.categories || []).slice(0, 2))
+
+// 底部 tag：取前 4 个
+const tagItems = computed<string[]>(() => (post.tags || []).slice(0, 4))
+
+// 相对时间
+const relativeDate = computed(() => getPostDate(post.date || post.updated))
 </script>
 
 <template>
@@ -22,55 +31,38 @@ const { post } = defineProps<ArticleCardProps>()
 			<div v-else class="cover-placeholder">
 				<Icon name="i-carbon-document" class="placeholder-icon" />
 			</div>
-			<!-- 分类标签移到封面上 -->
-			<span v-if="post.categories && post.categories[0]" class="article-category">
-				{{ post.categories[0] }}
-			</span>
 		</div>
 
 		<!-- 内容区域 -->
 		<div class="article-content">
+			<!-- 顶部 meta -->
+			<div v-if="metaItems.length" class="article-meta">
+				<span
+					v-for="m in metaItems"
+					:key="m"
+					class="meta-item"
+				>{{ m }}</span>
+			</div>
+
 			<!-- 文章标题 -->
 			<h2 class="article-title">
 				{{ post.title || '未命名文章' }}
 			</h2>
 
-			<!-- 文章描述 -->
-			<p v-if="post.description" class="article-description">
-				{{ post.description }}
-			</p>
-
-			<!-- 底部信息 -->
+			<!-- 底部：标签 + 相对时间 -->
 			<div class="article-footer">
-				<!-- 日期和阅读时间 -->
-				<div class="article-meta">
-					<time class="article-date">
-						<Icon name="i-carbon-calendar" class="meta-icon" />
-						{{ formatDate(post.date || (post as any).updated) }}
-					</time>
-					<span v-if="post.readingTime" class="reading-time">
-						<Icon name="i-carbon-time" class="meta-icon" />
-						{{ post.readingTime.text }}
-					</span>
-				</div>
-
-				<!-- 标签 -->
-				<div v-if="post.tags && post.tags.length > 0" class="article-tags">
+				<div class="article-tags">
 					<span
-						v-for="tag in (post.tags || []).slice(0, 2)"
+						v-for="tag in tagItems"
 						:key="tag"
 						class="tag-item"
 					>
-						<Icon name="material-symbols:tag" class="tag-icon" />
-						{{ tag }}
-					</span>
-					<span
-						v-if="(post.tags || []).length > 2"
-						class="tag-more"
-					>
-						+{{ (post.tags || []).length - 2 }}
+						# {{ tag }}
 					</span>
 				</div>
+				<time v-if="relativeDate" class="article-date">
+					{{ relativeDate }}
+				</time>
 			</div>
 		</div>
 	</article>
@@ -80,27 +72,20 @@ const { post } = defineProps<ArticleCardProps>()
 <style lang="scss" scoped>
 .article-link {
 	display: block;
-	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	text-decoration: none;
+	color: inherit;
 
 	&:hover {
-		.article-card {
-			box-shadow:
-				0 12px 24px -8px rgb(0 0 0 / 15%),
-				0 0 0 1px var(--main-color);
-		}
-
 		.article-title {
 			color: var(--main-color);
 		}
 
-		.cover-img {
-			transform: scale(1.08);
+		.article-meta {
+			color: var(--main-color);
 		}
 
-		.article-category {
-			border-color: var(--main-color);
-			background-color: var(--main-color);
-			color: #FFF;
+		.cover-img {
+			transform: scale(1.05);
 		}
 	}
 }
@@ -109,30 +94,24 @@ const { post } = defineProps<ArticleCardProps>()
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	height: 20rem;
-	border-radius: var(--radius);
-	box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
+	border: var(--border);
+	border-radius: var(--radius-lg);
 	background-color: var(--card-bg);
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	will-change: transform, box-shadow;
 }
 
 .article-cover {
 	position: relative;
 	overflow: hidden;
 	width: 100%;
-	height: 12rem; /* 3:2 比例中的 3 部分 */
-	background: linear-gradient(135deg, var(--c-bg-2) 0%, var(--c-bg) 100%);
-
-	&.no-image {
-		height: 8rem; /* 无图片时保持较小高度 */
-	}
+	max-height: 200px;
+	aspect-ratio: 16 / 10;
+	background: linear-gradient(135deg, var(--c-bg-2) 0%, var(--c-bg-1) 100%);
 
 	.cover-img {
 		display: block;
 		width: 100%;
 		height: 100%;
-		transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 		object-fit: cover;
 	}
 
@@ -154,43 +133,32 @@ const { post } = defineProps<ArticleCardProps>()
 
 .article-content {
 	display: flex;
-	flex: 1;
 	flex-direction: column;
-	gap: 0.5rem;
-	padding: 1.25rem;
+	gap: 0.875rem;
+	height: 10rem;
+	padding: 1.25rem 1.5rem 1rem;
 }
 
-.article-category {
-	display: inline-flex;
+.article-meta {
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-	position: absolute;
-	top: 0.75rem;
-	left: 0.75rem;
-	padding: 0.35rem 0.75rem;
-	border: 1px solid rgb(255 255 255 / 30%);
-	border-radius: calc(var(--radius) * 0.75);
-	box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
-	background-color: rgb(255 255 255 / 95%);
-	backdrop-filter: blur(8px);
-	font-size: 0.7rem;
-	font-weight: 600;
-	letter-spacing: 0.02em;
-	color: var(--font-color);
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	z-index: 1;
+	gap: 0.875rem;
+	font-size: 0.78rem;
+	color: var(--font-color-2);
+	transition: color 0.2s ease;
+}
 
-	@media (prefers-color-scheme: dark) {
-		border-color: rgb(255 255 255 / 20%);
-		background-color: rgb(0 0 0 / 70%);
-	}
+.meta-item {
+	white-space: nowrap;
 }
 
 .article-title {
 	display: -webkit-box;
 	overflow: hidden;
 	margin: 0;
-	font-size: 1.15rem;
-	font-weight: 600;
+	font-size: 1.25rem;
+	font-weight: 700;
 	letter-spacing: -0.01em;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
@@ -200,190 +168,83 @@ const { post } = defineProps<ArticleCardProps>()
 	-webkit-box-orient: vertical;
 }
 
-.article-description {
-	display: -webkit-box;
-	overflow: hidden;
-	margin: 0;
-	font-size: 0.875rem;
-	-webkit-line-clamp: 2;
-	line-clamp: 2;
-	line-height: 1.6;
-	color: var(--font-color-2);
-	-webkit-box-orient: vertical;
-}
-
 .article-footer {
 	display: flex;
-	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
 	gap: 1rem;
 	margin-top: auto;
-	padding-top: 1rem;
-	border-top: 1px solid var(--c-border);
-}
-
-.article-meta {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 1rem;
+	padding-top: 0.25rem;
 }
 
 .article-tags {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0.875rem;
+	min-width: 0;
 }
 
 .tag-item {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.25rem;
-	padding: 0.2rem 0;
-	font-size: 0.7rem;
-	font-weight: 500;
-	color: var(--font-color-3);
-
-	.tag-icon {
-		opacity: 0.6;
-		width: 0.75rem;
-		height: 0.75rem;
-	}
-}
-
-.tag-more {
-	display: inline-flex;
-	align-items: center;
-	padding: 0.2rem 0;
-	font-size: 0.7rem;
-	font-weight: 500;
-	color: var(--font-color-3);
-}
-
-.article-date,
-.reading-time {
-	display: flex;
-	align-items: center;
-	gap: 0.35rem;
-	font-size: 0.8rem;
+	overflow: hidden;
+	font-size: 0.78rem;
+	font-weight: 400;
 	white-space: nowrap;
-	color: var(--font-color-2);
-
-	.meta-icon {
-		opacity: 0.7;
-		width: 0.875rem;
-		height: 0.875rem;
-	}
+	color: var(--font-color-3);
 }
 
-@media (max-width: 900px) and (min-width: 769px) {
+.article-date {
+	flex-shrink: 0;
+	font-size: 0.78rem;
+	font-weight: 400;
+	white-space: nowrap;
+	color: var(--font-color-3);
+}
+
+// ========== 平板（横向卡）==========
+@media (min-width: 768px) and (max-width: 1023px) {
 	.article-card {
 		flex-direction: row;
 		align-items: stretch;
-		height: auto;
-		min-height: 15rem;
+		min-height: 10rem;
 	}
 
 	.article-cover {
-		width: 45%; /* 3:2 比例中的 3 部分 */
-		height: auto;
-
-		&.no-image {
-			width: 30%;
-		}
-
-		.cover-img,
-		.cover-placeholder {
-			height: 100%;
-			min-height: 15rem;
-		}
+		flex-shrink: 0;
+		width: 30%;
+		aspect-ratio: auto;
 	}
 
 	.article-content {
-		gap: 0.75rem;
-		width: 55%; /* 3:2 比例中的 2 部分 */
-		padding: 1.25rem;
+		flex: 1;
+		gap: 0.625rem;
+		padding: 1rem 1.25rem;
 	}
 
 	.article-title {
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
-	}
-
-	.article-description {
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
+		font-size: 1.05rem;
 	}
 }
 
-@media (max-width: 768px) {
-	.article-link:hover {
-		transform: translateY(-2px);
-	}
-
-	.article-card {
-		flex-direction: column;
-		height: auto;
-		min-height: 18rem;
-	}
-
-	.article-cover {
-		width: 100%;
-		height: 10.8rem; /* 保持 3:2 比例，移动端稍微调整 */
-
-		&.no-image {
-			height: 7rem;
-		}
-
-		.cover-img,
-		.cover-placeholder {
-			height: 100%;
-			min-height: auto;
-		}
-	}
-
-	.article-category {
-		top: 0.5rem;
-		left: 0.5rem;
-		padding: 0.25rem 0.6rem;
-		font-size: 0.65rem;
-	}
-
+// ========== 手机 ==========
+@media (max-width: 767px) {
 	.article-content {
-		gap: 0.5rem;
-		width: 100%;
+		gap: 0.75rem;
 		padding: 1rem;
 	}
 
 	.article-title {
-		font-size: 1rem;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
+		font-size: 1.05rem;
 	}
 
-	.article-description {
-		display: none;
-	}
-
-	.article-footer {
-		flex-wrap: wrap;
-		gap: 0.75rem;
-	}
-
-	.article-meta {
-		gap: 0.75rem;
-	}
-
-	.article-date,
-	.reading-time {
+	.article-meta,
+	.tag-item,
+	.article-date {
 		font-size: 0.75rem;
 	}
 
-	.tag-item {
-		padding: 0.25rem 0.5rem;
-		font-size: 0.65rem;
+	.article-tags {
+		gap: 0.625rem;
 	}
 }
 </style>

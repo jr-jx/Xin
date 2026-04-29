@@ -8,7 +8,7 @@ useSeoMeta({
 })
 
 // 使用内容加载器
-const { publishedPosts, postsPending } = useContentLoader()
+const { publishedPosts, featuredPosts, postsPending } = useContentLoader()
 
 // 侧边栏相关数据来源于 Sidebar 组件
 </script>
@@ -17,6 +17,9 @@ const { publishedPosts, postsPending } = useContentLoader()
 <div class="home-page">
 	<!-- 主要内容 -->
 	<main class="main-content">
+		<!-- 顶部精选 Banner -->
+		<HomeBanner :posts="featuredPosts" data-aos="fade-up" />
+
 		<!-- 主要内容区域 -->
 		<div class="content-layout">
 			<!-- 文章列表 -->
@@ -87,7 +90,7 @@ const { publishedPosts, postsPending } = useContentLoader()
 }
 
 ::-webkit-scrollbar-thumb {
-	border-radius: 3px;
+	border-radius: var(--radius-sm);
 	background: rgb(156 163 175 / 50%);
 
 	&:hover {

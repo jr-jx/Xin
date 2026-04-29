@@ -132,6 +132,7 @@ useSeoMeta({
 			<div class="archives-container">
 				<div
 					v-for="(yearGroup, index) in paginatedPostsByYear"
+					:id="String(yearGroup.year)"
 					:key="yearGroup.year"
 					class="year-group"
 					data-aos="fade-up"
