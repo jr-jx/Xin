@@ -51,7 +51,7 @@ useSeoMeta({
 				class="category-tag"
 			>
 				<span class="category-name">
-					<Icon name="material-symbols:category" />
+					<Icon name="ph:folder-bold" />
 					{{ category.name }}
 				</span>
 				<span class="category-count">{{ category.count }}</span>

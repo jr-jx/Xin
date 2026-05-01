@@ -81,5 +81,6 @@ Netlify (`netlify.toml`). Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are pre
 
 ## Change Log
 
+- 2026-05-01: Migrated site icons to the Phosphor (`ph:`) namespace and refined header nav pill/dropdown bridging animation and text color tokens; verification: not run.
 - 2026-05-01: Added the `commit-changelog` skill so explicit user requests for AI-created commits keep concise change log entries in `AGENT.md` and `CLAUDE.md`; verification: `node -e` format check passed.
 - 2026-05-01: Committed project-level Codex skills for general project work, dependency maintenance, and AI-created commit logs; verification: `node .codex/skills/project/scripts/skill_doctor.mjs`, `node -e`.

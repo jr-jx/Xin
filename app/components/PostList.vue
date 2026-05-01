@@ -110,7 +110,7 @@ const pageNumbers = computed<(number | string)[]>(() => {
 
 	<!-- 空状态 -->
 	<div v-if="!isPending && paginatedPosts.length === 0" class="empty-state">
-		<Icon name="i-carbon-document" class="empty-icon" />
+		<Icon name="ph:file-text-bold" class="empty-icon" />
 		<p>暂无文章内容</p>
 	</div>
 </div>
@@ -122,7 +122,7 @@ const pageNumbers = computed<(number | string)[]>(() => {
 		class="pagination-button pagination-prev"
 		@click="ui.setPage(Math.max(1, ui.currentPage - 1))"
 	>
-		<Icon name="i-carbon-chevron-left" class="pagination-icon" />
+		<Icon name="ph:caret-left-bold" class="pagination-icon" />
 	</button>
 
 	<template v-for="p in pageNumbers" :key="`p-${p}`">
@@ -143,7 +143,7 @@ const pageNumbers = computed<(number | string)[]>(() => {
 		class="pagination-button pagination-next"
 		@click="ui.setPage(Math.min(totalPages, ui.currentPage + 1))"
 	>
-		<Icon name="i-carbon-chevron-right" class="pagination-icon" />
+		<Icon name="ph:caret-right-bold" class="pagination-icon" />
 	</button>
 </div>
 </template>

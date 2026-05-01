@@ -56,7 +56,7 @@ useSeoMeta({
 				class="tag-tag"
 			>
 				<span class="tag-name">
-					<Icon name="material-symbols:tag" />
+					<Icon name="ph:tag-bold" />
 					{{ tag.name }}
 				</span>
 				<span class="tag-count">{{ tag.count }}</span>

@@ -56,6 +56,7 @@ const showInfoCard = computed(() => isHome.value || isContentPage.value)
 .sticky {
 	display: flex;
 	flex-direction: column;
+	gap: 0.5rem;
 	position: sticky;
 	top: calc(4rem + var(--space-2));
 }
@@ -64,6 +65,6 @@ const showInfoCard = computed(() => isHome.value || isContentPage.value)
 	display: flex;
 	flex-direction: column;
 	position: relative;
-	margin-bottom: var(--space-2);
+	margin-bottom: 0.5rem;
 }
 </style>

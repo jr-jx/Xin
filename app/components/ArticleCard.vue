@@ -29,7 +29,7 @@ const relativeDate = computed(() => getPostDate(post.date || post.updated))
 				loading="lazy"
 			/>
 			<div v-else class="cover-placeholder">
-				<Icon name="i-carbon-document" class="placeholder-icon" />
+				<Icon name="ph:file-text-bold" class="placeholder-icon" />
 			</div>
 		</div>
 

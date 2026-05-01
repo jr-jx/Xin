@@ -20,7 +20,7 @@ const blogConfig = {
 
 	// 许可证信息
 	license: {
-		icon: 'i-ri:creative-commons-line',
+		icon: 'ri:creative-commons-line',
 		name: '署名-非商业性使用-相同方式共享 4.0 国际',
 		url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
 	},
@@ -90,7 +90,7 @@ const blogConfig = {
 			},
 			{
 				label: 'Email',
-				icon: 'mdi:email',
+				icon: 'ph:envelope-simple-bold',
 				url: 'mailto:everfu@gmail.com',
 			},
 			{
@@ -146,7 +146,7 @@ const blogConfig = {
 				{ label: 'GitHub', icon: 'mdi:github', link: 'https://github.com/everfu' },
 				{ label: 'LinkedIn', icon: 'mdi:linkedin', link: 'https://www.linkedin.com/in/everfu/' },
 				{ label: 'Bilibili', icon: 'ant-design:bilibili-filled', link: 'https://space.bilibili.com/1234567890' },
-				{ label: 'Email', icon: 'mdi:email', link: 'mailto:everfu@gmail.com' },
+				{ label: 'Email', icon: 'ph:envelope-simple-bold', link: 'mailto:everfu@gmail.com' },
 			],
 		},
 	],

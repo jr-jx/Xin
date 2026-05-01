@@ -137,14 +137,14 @@ useSeoMeta({
 <style lang="scss" scoped>
 .about-page {
 	min-height: 100vh;
-	margin-top: 0.5rem;
-	margin-bottom: 0.5rem;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
 }
 
 .main-content {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: 1rem;
 	margin: 0 auto;
 	padding: 0 0.5rem;
 }
@@ -173,11 +173,10 @@ useSeoMeta({
 .skills-and-personalitie-section {
 	display: grid;
 	grid-template-columns: 6fr 4fr;
-	gap: 0.5rem;
+	gap: 1rem;
 
 	@media (max-width: 768px) {
 		grid-template-columns: 1fr;
-		margin-top: 1rem;
 	}
 }
 

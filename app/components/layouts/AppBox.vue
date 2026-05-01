@@ -26,7 +26,7 @@ function isExternal(link: string) {
 				class="app-item"
 				v-bind="isExternal(item.link)
 					? { href: item.link, target: '_blank', rel: 'noopener noreferrer' }
-					: { to: item.link }"
+					: { to: item.link, activeClass: '', exactActiveClass: '' }"
 			>
 				<Icon :name="item.icon" class="app-icon" />
 				<span class="app-label">{{ item.label }}</span>
@@ -40,11 +40,11 @@ function isExternal(link: string) {
 .app-box {
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: 0.5rem;
 	overflow-y: auto;
-	width: 20rem;
-	max-height: 70vh;
-	padding: 0.75rem;
+	width: min(22rem, calc(100vw - 1rem));
+	max-height: min(70vh, 32rem);
+	padding: 0.5rem;
 	scrollbar-width: none;
 
 	&::-webkit-scrollbar {
@@ -55,20 +55,26 @@ function isExternal(link: string) {
 .app-group {
 	display: flex;
 	flex-direction: column;
-	gap: 0.375rem;
+	gap: 0.25rem;
+
+	& + .app-group {
+		margin-top: 0.25rem;
+	}
 }
 
 .group-title {
-	padding-left: 0.25rem;
+	margin-bottom: 0.125rem;
+	padding: 0 0.5rem;
 	font-size: 0.75rem;
 	font-weight: 500;
+	letter-spacing: 0.05em;
 	color: var(--font-color-3);
 }
 
 .group-grid {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	gap: 0.25rem;
+	gap: 0.125rem;
 }
 
 .app-item {
@@ -79,14 +85,23 @@ function isExternal(link: string) {
 	border-radius: var(--radius);
 	text-decoration: none;
 	color: var(--font-color);
-	transition: background-color 0.2s ease;
+	transition: background-color 0.18s ease, color 0.18s ease;
 
-	&:hover {
-		background-color: var(--c-bg-2);
+	&:hover,
+	&:focus-visible {
+		outline: none;
+		background-color: var(--main-color-bg);
+		color: var(--main-color);
 
 		.app-icon {
 			color: var(--main-color);
+			transform: scale(1.05);
 		}
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--main-color);
+		outline-offset: 2px;
 	}
 }
 
@@ -95,7 +110,7 @@ function isExternal(link: string) {
 	width: 1.5rem;
 	height: 1.5rem;
 	color: var(--font-color-2);
-	transition: color 0.2s ease;
+	transition: color 0.18s ease, transform 0.18s ease;
 }
 
 .app-label {

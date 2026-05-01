@@ -44,7 +44,7 @@ function handlePostClick() {
 		role="status"
 		aria-live="polite"
 	>
-		<Icon name="mdi:file-document-outline" class="empty-icon" />
+		<Icon name="ph:file-text-bold" class="empty-icon" />
 		<div class="empty-text">
 			暂无文章
 		</div>

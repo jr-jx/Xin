@@ -83,8 +83,8 @@ function copyShare() {
 								</span>
 
 								<div class="post-share" @click="copyShare">
-									<Icon v-if="!copied" name="i-carbon-share" />
-									<Icon v-else name="i-carbon-checkmark" />
+									<Icon v-if="!copied" name="ph:share-network-bold" />
+									<Icon v-else name="ph:check-bold" />
 									<span>文字分享</span>
 								</div>
 							</div>
@@ -98,25 +98,25 @@ function copyShare() {
 							<div class="post-info">
 								<!-- 发布时间 -->
 								<div v-if="post.date" class="post-info-item">
-									<Icon name="i-carbon-calendar" class="post-info-icon" />
+									<Icon name="ph:calendar-bold" class="post-info-icon" />
 									<time>{{ formatDate(post.date) }}</time>
 								</div>
 
 								<!-- 更新时间 -->
 								<div v-if="(post as any).updated && (post as any).updated !== post.date" class="post-info-item">
-									<Icon name="i-carbon-time" class="post-info-icon" />
+									<Icon name="ph:clock-counter-clockwise-bold" class="post-info-icon" />
 									<span>更新于 {{ formatDate((post as any).updated) }}</span>
 								</div>
 
 								<!-- 阅读时间 -->
 								<div class="post-info-item">
-									<Icon name="i-carbon-time" class="post-info-icon" />
+									<Icon name="ph:clock-bold" class="post-info-icon" />
 									<span>{{ post.readingTime?.minutes }} 分钟</span>
 								</div>
 
 								<!-- 字数统计 -->
 								<div class="post-info-item">
-									<Icon name="i-ri-text" class="post-info-icon" />
+									<Icon name="ph:text-aa-bold" class="post-info-icon" />
 									<span>{{ post.readingTime?.words }} 字</span>
 								</div>
 							</div>

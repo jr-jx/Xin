@@ -175,7 +175,7 @@ useSeoMeta({
 											loading="lazy"
 										/>
 										<div v-else class="image-placeholder">
-											<Icon name="i-carbon-document" class="placeholder-icon" />
+											<Icon name="ph:file-text-bold" class="placeholder-icon" />
 										</div>
 									</div>
 								</NuxtLink>
@@ -225,7 +225,7 @@ useSeoMeta({
 						:to="currentPage === 2 ? '/archives' : `/archives/page/${currentPage - 1}`"
 						class="pagination-button pagination-prev"
 					>
-						<Icon name="i-carbon-chevron-left" class="pagination-icon" />
+						<Icon name="ph:caret-left-bold" class="pagination-icon" />
 						上一页
 					</NuxtLink>
 
@@ -250,7 +250,7 @@ useSeoMeta({
 						class="pagination-button pagination-next"
 					>
 						下一页
-						<Icon name="i-carbon-chevron-right" class="pagination-icon" />
+						<Icon name="ph:caret-right-bold" class="pagination-icon" />
 					</NuxtLink>
 				</div>
 			</div>

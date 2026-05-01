@@ -88,7 +88,7 @@ useSeoMeta({
 											loading="lazy"
 										/>
 										<div v-else class="image-placeholder">
-											<Icon name="i-carbon-document" class="placeholder-icon" />
+											<Icon name="ph:file-text-bold" class="placeholder-icon" />
 										</div>
 									</div>
 								</NuxtLink>
@@ -108,7 +108,7 @@ useSeoMeta({
 											:to="`/tags/${post.tags[0]}`"
 											class="post-tag"
 										>
-											<Icon name="material-symbols:tag" />
+											<Icon name="ph:tag-bold" />
 											{{ post.tags[0] }}
 										</NuxtLink>
 									</div>

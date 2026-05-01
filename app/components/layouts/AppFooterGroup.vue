@@ -30,7 +30,7 @@ function scrollTop() {
 				title="返回顶部"
 				@click="scrollTop"
 			>
-				<Icon size="1.5rem" name="mdi:arrow-up" />
+				<Icon size="1.5rem" name="ph:arrow-up-bold" />
 				<img :src="avatar" alt="返回顶部" class="avatar-img">
 			</button>
 		</template>

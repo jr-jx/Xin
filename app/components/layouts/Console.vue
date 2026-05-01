@@ -80,7 +80,7 @@ watch(() => isConsoleVisible.value, (visible) => {
 			<div class="console-content">
 				<div class="console-grid">
 					<!-- 左侧：最近评论 -->
-					<Widget card class="panel-comments" title="最近评论" icon="mdi:comment-text-outline">
+					<Widget card class="panel-comments" title="最近评论" icon="ph:chat-bold">
 						<ClientOnly>
 							<Suspense>
 								<RecentComment />
@@ -95,7 +95,7 @@ watch(() => isConsoleVisible.value, (visible) => {
 
 					<!-- 右侧：标签 + 文章归档 -->
 					<div class="panel-right">
-						<Widget card class="panel-tags" title="热门标签" icon="icon-park-solid:tag">
+						<Widget card class="panel-tags" title="热门标签" icon="ph:tag-bold">
 							<ClientOnly>
 								<Suspense>
 									<ConsoleTag :max-tags="30" />

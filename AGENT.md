@@ -101,5 +101,6 @@ image: /path/to/image.webp
 
 ## 修改日志
 
+- 2026-05-01：将站点图标统一迁移到 Phosphor (`ph:`) 命名空间，并优化顶栏菜单胶囊与下拉桥接动画、文字色变量；验证：未运行。
 - 2026-05-01：新增 `commit-changelog` skill，仅在用户明确要求 AI 提交当前项目或当前改动时，同步维护 `AGENT.md` 与 `CLAUDE.md` 修改日志；验证：`node -e` 格式检查通过。
 - 2026-05-01：提交项目级 Codex skills，包括通用项目、依赖维护和 AI 提交日志流程；验证：`node .codex/skills/project/scripts/skill_doctor.mjs`，`node -e`。

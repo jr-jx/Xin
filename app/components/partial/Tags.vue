@@ -12,7 +12,7 @@ defineProps<{
 		:to="`/tags/${tag.name}`"
 		class="tag-item"
 	>
-		<Icon name="material-symbols:tag" />
+		<Icon name="ph:tag-bold" />
 		{{ tag.name }}
 	</NuxtLink>
 </div>

@@ -57,7 +57,7 @@ function handlePostClick() {
 	class="comment-empty"
 	aria-live="polite"
 >
-	<Icon name="mdi:comment-text-outline" class="empty-icon" />
+	<Icon name="ph:chat-bold" class="empty-icon" />
 	<div class="empty-text">
 		暂无评论
 	</div>

@@ -8,28 +8,29 @@ import { Icon } from '#components'
 	<div class="footer-content">
 		<div class="footer-left">
 			<div class="copyright">
-				<span class="time">© {{ new Date(blogConfig.site.timeEstablished).getFullYear() }} - {{ new Date().getFullYear() }} By </span>
-				<a :href="blogConfig.profile.homepage" class="author link" target="_blank">
+				<span class="time"> {{ new Date(blogConfig.site.timeEstablished).getFullYear() }} - {{ new Date().getFullYear() }} By </span>
+				<a v-tip="blogConfig.profile.homepage" :href="blogConfig.profile.homepage" class="author link" target="_blank">
 					<img :src="blogConfig.profile.avatar" alt="author">
 					{{ blogConfig.profile.name }}
 				</a>
 			</div>
 			<div class="beian-group">
-				<a v-for="item in blogConfig.beian" :key="item.name" class="icp" :href="item.link" target="_blank">
+				<a v-for="item in blogConfig.beian" :key="item.name" v-tip="item.link" class="icp" :href="item.link" target="_blank">
 					<img v-if="item.icon" :src="item.icon" alt="beian">
 					{{ item.name }}
 				</a>
-				<a class="theme" target="_blank" href="https://github.com/jr-jx/Xin">
+				<a v-tip="'本站主题：Xin'" class="theme" target="_blank" href="https://github.com/jr-jx/Xin">
 					<Icon name="solar:adhesive-plaster-bold-duotone" />
 					Xin
 				</a>
 			</div>
 		</div>
 		<div class="meta">
-			<a class="rss link" href="/atom.xml" target="_blank">
+			<a v-tip="'订阅本站 Atom 源'" class="rss link" href="/atom.xml" target="_blank">
 				<span class="name">订阅</span>
 			</a>
 			<a
+				v-tip="'CC BY-NC-SA 4.0 知识共享许可协议'"
 				class="cc link"
 				href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans"
 				target="_blank"
@@ -64,9 +65,9 @@ import { Icon } from '#components'
 		justify-content: space-between;
 		width: 100%;
 		min-height: 32px;
-		max-width: 1400px;
+		max-width: 1250px;
 		margin: 0 auto;
-		padding: 0 1rem;
+		padding: 0 0.5rem;
 		line-height: 1;
 		color: var(--font-color);
 
@@ -170,10 +171,6 @@ import { Icon } from '#components'
 		@media (max-width: 768px) {
 			flex-direction: column;
 			font-size: 14px;
-
-			.meta {
-				display: none;
-			}
 		}
 
 		@media (max-width: 420px) {

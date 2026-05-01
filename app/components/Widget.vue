@@ -37,10 +37,6 @@ defineProps<WidgetProps>()
 	overflow: hidden;
 	font-size: 0.9em;
 
-	.widget + & {
-		margin-top: 1rem;
-	}
-
 	&.dim {
 		opacity: 0.3;
 		transition: opacity 0.2s;

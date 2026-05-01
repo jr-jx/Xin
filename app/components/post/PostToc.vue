@@ -24,7 +24,7 @@ function hasActiveChild(entry: TocLink, activeId: string | null): boolean {
 </script>
 
 <template>
-<Widget title="目录" card icon="carbon:menu">
+<Widget title="目录" card icon="ph:list-bold">
 	<!-- 目录内容 -->
 	<div v-if="toc?.links?.length" class="toc-content">
 		<DefineTemplate v-slot="{ tocItem }">
@@ -54,7 +54,7 @@ function hasActiveChild(entry: TocLink, activeId: string | null): boolean {
 
 	<!-- 无目录时的提示 -->
 	<div v-else class="no-toc">
-		<Icon name="mdi:file-document-outline" class="no-toc-icon" />
+		<Icon name="ph:file-text-bold" class="no-toc-icon" />
 		<span class="no-toc-text">暂无目录信息</span>
 	</div>
 </Widget>

@@ -43,14 +43,14 @@ export function getPostTypeDisplayName(type?: string): string {
  */
 export function getPostTypeIcon(type?: string): string {
 	const iconMap: Record<string, string> = {
-		tech: 'i-carbon-code',
-		story: 'i-carbon-book',
-		life: 'i-carbon-user',
-		review: 'i-carbon-star',
-		tutorial: 'i-carbon-education',
+		tech: 'ph:code-bold',
+		story: 'ph:book-open-bold',
+		life: 'ph:user-bold',
+		review: 'ph:star-bold',
+		tutorial: 'ph:graduation-cap-bold',
 	}
 
-	return iconMap[type || 'tech'] || 'i-carbon-document'
+	return iconMap[type || 'tech'] || 'ph:file-text-bold'
 }
 
 /**

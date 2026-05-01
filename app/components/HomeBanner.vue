@@ -160,7 +160,7 @@ onBeforeUnmount(() => clearTimer())
 		<div class="hero-mask" />
 		<div class="hero-content">
 			<div class="hero-tag">
-				<Icon name="ri:star-fill" />
+				<Icon name="ph:star-fill" />
 				<span>全站推荐</span>
 			</div>
 			<h2 class="hero-title">

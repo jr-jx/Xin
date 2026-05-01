@@ -151,6 +151,11 @@ function handleKeydown(event: KeyboardEvent) {
 		event.preventDefault()
 		searchStore.openSearch()
 	}
+
+	// ESC 关闭应用盒子
+	if (event.key === 'Escape' && showAppBox.value) {
+		showAppBox.value = false
+	}
 }
 
 // 组件挂载时设置事件监听器
@@ -184,7 +189,10 @@ onUnmounted(() => {
 					<button
 						v-tip="'应用盒子'"
 						class="app-box-btn"
+						:class="{ 'app-box-btn-active': showAppBox }"
 						aria-label="应用盒子"
+						aria-haspopup="true"
+						:aria-expanded="showAppBox"
 					>
 						<Icon name="ph:squares-four-bold" />
 					</button>
@@ -208,7 +216,7 @@ onUnmounted(() => {
 					@click="handleLogoClick"
 				>
 					<span class="logo-text">{{ site.title }}</span>
-					<Icon name="i-material-symbols:home-rounded" class="logo-icon" />
+					<Icon name="ph:house-bold" class="logo-icon" />
 				</NuxtLink>
 			</div>
 
@@ -290,8 +298,8 @@ onUnmounted(() => {
 					:aria-pressed="consoleStore.showConsole"
 					@click="toggleConsole"
 				>
-					<Icon v-if="!consoleStore.showConsole" name="i-ph:circles-four-bold" />
-					<Icon v-else name="i-ph:x-bold" />
+					<Icon v-if="!consoleStore.showConsole" name="ph:circles-four-bold" />
+					<Icon v-else name="ph:x-bold" />
 				</button>
 			</div>
 		</div>
@@ -361,10 +369,11 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 		// nav-menu 用 ::before 实现毛玻璃，避免在自身建立 backdrop-filter 上下文
 		// 否则其子节点 .dropdown-menu 的 backdrop-filter 会读取已被过滤的背景
+		// 不使用 isolation/z-index:-1，确保 .dropdown-menu 与胶囊在同一堆叠上下文下采样背景，
+		// 这样下拉菜单的模糊透明度与菜单胶囊保持一致
 		.nav-menu {
 			position: relative;
 			border-radius: var(--radius-pill);
-			isolation: isolate;
 
 			&::before {
 				content: "";
@@ -376,7 +385,6 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 				background-color: var(--glass-bg, rgb(255 255 255 / 12%));
 				backdrop-filter: blur(16px) saturate(180%);
 				pointer-events: none;
-				z-index: -1;
 			}
 		}
 
@@ -533,13 +541,18 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	background: none;
 	font-size: 1.125rem;
 	text-decoration: none;
-	color: var(--font-color-2);
+	color: var(--font-color);
 	transition: all $transition-normal;
 	cursor: pointer;
 
 	&:hover {
 		background-color: var(--main-color-bg);
-		color: var(--font-color);
+		color: var(--main-color);
+	}
+
+	&.app-box-btn-active {
+		background-color: var(--main-color-bg);
+		color: var(--main-color);
 	}
 
 	&:focus-visible {
@@ -555,19 +568,31 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	border: 1px solid var(--glass-border);
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-md);
-	background-color: var(--card-bg);
+	background-color: var(--glass-bg);
+	backdrop-filter: blur(16px) saturate(180%);
 	z-index: 100;
+
+	// 透明桥接区，覆盖触发按钮与面板之间的 0.5rem 间隙，避免鼠标穿越时面板抖动关闭
+	&::before {
+		content: "";
+		position: absolute;
+		top: -0.5rem;
+		left: 0;
+		width: 100%;
+		height: 0.5rem;
+	}
 }
 
 .app-box-enter-active,
 .app-box-leave-active {
-	transition: opacity 0.2s ease, transform 0.2s ease;
+	transform-origin: top left;
+	transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .app-box-enter-from,
 .app-box-leave-to {
 	opacity: 0;
-	transform: translateY(-0.5rem);
+	transform: translateY(-0.5rem) scale(0.96);
 }
 
 // 导航菜单样式
@@ -659,7 +684,7 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	padding: 0.5rem 0.875rem;
 	border-radius: var(--radius-pill);
 	text-decoration: none;
-	color: var(--font-color-2);
+	color: var(--font-color);
 	transition: background-color $transition-fast, color $transition-fast;
 
 	&:hover,
@@ -669,7 +694,7 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 		color: var(--main-color);
 
 		.dropdown-icon {
-			opacity: 1;
+			color: var(--main-color);
 			transform: scale(1.05);
 		}
 	}
@@ -677,10 +702,10 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 .dropdown-icon {
 	flex-shrink: 0;
-	opacity: 0.6;
 	width: 1rem;
 	height: 1rem;
-	transition: opacity $transition-fast, transform $transition-fast;
+	color: var(--font-color);
+	transition: color $transition-fast, transform $transition-fast;
 }
 
 .dropdown-text {
@@ -717,7 +742,7 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	outline: none;
 	background: none;
 	text-decoration: none;
-	color: var(--font-color-2);
+	color: var(--font-color);
 	transition: all $transition-normal;
 	cursor: pointer;
 
