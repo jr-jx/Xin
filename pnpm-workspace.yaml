@@ -38,7 +38,7 @@ catalogs:
     '@nuxt/icon': ^2.2.1
     '@nuxt/image': ^2.0.0
     '@nuxtjs/color-mode': ^4.0.0
-    nuxt-aos: ^1.2.6
+    '@vueuse/motion': ^3.0.1
     vue-tippy: ^6.7.1
   util:
     '@nuxt/scripts': ^1.0.4

@@ -101,8 +101,7 @@ const pageNumbers = computed<(number | string)[]>(() => {
 		<div
 			v-for="(post, index) in paginatedPosts"
 			:key="post.path"
-			data-aos="fade-up"
-			:data-aos-delay="index * 50"
+			v-fade-up="index * 50"
 			class="post-card"
 		>
 			<ArticleCard :post="post" />

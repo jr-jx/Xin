@@ -31,7 +31,7 @@ useSeoMeta({
 			<CategoriesBar :active-category="tagSlug" type="tag" />
 
 			<!-- 文章列表 -->
-			<div v-if="postsPending" class="loading-state" data-aos="fade-up">
+			<div v-if="postsPending" v-fade-up class="loading-state">
 				<div class="loading-spinner" />
 				<p>正在加载文章...</p>
 			</div>
@@ -44,7 +44,7 @@ useSeoMeta({
 		</div>
 
 		<!-- 侧边栏 -->
-		<AppSidebar data-aos="fade-up" />
+		<AppSidebar v-fade-up />
 	</div>
 </div>
 </template>

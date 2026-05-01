@@ -42,7 +42,7 @@ export default defineNuxtConfig({
 		'~/assets/css/reusable.scss',
 		'~/assets/css/animation.scss',
 	],
-	modules: ['nuxt-content-twoslash', '@nuxt/content', '@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@nuxtjs/color-mode', '@pinia/nuxt', '@nuxt/icon', 'unplugin-yaml/nuxt', 'nuxt-aos'],
+	modules: ['nuxt-content-twoslash', '@nuxt/content', '@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@nuxtjs/color-mode', '@pinia/nuxt', '@nuxt/icon', 'unplugin-yaml/nuxt', '@vueuse/motion/nuxt'],
 
 	vite: {
 		css: {

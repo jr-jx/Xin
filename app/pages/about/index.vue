@@ -12,7 +12,7 @@ useSeoMeta({
 <template>
 <div class="about-page">
 	<!-- 主要内容 -->
-	<main class="main-content" data-aos="fade-up">
+	<main v-fade-up class="main-content">
 		<!-- 个人信息卡片 -->
 		<Widget card class="profile-card" title="个人信息" icon="mdi:user">
 			<div class="profile-header">
@@ -75,7 +75,7 @@ useSeoMeta({
 
 		<div class="skills-and-personalitie-section">
 			<!-- 技能展示 -->
-			<Widget grid class="skills-section" data-aos="fade-up" data-aos-delay="50" title="技能专长" icon="mdi:code-braces">
+			<Widget v-fade-up="50" grid class="skills-section" title="技能专长" icon="mdi:code-braces">
 				<div class="skills-carousel">
 					<div class="skills-track">
 						<!-- 原始技能项 -->
@@ -101,7 +101,7 @@ useSeoMeta({
 			</Widget>
 
 			<!-- 性格展示 -->
-			<Widget card class="personalitie-section" data-aos="fade-up" data-aos-delay="100" title="性格" icon="mdi:heart">
+			<Widget v-fade-up="100" card class="personalitie-section" title="性格" icon="mdi:heart">
 				<div class="personalitie-content">
 					<div class="personalitie-info">
 						<h3 class="personality-title">
@@ -119,7 +119,7 @@ useSeoMeta({
 		</div>
 
 		<!-- 个人介绍 -->
-		<Widget grid :title="introduction.title" icon="mdi:file-document" class="introduction-section" data-aos="fade-up" data-aos-delay="150">
+		<Widget v-fade-up="150" grid :title="introduction.title" icon="mdi:file-document" class="introduction-section">
 			<div class="introduction-content">
 				<p
 					v-for="(paragraph, index) in introduction.content.split('\n\n')"

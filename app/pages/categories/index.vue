@@ -34,7 +34,7 @@ useSeoMeta({
 <template>
 <div class="categories-page">
 	<!-- 页面标题 -->
-	<div class="page-header" data-aos="fade-up">
+	<div v-fade-up class="page-header">
 		<h1 class="page-title">
 			全部分类
 		</h1>
@@ -46,10 +46,9 @@ useSeoMeta({
 			<NuxtLink
 				v-for="(category, index) in allCategories"
 				:key="category.slug"
+				v-fade-up="50 * index"
 				:to="`/categories/${category.slug}`"
 				class="category-tag"
-				data-aos="fade-up"
-				:data-aos-delay="50 * index"
 			>
 				<span class="category-name">
 					<Icon name="material-symbols:category" />

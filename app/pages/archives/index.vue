@@ -47,7 +47,7 @@ useSeoMeta({
 	<div class="content-layout">
 		<!-- 归档内容 -->
 		<div class="archives-section">
-			<div class="page-header" data-aos="fade-up">
+			<div v-fade-up class="page-header">
 				<h1 class="page-title">
 					文章
 					<sup class="total-count">{{ posts.length }}</sup>
@@ -58,9 +58,8 @@ useSeoMeta({
 				<div
 					v-for="(yearGroup, index) in postsByYear"
 					:key="yearGroup.year"
+					v-fade-up="50 * index"
 					class="year-group"
-					data-aos="fade-up"
-					:data-aos-delay="50 * index"
 				>
 					<!-- 年份标题 -->
 					<div class="year-header">
@@ -75,9 +74,8 @@ useSeoMeta({
 							class="post-item"
 						>
 							<div
+								v-fade-up="50 * indexi"
 								class="post-card"
-								data-aos="fade-up"
-								:data-aos-delay="50 * indexi"
 							>
 								<!-- 文章图片 - 点击跳转到文章 -->
 								<NuxtLink :to="post.path" class="post-image-link">
@@ -123,7 +121,7 @@ useSeoMeta({
 		</div>
 
 		<!-- 侧边栏 -->
-		<AppSidebar data-aos="fade-up" />
+		<AppSidebar v-fade-up />
 	</div>
 </div>
 </template>

@@ -18,18 +18,18 @@ const { publishedPosts, featuredPosts, postsPending } = useContentLoader()
 	<!-- 主要内容 -->
 	<main class="main-content">
 		<!-- 顶部精选 Banner -->
-		<HomeBanner :posts="featuredPosts" data-aos="fade-up" />
+		<HomeBanner v-fade-up :posts="featuredPosts" />
 
 		<!-- 主要内容区域 -->
 		<div class="content-layout">
 			<!-- 文章列表 -->
-			<div class="post-list-section" data-aos="fade-up">
+			<div v-fade-up class="post-list-section">
 				<CategoriesBar active-category="" />
 				<PostList :posts="publishedPosts" :loading="postsPending" />
 			</div>
 
 			<!-- 侧边栏 -->
-			<AppSidebar data-aos="fade-up" />
+			<AppSidebar v-fade-up />
 		</div>
 	</main>
 </div>

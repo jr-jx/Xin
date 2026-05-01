@@ -11,7 +11,7 @@ Guidance for Claude Code (and similar AI assistants) working in this repository.
 - **Framework**: Nuxt 4, Vue 3, TypeScript
 - **Content**: `@nuxt/content` + Shiki + `nuxt-content-twoslash`, KaTeX, remark/rehype plugins
 - **State**: Pinia (`@pinia/nuxt`)
-- **UI**: `@nuxt/icon` (ri, mdi, material-symbols, carbon, ph, devicon, skill-icons), `@nuxt/image`, `nuxt-aos`, `vue-tippy`
+- **UI**: `@nuxt/icon` (ri, mdi, material-symbols, carbon, ph, devicon, skill-icons), `@nuxt/image`, `@vueuse/motion`, `vue-tippy`
 - **Styling**: SCSS (`sass-embedded`), `@nuxtjs/color-mode` (system/light/dark)
 - **Tooling**: ESLint (`@antfu/eslint-config`), Stylelint (`@zinkawaii/stylelint-config`), `simple-git-hooks` + `lint-staged`
 - **Package manager**: `pnpm@10.15.0` with workspace catalogs (`pnpm-workspace.yaml`)

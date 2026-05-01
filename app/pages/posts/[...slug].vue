@@ -55,7 +55,7 @@ function copyShare() {
 	>
 		<div class="content-layout">
 			<!-- 文章主体 -->
-			<div id="main-content" class="post-main" data-aos="fade-up">
+			<div id="main-content" v-fade-up class="post-main">
 				<article class="post-article">
 					<!-- 文章头部 -->
 					<header class="post-header">
@@ -148,7 +148,7 @@ function copyShare() {
 			</div>
 
 			<!-- 侧边栏 -->
-			<AppSidebar data-aos="fade-up" />
+			<AppSidebar v-fade-up />
 		</div>
 	</div>
 </div>

@@ -40,7 +40,7 @@ async function refreshComments() {
 </script>
 
 <template>
-<div class="recentcomments-page" data-aos="fade-up">
+<div v-fade-up class="recentcomments-page">
 	<PageBanner
 		title="最近评论"
 		desc="最近评论"
@@ -69,10 +69,9 @@ async function refreshComments() {
 			<NuxtLink
 				v-for="(comment, index) in comments"
 				:key="comment.id"
+				v-fade-up="50 * index"
 				:to="`${comment.url}#${comment.id}`"
 				class="comment-card"
-				data-aos="fade-up"
-				:data-aos-delay="50 * index"
 			>
 				<div class="comment-header">
 					<div class="comment-avatar">

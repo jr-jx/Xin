@@ -114,7 +114,7 @@ useSeoMeta({
 <template>
 <div class="archives-page">
 	<!-- 页面标题 -->
-	<div class="page-header" data-aos="fade-up">
+	<div v-fade-up class="page-header">
 		<h1 class="page-title">
 			文章归档
 		</h1>
@@ -134,9 +134,8 @@ useSeoMeta({
 					v-for="(yearGroup, index) in paginatedPostsByYear"
 					:id="String(yearGroup.year)"
 					:key="yearGroup.year"
+					v-fade-up="50 * index"
 					class="year-group"
-					data-aos="fade-up"
-					:data-aos-delay="50 * index"
 				>
 					<!-- 年份标题 -->
 					<div class="year-header">
@@ -162,9 +161,8 @@ useSeoMeta({
 							class="post-item"
 						>
 							<div
+								v-fade-up="50 * index"
 								class="post-card"
-								data-aos="fade-up"
-								:data-aos-delay="50 * index"
 							>
 								<!-- 文章图片 - 点击跳转到文章 -->
 								<NuxtLink :to="post.path" class="post-image-link">
@@ -219,7 +217,7 @@ useSeoMeta({
 			</div>
 
 			<!-- 分页导航 -->
-			<div v-if="totalPages > 1" class="pagination-section" data-aos="fade-up">
+			<div v-if="totalPages > 1" v-fade-up class="pagination-section">
 				<div class="pagination">
 					<!-- 上一页 -->
 					<NuxtLink
@@ -259,7 +257,7 @@ useSeoMeta({
 		</div>
 
 		<!-- 侧边栏 -->
-		<AppSidebar data-aos="fade-up" />
+		<AppSidebar v-fade-up />
 	</div>
 </div>
 </template>

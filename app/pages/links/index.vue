@@ -10,7 +10,7 @@ useSeoMeta({
 </script>
 
 <template>
-<div class="links-page" data-aos="fade-up">
+<div v-fade-up class="links-page">
 	<PageBanner
 		title="友情链接"
 		desc="我的朋友们和帮助过我的人"
@@ -22,9 +22,8 @@ useSeoMeta({
 		<div
 			v-for="(category, categoryIndex) in satisfies"
 			:key="category.name"
+			v-fade-up="100 * categoryIndex"
 			class="category-section"
-			data-aos="fade-up"
-			:data-aos-delay="100 * categoryIndex"
 		>
 			<!-- 分组标题和描述 -->
 			<div class="category-header">
@@ -41,12 +40,11 @@ useSeoMeta({
 				<a
 					v-for="(link, linkIndex) in category.entries"
 					:key="link.sitenick"
+					v-fade-up="100 * categoryIndex + 50 * linkIndex"
 					:href="link.link"
 					target="_blank"
 					rel="noopener noreferrer"
 					class="link-card"
-					data-aos="fade-up"
-					:data-aos-delay="100 * categoryIndex + 50 * linkIndex"
 				>
 					<div class="link-header">
 						<div class="link-avatar">

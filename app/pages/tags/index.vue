@@ -39,7 +39,7 @@ useSeoMeta({
 <template>
 <div class="tags-page">
 	<!-- 页面标题 -->
-	<div class="page-header" data-aos="fade-up">
+	<div v-fade-up class="page-header">
 		<h1 class="page-title">
 			全部标签
 		</h1>
@@ -51,10 +51,9 @@ useSeoMeta({
 			<NuxtLink
 				v-for="(tag, index) in allTags"
 				:key="tag.slug"
+				v-fade-up="50 * index"
 				:to="`/tags/${tag.slug}`"
 				class="tag-tag"
-				data-aos="fade-up"
-				:data-aos-delay="50 * index"
 			>
 				<span class="tag-name">
 					<Icon name="material-symbols:tag" />

@@ -11,7 +11,7 @@
 - 框架：Nuxt 4、Vue 3、TypeScript
 - 内容：`@nuxt/content`、Markdown、Shiki、`nuxt-content-twoslash`、KaTeX、remark/rehype 插件
 - 状态管理：Pinia
-- UI 与资源：`@nuxt/icon`、`@nuxt/image`、`nuxt-aos`、`vue-tippy`
+- UI 与资源：`@nuxt/icon`、`@nuxt/image`、`@vueuse/motion`、`vue-tippy`
 - 样式：SCSS、CSS 变量、`@nuxtjs/color-mode`
 - 工具：ESLint、Stylelint、simple-git-hooks、lint-staged
 - 包管理器：pnpm 10.15.0，依赖版本通过 `pnpm-workspace.yaml` 的 catalog 管理
