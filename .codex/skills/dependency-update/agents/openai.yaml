@@ -1,0 +1,7 @@
+interface:
+  display_name: "Xin Dependency Update"
+  short_description: "Update Xin dependencies safely"
+  default_prompt: "Use $dependency-update to inspect and update dependencies in the Xin pnpm catalog workflow."
+
+policy:
+  allow_implicit_invocation: true

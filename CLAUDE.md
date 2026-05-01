@@ -78,3 +78,8 @@ Netlify (`netlify.toml`). Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are pre
 - **Component imports**: rely on Nuxt auto-import; avoid manual imports for components/composables under `app/`.
 - **Content additions**: new posts go in `content/posts/*.md` with the frontmatter above; date field drives ordering and feeds.
 - **SEO/feeds**: changes to site identity belong in `blog.config.ts`; head defaults live in `nuxt.config.ts` under `app.head`.
+
+## Change Log
+
+- 2026-05-01: Added the `commit-changelog` skill so explicit user requests for AI-created commits keep concise change log entries in `AGENT.md` and `CLAUDE.md`; verification: `node -e` format check passed.
+- 2026-05-01: Committed project-level Codex skills for general project work, dependency maintenance, and AI-created commit logs; verification: `node .codex/skills/project/scripts/skill_doctor.mjs`, `node -e`.

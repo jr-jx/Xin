@@ -1,0 +1,7 @@
+interface:
+  display_name: "Xin Project"
+  short_description: "Xin Nuxt blog development workflow"
+  default_prompt: "Use $project to work in the Xin / 伍拾柒 Nuxt blog: load the task-specific reference, preserve project conventions, and choose focused verification."
+
+policy:
+  allow_implicit_invocation: true

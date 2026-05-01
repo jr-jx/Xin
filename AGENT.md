@@ -1,4 +1,4 @@
-# agent.md
+# AGENT.md
 
 本文件给在该仓库中工作的 AI Agent 使用。目标是让改动贴合现有 Nuxt 博客项目，避免引入不一致的工具链、风格或目录结构。
 
@@ -98,3 +98,8 @@ image: /path/to/image.webp
 - 生成代码时沿用当前目录组织与命名方式。
 - 修改 UI 时保持博客现有视觉语言，避免引入不必要的组件库或大范围样式重写。
 - 修改公开链接、站点元信息、评论服务、备案信息前，确认它们是否应同步到 `blog.config.ts`、`nuxt.config.ts` 或内容文件。
+
+## 修改日志
+
+- 2026-05-01：新增 `commit-changelog` skill，仅在用户明确要求 AI 提交当前项目或当前改动时，同步维护 `AGENT.md` 与 `CLAUDE.md` 修改日志；验证：`node -e` 格式检查通过。
+- 2026-05-01：提交项目级 Codex skills，包括通用项目、依赖维护和 AI 提交日志流程；验证：`node .codex/skills/project/scripts/skill_doctor.mjs`，`node -e`。
