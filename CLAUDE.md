@@ -81,6 +81,7 @@ Netlify (`netlify.toml`). Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are pre
 
 ## Change Log
 
+- 2026-05-02: Expanded `netlify.toml` with explicit pnpm build command, Node 22 / pnpm 10.15.0 pins, long-cache headers for `/_nuxt` and `/assets`, XML content-type for `atom.xml`/`efu.opml`, and site-wide security headers; verification: not run.
 - 2026-05-02: Replaced Twikoo with a built-in comment system, adding `server/api/comments/` routes, `server/utils/{adminAuth,comments,mailer,rateLimit,spam}.ts`, `app/components/post/comment/` UI and `useComments` composable, wiring `comments`/`comments-meta` Nitro storage plus SMTP/admin `runtimeConfig` in `nuxt.config.ts`, swapping `blog.config.ts` `twikoo` for a `comment` block, syncing `NUXT_COMMENT_*`/SMTP vars in `.env.example`, and moving `@netlify/blobs` to the pnpm catalog; verification: not run.
 - 2026-05-02: Added a friends aggregation page at `/friends` and like endpoints (`server/api/friends.get.ts`, `likes.{get,post}.ts`) backed by Nitro storage (Netlify Blobs in prod, fs in dev) with `NUXT_IP_HASH_SALT`-hashed IP dedupe, plus `@netlify/blobs` dependency and `FriendItem` types; verification: not run.
 - 2026-05-01: Migrated site icons to the Phosphor (`ph:`) namespace and refined header nav pill/dropdown bridging animation and text color tokens; verification: not run.
