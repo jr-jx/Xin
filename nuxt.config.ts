@@ -18,7 +18,6 @@ export default defineNuxtConfig({
 			link: [
 				{ rel: 'icon', href: '/favicon.ico' },
 				{ rel: 'alternate', type: 'application/atom+xml', href: '/atom.xml' },
-				{ rel: 'preconnect', href: blogConfig.twikoo.preload },
 				{ rel: 'stylesheet', href: 'https://lib.baomitu.com/KaTeX/0.16.9/katex.min.css' },
 				// 思源黑体 "Noto Sans SC", 思源宋体 "Noto Serif SC", "JetBrains Mono"
 				{ rel: 'preconnect', href: 'https://fonts.gstatic.cn', crossorigin: '' },
@@ -75,15 +74,31 @@ export default defineNuxtConfig({
 	nitro: {
 		compressPublicAssets: true,
 		storage: {
-			likes: {
+			'likes': {
 				driver: 'netlify-blobs',
 				name: 'friends-likes',
 			},
+			'comments': {
+				driver: 'netlify-blobs',
+				name: 'comments',
+			},
+			'comments-meta': {
+				driver: 'netlify-blobs',
+				name: 'comments-meta',
+			},
 		},
 		devStorage: {
-			likes: {
+			'likes': {
 				driver: 'fs',
 				base: './.data/likes',
+			},
+			'comments': {
+				driver: 'fs',
+				base: './.data/comments',
+			},
+			'comments-meta': {
+				driver: 'fs',
+				base: './.data/comments-meta',
 			},
 		},
 	},
@@ -96,6 +111,17 @@ export default defineNuxtConfig({
 
 	runtimeConfig: {
 		ipHashSalt: process.env.NUXT_IP_HASH_SALT || 'xin-friends-likes-v1',
+		commentAdminPassword: process.env.NUXT_COMMENT_ADMIN_PASSWORD || '',
+		commentJwtSecret: process.env.NUXT_COMMENT_JWT_SECRET || 'xin-comment-jwt-dev-secret-change-me',
+		commentNotifyTo: process.env.NUXT_COMMENT_NOTIFY_TO || '',
+		commentKeywordBlacklist: process.env.NUXT_COMMENT_KEYWORD_BLACKLIST || '',
+		smtp: {
+			host: process.env.SMTP_HOST || '',
+			port: Number(process.env.SMTP_PORT || 465),
+			user: process.env.SMTP_USER || '',
+			pass: process.env.SMTP_PASSWORD || '',
+			from: process.env.SMTP_FROM || process.env.SMTP_USER || '',
+		},
 		public: {
 			buildTime: new Date().toISOString(),
 			nodeVersion: process.version,

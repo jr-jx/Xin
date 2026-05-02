@@ -27,14 +27,7 @@ function truncateText(text: string, maxLength: number = props.maxTextLength): st
 
 onMounted(async () => {
 	try {
-		const appConfig = useAppConfig()
-		if (appConfig.twikoo?.envId) {
-			await commentsStore.fetchRecentComments(
-				appConfig.twikoo.envId,
-				9,
-				false,
-			)
-		}
+		await commentsStore.fetchRecentComments(9, false)
 	}
 	catch (error) {
 		console.error('Failed to fetch comments:', error)

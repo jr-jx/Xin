@@ -52,6 +52,12 @@ catalogs:
     pinia: ^3.0.4
     radash: ^12.1.1
     unplugin-yaml: ^4.2.0
+  comment:
+    '@netlify/blobs': ^10.7.4
+    '@types/nodemailer': ^8.0.0
+    isomorphic-dompurify: ^3.11.0
+    marked: ^18.0.3
+    nodemailer: ^8.0.7
 
 onlyBuiltDependencies:
   - '@parcel/watcher'

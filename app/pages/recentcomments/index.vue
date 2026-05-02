@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const appConfig = useAppConfig()
 const commentsStore = useCommentsStore()
 
 // SEO 设置
@@ -12,30 +11,16 @@ useSeoMeta({
 const { comments, loading, error, hasComments } = storeToRefs(commentsStore)
 
 onMounted(async () => {
-	// 如果已经有数据且不是很久之前更新的，则不需要重新获取
 	if (hasComments.value && commentsStore.lastUpdated) {
 		const timeDiff = Date.now() - commentsStore.lastUpdated.getTime()
-		// 如果数据是5分钟内更新的，则不需要重新获取
-		if (timeDiff < 5 * 60 * 1000) {
+		if (timeDiff < 5 * 60 * 1000)
 			return
-		}
 	}
-
-	// 获取最近评论
-	await commentsStore.fetchRecentComments(
-		appConfig.twikoo?.envId,
-		999,
-		false,
-	)
+	await commentsStore.fetchRecentComments(50, false)
 })
 
-// 刷新评论
 async function refreshComments() {
-	await commentsStore.fetchRecentComments(
-		appConfig.twikoo?.envId,
-		999,
-		false,
-	)
+	await commentsStore.fetchRecentComments(50, false)
 }
 </script>
 

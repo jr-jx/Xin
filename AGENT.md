@@ -101,6 +101,7 @@ image: /path/to/image.webp
 
 ## 修改日志
 
+- 2026-05-02：用内置评论系统替换 Twikoo，新增 `server/api/comments/` 接口、`server/utils/{adminAuth,comments,mailer,rateLimit,spam}.ts`、`app/components/post/comment/` UI 与 `useComments` composable，`nuxt.config.ts` 增加 `comments`/`comments-meta` Nitro storage 与 SMTP/管理员 runtimeConfig，`blog.config.ts` 用 `comment` 配置替换 `twikoo`，`.env.example` 同步新增 `NUXT_COMMENT_*` 与 SMTP 变量，依赖 `@netlify/blobs` 改走 pnpm catalog；验证：未运行。
 - 2026-05-02：新增朋友圈聚合页 `/friends` 与点赞接口（`server/api/friends.get.ts`、`likes.{get,post}.ts`），使用 Nitro storage（Netlify Blobs / 本地 fs）保存点赞并以 `NUXT_IP_HASH_SALT` 哈希 IP 去重，新增 `@netlify/blobs` 依赖与 `FriendItem` 等类型；验证：未运行。
 - 2026-05-01：将站点图标统一迁移到 Phosphor (`ph:`) 命名空间，并优化顶栏菜单胶囊与下拉桥接动画、文字色变量；验证：未运行。
 - 2026-05-01：新增 `commit-changelog` skill，仅在用户明确要求 AI 提交当前项目或当前改动时，同步维护 `AGENT.md` 与 `CLAUDE.md` 修改日志；验证：`node -e` 格式检查通过。

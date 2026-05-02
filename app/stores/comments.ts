@@ -31,19 +31,15 @@ export const useCommentsStore = defineStore('comments', () => {
 		lastUpdated.value = new Date()
 	}
 
-	// 获取最近评论
+	// 获取最近评论（调用内置 API）
 	const fetchRecentComments = withLoading(
-		async (envId: string, pageSize: number = 999, includeReply: boolean = false) => {
+		async (limit: number = 9, includeReply: boolean = false) => {
 			try {
-				// @ts-expect-error windows上有twikoo实例
-				const res = await window.twikoo?.getRecentComments?.({
-					envId,
-					pageSize,
-					includeReply,
+				const res = await $fetch<{ items: Comment[] }>('/api/comments/recent', {
+					params: { limit, includeReply: includeReply ? 1 : 0 },
 				})
-
-				if (res) {
-					comments.value = res
+				if (res?.items) {
+					comments.value = res.items
 					updateLastUpdated()
 				}
 			}

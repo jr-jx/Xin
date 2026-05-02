@@ -360,7 +360,7 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	&.header-scrolled {
 		.logo-container,
 		.right-section {
-			border: 1px solid var(--glass-border, rgb(255 255 255 / 18%));
+			border: 1px solid color-mix(in srgb, var(--font-color) 10%, transparent);
 			border-radius: var(--radius-pill);
 			box-shadow: var(--shadow-sm);
 			background-color: var(--glass-bg, rgb(255 255 255 / 12%));
@@ -379,7 +379,7 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 				content: "";
 				position: absolute;
 				inset: 0;
-				border: 1px solid var(--glass-border, rgb(255 255 255 / 18%));
+				border: 1px solid color-mix(in srgb, var(--font-color) 10%, transparent);
 				border-radius: inherit;
 				box-shadow: var(--shadow-sm);
 				background-color: var(--glass-bg, rgb(255 255 255 / 12%));

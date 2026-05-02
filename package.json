@@ -14,7 +14,7 @@
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
-    "@netlify/blobs": "^10.7.4",
+    "@netlify/blobs": "catalog:comment",
     "@nuxt/content": "catalog:content",
     "@nuxt/eslint": "catalog:quality",
     "@nuxt/icon": "catalog:ui",
@@ -31,6 +31,9 @@
     "ci-info": "catalog:util",
     "date-fns": "catalog:util",
     "fast-xml-parser": "catalog:util",
+    "isomorphic-dompurify": "catalog:comment",
+    "marked": "catalog:comment",
+    "nodemailer": "catalog:comment",
     "nuxt": "catalog:framework",
     "nuxt-content-twoslash": "catalog:content",
     "parse-domain": "catalog:util",
@@ -52,6 +55,7 @@
     "@iconify-json/icon-park-solid": "catalog:ui",
     "@iconify-json/solar": "catalog:ui",
     "@iconify/json": "catalog:ui",
+    "@types/nodemailer": "catalog:comment",
     "better-sqlite3": "catalog:content",
     "eslint": "catalog:quality",
     "lint-staged": "catalog:",

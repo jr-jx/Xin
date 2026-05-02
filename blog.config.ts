@@ -152,15 +152,26 @@ const blogConfig = {
 	],
 
 	// 外部脚本
-	scripts: [
-		// Twikoo 评论系统
-		{ src: 'https://lib.baomitu.com/twikoo/1.6.44/twikoo.min.js', defer: true },
-	],
+	scripts: [] as Array<Record<string, any>>,
 
-	// Twikoo 评论系统配置
-	twikoo: {
-		envId: 'https://tk.efu.me/',
-		preload: 'https://tk.efu.me/',
+	// 内置评论系统配置
+	comment: {
+		/** 每页加载评论数 */
+		pageSize: 20,
+		/** 评论最大长度 */
+		maxLength: 2000,
+		/** Gravatar 镜像（支持 cravatar.cn / gravatar.com / weavatar.com 等） */
+		gravatarMirror: 'https://cravatar.cn/avatar',
+		/** 默认头像样式：identicon / mp / monsterid / retro / robohash / wavatar */
+		gravatarDefault: 'identicon',
+		/** OWO 表情资源路径 */
+		owoPath: '/assets/owo.json',
+		/** 是否允许匿名（未填邮箱）评论 */
+		allowAnonymous: true,
+		/** 发送邮件通知 */
+		notify: {
+			enabled: true,
+		},
 	},
 
 	// RSS 订阅配置
