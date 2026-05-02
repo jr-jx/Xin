@@ -81,6 +81,7 @@ Netlify (`netlify.toml`). Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are pre
 
 ## Change Log
 
+- 2026-05-02: Added a friends aggregation page at `/friends` and like endpoints (`server/api/friends.get.ts`, `likes.{get,post}.ts`) backed by Nitro storage (Netlify Blobs in prod, fs in dev) with `NUXT_IP_HASH_SALT`-hashed IP dedupe, plus `@netlify/blobs` dependency and `FriendItem` types; verification: not run.
 - 2026-05-01: Migrated site icons to the Phosphor (`ph:`) namespace and refined header nav pill/dropdown bridging animation and text color tokens; verification: not run.
 - 2026-05-01: Added the `commit-changelog` skill so explicit user requests for AI-created commits keep concise change log entries in `AGENT.md` and `CLAUDE.md`; verification: `node -e` format check passed.
 - 2026-05-01: Committed project-level Codex skills for general project work, dependency maintenance, and AI-created commit logs; verification: `node .codex/skills/project/scripts/skill_doctor.mjs`, `node -e`.

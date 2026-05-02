@@ -74,6 +74,18 @@ export default defineNuxtConfig({
 
 	nitro: {
 		compressPublicAssets: true,
+		storage: {
+			likes: {
+				driver: 'netlify-blobs',
+				name: 'friends-likes',
+			},
+		},
+		devStorage: {
+			likes: {
+				driver: 'fs',
+				base: './.data/likes',
+			},
+		},
 	},
 
 	icon: {
@@ -83,6 +95,7 @@ export default defineNuxtConfig({
 	},
 
 	runtimeConfig: {
+		ipHashSalt: process.env.NUXT_IP_HASH_SALT || 'xin-friends-likes-v1',
 		public: {
 			buildTime: new Date().toISOString(),
 			nodeVersion: process.version,

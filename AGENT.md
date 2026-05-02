@@ -101,6 +101,7 @@ image: /path/to/image.webp
 
 ## 修改日志
 
+- 2026-05-02：新增朋友圈聚合页 `/friends` 与点赞接口（`server/api/friends.get.ts`、`likes.{get,post}.ts`），使用 Nitro storage（Netlify Blobs / 本地 fs）保存点赞并以 `NUXT_IP_HASH_SALT` 哈希 IP 去重，新增 `@netlify/blobs` 依赖与 `FriendItem` 等类型；验证：未运行。
 - 2026-05-01：将站点图标统一迁移到 Phosphor (`ph:`) 命名空间，并优化顶栏菜单胶囊与下拉桥接动画、文字色变量；验证：未运行。
 - 2026-05-01：新增 `commit-changelog` skill，仅在用户明确要求 AI 提交当前项目或当前改动时，同步维护 `AGENT.md` 与 `CLAUDE.md` 修改日志；验证：`node -e` 格式检查通过。
 - 2026-05-01：提交项目级 Codex skills，包括通用项目、依赖维护和 AI 提交日志流程；验证：`node .codex/skills/project/scripts/skill_doctor.mjs`，`node -e`。
