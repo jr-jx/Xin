@@ -1,4 +1,3 @@
-import type { H3Event } from 'h3'
 import { createHash, randomBytes } from 'node:crypto'
 import DOMPurify from 'isomorphic-dompurify'
 import { marked } from 'marked'
@@ -42,27 +41,6 @@ export function normalizeSlug(slug: string): string {
 /** slug → 安全的 key 片段（短、URL 安全、稳定） */
 export function slugKey(slug: string): string {
 	return createHash('sha1').update(normalizeSlug(slug)).digest('base64url').slice(0, 16)
-}
-
-/** 获取客户端 IP */
-export function getClientIp(event: H3Event): string {
-	const headers = event.node.req.headers
-	const pick = (name: string): string | undefined => {
-		const v = headers[name]
-		return Array.isArray(v) ? v[0] : v
-	}
-	return (
-		pick('x-nf-client-connection-ip')
-		|| pick('cf-connecting-ip')
-		|| pick('x-real-ip')
-		|| pick('x-forwarded-for')?.split(',')[0]?.trim()
-		|| event.node.req.socket?.remoteAddress
-		|| 'unknown'
-	)
-}
-
-export function hashIp(ip: string, salt: string): string {
-	return createHash('sha256').update(`${salt}:${ip}`).digest('base64url').slice(0, 22)
 }
 
 export function md5(input: string): string {
@@ -262,10 +240,6 @@ export function toPublicComment(rec: CommentRecord, likedByMe = false) {
 		updated: updatedAt,
 		liked: likedByMe,
 	}
-}
-
-export function encodeLink(link: string): string {
-	return createHash('sha1').update(link).digest('base64url').slice(0, 22)
 }
 
 /** 点赞：同 IP 对同评论只能点一次 */

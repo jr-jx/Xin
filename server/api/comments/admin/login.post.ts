@@ -1,7 +1,6 @@
 import { Buffer } from 'node:buffer'
 import { timingSafeEqual } from 'node:crypto'
 import { issueToken, setAdminCookie } from '../../../utils/adminAuth'
-import { getClientIp, hashIp } from '../../../utils/comments'
 import { enforce } from '../../../utils/rateLimit'
 
 export default defineEventHandler(async (event) => {

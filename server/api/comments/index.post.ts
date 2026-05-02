@@ -1,9 +1,7 @@
 import type { CommentRecord } from '../../utils/comments'
 import { isAdmin } from '../../utils/adminAuth'
 import {
-	getClientIp,
 	getComment,
-	hashIp,
 	md5,
 	newCommentId,
 	normalizeSlug,

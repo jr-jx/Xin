@@ -101,6 +101,7 @@ image: /path/to/image.webp
 
 ## 修改日志
 
+- 2026-05-02：清理 `server/utils/comments.ts` 中未使用的 `getClientIp`、`hashIp`、`encodeLink` 及相关导入，评论接口改用 `rateLimit` 侧的 IP 处理；验证：未运行。
 - 2026-05-02：扩展 `netlify.toml`，显式声明 pnpm 构建命令与 Node 22、pnpm 10.15.0 版本，并补充 `/_nuxt`、`/assets` 长缓存、`atom.xml`/`efu.opml` XML 头与全站安全响应头；验证：未运行。
 - 2026-05-02：用内置评论系统替换 Twikoo，新增 `server/api/comments/` 接口、`server/utils/{adminAuth,comments,mailer,rateLimit,spam}.ts`、`app/components/post/comment/` UI 与 `useComments` composable，`nuxt.config.ts` 增加 `comments`/`comments-meta` Nitro storage 与 SMTP/管理员 runtimeConfig，`blog.config.ts` 用 `comment` 配置替换 `twikoo`，`.env.example` 同步新增 `NUXT_COMMENT_*` 与 SMTP 变量，依赖 `@netlify/blobs` 改走 pnpm catalog；验证：未运行。
 - 2026-05-02：新增朋友圈聚合页 `/friends` 与点赞接口（`server/api/friends.get.ts`、`likes.{get,post}.ts`），使用 Nitro storage（Netlify Blobs / 本地 fs）保存点赞并以 `NUXT_IP_HASH_SALT` 哈希 IP 去重，新增 `@netlify/blobs` 依赖与 `FriendItem` 等类型；验证：未运行。

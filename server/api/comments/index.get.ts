@@ -1,7 +1,5 @@
 import blogConfig from '../../../blog.config'
 import {
-	getClientIp,
-	hashIp,
 	hasLiked,
 	listBySlug,
 	normalizeSlug,

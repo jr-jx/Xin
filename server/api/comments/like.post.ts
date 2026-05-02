@@ -1,4 +1,4 @@
-import { getClientIp, hashIp, normalizeSlug, tryLike } from '../../utils/comments'
+import { normalizeSlug, tryLike } from '../../utils/comments'
 import { enforce } from '../../utils/rateLimit'
 
 export default defineEventHandler(async (event) => {
