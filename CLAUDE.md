@@ -81,6 +81,7 @@ Netlify (`netlify.toml`). Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are pre
 
 ## Change Log
 
+- 2026-05-03: Bumped catalog deps (`nuxt` 4.4.4, `zod` 4.4.2, `@iconify/json` 2.2.469, `@vueuse/motion` 3.0.3, `@nuxt/scripts` 1.0.6, `@vueuse/core` 14.3.0, `isomorphic-dompurify` 3.12.0), added a `nuxt-content-twoslash@0.4.0` patch, declared explicit vite `optimizeDeps.include` entries in `nuxt.config.ts`, and tweaked `.personality-image` positioning in `app/pages/about/index.vue` to bottom-align; verification: not run.
 - 2026-05-02: Removed unused `getClientIp`, `hashIp`, and `encodeLink` helpers (and their imports) from `server/utils/comments.ts` and comment API routes, relying on the existing `rateLimit` IP handling; verification: not run.
 - 2026-05-02: Expanded `netlify.toml` with explicit pnpm build command, Node 22 / pnpm 10.15.0 pins, long-cache headers for `/_nuxt` and `/assets`, XML content-type for `atom.xml`/`efu.opml`, and site-wide security headers; verification: not run.
 - 2026-05-02: Replaced Twikoo with a built-in comment system, adding `server/api/comments/` routes, `server/utils/{adminAuth,comments,mailer,rateLimit,spam}.ts`, `app/components/post/comment/` UI and `useComments` composable, wiring `comments`/`comments-meta` Nitro storage plus SMTP/admin `runtimeConfig` in `nuxt.config.ts`, swapping `blog.config.ts` `twikoo` for a `comment` block, syncing `NUXT_COMMENT_*`/SMTP vars in `.env.example`, and moving `@netlify/blobs` to the pnpm catalog; verification: not run.

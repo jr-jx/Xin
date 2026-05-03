@@ -54,6 +54,24 @@ export default defineNuxtConfig({
 		server: {
 			allowedHosts: true,
 		},
+		optimizeDeps: {
+			include: [
+				'@vue/devtools-core',
+				'@vue/devtools-kit',
+				'vue-tippy',
+				'date-fns',
+				'date-fns/locale/zh-CN',
+				'parse-domain',
+				'radash',
+				'@shikijs/colorized-brackets',
+				'@shikijs/transformers',
+				'shiki/core',
+				'shiki/engine-javascript.mjs',
+				'shiki/themes/catppuccin-latte.mjs',
+				'shiki/themes/one-dark-pro.mjs',
+				'shiki/langs',
+			],
+		},
 		build: {
 			minify: 'terser',
 			terserOptions: {

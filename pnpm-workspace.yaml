@@ -6,6 +6,12 @@ catalog:
   simple-git-hooks: ^2.13.1
 
 catalogs:
+  comment:
+    '@netlify/blobs': ^10.7.4
+    '@types/nodemailer': ^8.0.0
+    isomorphic-dompurify: ^3.12.0
+    marked: ^18.0.3
+    nodemailer: ^8.0.7
   content:
     '@nuxt/content': ^3.13.0
     '@shikijs/colorized-brackets': ^4.0.2
@@ -15,11 +21,11 @@ catalogs:
     rehype-katex: ^7.0.1
     remark-math: ^6.0.0
     remark-reading-time: ^2.1.0
-    zod: ^4.3.6
+    zod: ^4.4.2
     zod-to-json-schema: ^3.25.2
   framework:
     '@types/node': ^25.6.0
-    nuxt: ^4.4.2
+    nuxt: ^4.4.4
     sass-embedded: ^1.99.0
     typescript: ^6.0.3
     vue: ^3.5.33
@@ -34,16 +40,16 @@ catalogs:
     '@iconify-json/ant-design': ^1.2.5
     '@iconify-json/icon-park-solid': ^1.2.4
     '@iconify-json/solar': ^1.2.5
-    '@iconify/json': ^2.2.467
+    '@iconify/json': ^2.2.469
     '@nuxt/icon': ^2.2.1
     '@nuxt/image': ^2.0.0
     '@nuxtjs/color-mode': ^4.0.0
-    '@vueuse/motion': ^3.0.1
+    '@vueuse/motion': ^3.0.3
     vue-tippy: ^6.7.1
   util:
-    '@nuxt/scripts': ^1.0.4
+    '@nuxt/scripts': ^1.0.6
     '@pinia/nuxt': ^0.11.3
-    '@vueuse/core': ^14.2.1
+    '@vueuse/core': ^14.3.0
     aplayer: ^1.10.1
     ci-info: ^4.4.0
     date-fns: ^4.1.0
@@ -52,12 +58,6 @@ catalogs:
     pinia: ^3.0.4
     radash: ^12.1.1
     unplugin-yaml: ^4.2.0
-  comment:
-    '@netlify/blobs': ^10.7.4
-    '@types/nodemailer': ^8.0.0
-    isomorphic-dompurify: ^3.11.0
-    marked: ^18.0.3
-    nodemailer: ^8.0.7
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
@@ -69,6 +69,7 @@ onlyBuiltDependencies:
 patchedDependencies:
   '@nuxtjs/mdc': patches/@nuxtjs__mdc.patch
   '@vue/shared': patches/@vue__shared.patch
+  nuxt-content-twoslash@0.4.0: patches/nuxt-content-twoslash@0.4.0.patch
   vue-tippy: patches/vue-tippy.patch
 
 peerDependencyRules:

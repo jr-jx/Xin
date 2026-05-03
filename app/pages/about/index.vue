@@ -337,12 +337,12 @@ useSeoMeta({
 
 .personality-image {
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 	justify-content: center;
 	position: absolute;
-	top: 0;
 	right: 0;
-	padding: 1rem;
+	bottom: -100%;
+	padding: 0 1rem;
 
 	img {
 		height: auto;
