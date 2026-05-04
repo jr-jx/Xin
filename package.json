@@ -14,7 +14,6 @@
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
-    "@netlify/blobs": "catalog:comment",
     "@nuxt/content": "catalog:content",
     "@nuxt/eslint": "catalog:quality",
     "@nuxt/icon": "catalog:ui",

@@ -2,6 +2,7 @@ import { createHash, randomBytes } from 'node:crypto'
 import DOMPurify from 'isomorphic-dompurify'
 import { marked } from 'marked'
 import blogConfig from '../../blog.config'
+import { getEdgeKvStore } from './edgeKv'
 
 /** 服务端评论记录（完整存储字段） */
 export interface CommentRecord {
@@ -112,8 +113,8 @@ export function renderMarkdown(md: string): { html: string, text: string } {
 
 // ==================== 存储 ====================
 
-const STORE = 'comments'
-const META = 'comments-meta'
+const STORE = 'comment:record'
+const META = 'comment:meta'
 
 function recordKey(slug: string, id: string): string {
 	return `posts:${slugKey(slug)}:${id}`
@@ -127,10 +128,10 @@ const RECENT_KEY = 'recent:index'
 const RECENT_MAX = 200
 
 function storage() {
-	return useStorage(STORE)
+	return getEdgeKvStore(STORE)
 }
 function metaStorage() {
-	return useStorage(META)
+	return getEdgeKvStore(META)
 }
 
 /** 读取文章下评论 id 列表（按创建时间倒序） */

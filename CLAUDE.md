@@ -4,7 +4,7 @@ Guidance for Claude Code (and similar AI assistants) working in this repository.
 
 ## Project Overview
 
-`@everfu/xin` is a personal blog ("伍拾柒") built on **Nuxt 4**, content-driven via `@nuxt/content` (Markdown posts in `content/posts/`), with Twikoo comments and an Atom/OPML feed. Deployed to Netlify.
+`@everfu/xin` is a personal blog ("伍拾柒") built on **Nuxt 4**, content-driven via `@nuxt/content` (Markdown posts in `content/posts/`), with built-in comments and an Atom/OPML feed. Deployed to EdgeOne Pages.
 
 ## Tech Stack
 
@@ -42,11 +42,11 @@ pnpm lint:fix   # eslint --fix + stylelint --fix
   - `routes/atom.xml.get.ts`, `routes/efu.opml.get.ts`
 - `public/` — static assets (`favicon.ico`, `robots.txt`, `assets/atom.css`, `assets/atom.xsl`)
 - `patches/` — pnpm patches for `@nuxtjs/mdc`, `@vue/shared`, `vue-tippy`
-- Root configs: `nuxt.config.ts`, `blog.config.ts`, `content.config.ts`, `eslint.config.mjs`, `stylelint.config.mjs`, `netlify.toml`, `tsconfig.json`
+- Root configs: `nuxt.config.ts`, `blog.config.ts`, `content.config.ts`, `eslint.config.mjs`, `stylelint.config.mjs`, `tsconfig.json`
 
 ## Configuration Entry Points
 
-- **`blog.config.ts`** — site info, profile, menu, social, footer, Twikoo, feed limit, default category, license, beian.
+- **`blog.config.ts`** — site info, profile, menu, social, footer, built-in comments, feed limit, default category, license, beian.
 - **`nuxt.config.ts`** — modules, CSS pipeline, SCSS auto-import of `_variable.scss`, route rules (`/atom.xml`, `/efu.opml` prerendered; `/favicon.ico` redirect), icon server bundle, runtime config (build time, node/platform, CI detection).
 - **`app/app.config.ts`** — runtime app config.
 - **`content.config.ts`** — `@nuxt/content` collection schemas.
@@ -68,7 +68,7 @@ pnpm lint:fix   # eslint --fix + stylelint --fix
 
 ## Deployment
 
-Netlify (`netlify.toml`). Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are prerendered. Public assets are gzip/brotli compressed via Nitro (`compressPublicAssets: true`).
+EdgeOne Pages. Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are prerendered. Public assets are gzip/brotli compressed via Nitro (`compressPublicAssets: true`).
 
 ## Notes for AI Assistants
 
@@ -81,6 +81,7 @@ Netlify (`netlify.toml`). Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are pre
 
 ## Change Log
 
+- 2026-05-05: Moved comments and friends likes storage to EdgeOne Pages KV, adding `server/utils/edgeKv.ts` for the `XIN_COMMENTS_KV` binding with local `.data/edgeone-kv` fallback; removed Netlify Blobs and `netlify.toml`; moved comment/like rate limiting to KV; verification: `pnpm build`.
 - 2026-05-04: Slimmed dependencies by removing `radash`, `parse-domain`, `aplayer`, `@nuxt/scripts`, `nuxt-content-twoslash` (and its patch), `plain-shiki`, and `zod-to-json-schema`; reimplemented throttle/debounce/domain parsing locally in `app/utils/async.ts` and `app/utils/link.ts`; split `@iconify/json` into per-collection `@iconify-json/*` packages with matching `nuxt.config.ts` icon `serverBundle.collections`; added vite `manualChunks` (shiki/katex/tippy/motion) and enabled nitro `minify` plus gzip+brotli asset compression; added `@shikijs/transformers`; appended `NODE_OPTIONS=--max-old-space-size=4096` to `netlify.toml`; verification: not run.
 - 2026-05-03: Bumped catalog deps (`nuxt` 4.4.4, `zod` 4.4.2, `@iconify/json` 2.2.469, `@vueuse/motion` 3.0.3, `@nuxt/scripts` 1.0.6, `@vueuse/core` 14.3.0, `isomorphic-dompurify` 3.12.0), added a `nuxt-content-twoslash@0.4.0` patch, declared explicit vite `optimizeDeps.include` entries in `nuxt.config.ts`, and tweaked `.personality-image` positioning in `app/pages/about/index.vue` to bottom-align; verification: not run.
 - 2026-05-02: Removed unused `getClientIp`, `hashIp`, and `encodeLink` helpers (and their imports) from `server/utils/comments.ts` and comment API routes, relying on the existing `rateLimit` IP handling; verification: not run.

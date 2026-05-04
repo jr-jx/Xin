@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 	const { commentAdminPassword, commentJwtSecret, ipHashSalt } = useRuntimeConfig()
 
 	const ipHash = hashIp(getClientIp(event), ipHashSalt as string)
-	enforce(ipHash, 'comment:login', [
+	await enforce(ipHash, 'comment:login', [
 		{ windowMs: 60_000, max: 5 },
 		{ windowMs: 3_600_000, max: 30 },
 	])

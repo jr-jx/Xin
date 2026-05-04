@@ -341,9 +341,12 @@ $transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	@if $breakpoint == lg {
 		@media (min-width: 1024px) { @content; }
 	}
-	@else if $breakpoint == md {
+
+	@if $breakpoint == md {
 		@media (min-width: 768px) { @content; }
-	} @else if $breakpoint == mobile {
+	}
+
+	@if $breakpoint == mobile {
 		@media (max-width: 767px) { @content; }
 	}
 }

@@ -112,32 +112,10 @@ export default defineNuxtConfig({
 	nitro: {
 		minify: true,
 		compressPublicAssets: { gzip: true, brotli: true },
-		storage: {
-			'likes': {
-				driver: 'netlify-blobs',
-				name: 'friends-likes',
-			},
-			'comments': {
-				driver: 'netlify-blobs',
-				name: 'comments',
-			},
-			'comments-meta': {
-				driver: 'netlify-blobs',
-				name: 'comments-meta',
-			},
-		},
 		devStorage: {
-			'likes': {
+			'edgeone-kv-local': {
 				driver: 'fs',
-				base: './.data/likes',
-			},
-			'comments': {
-				driver: 'fs',
-				base: './.data/comments',
-			},
-			'comments-meta': {
-				driver: 'fs',
-				base: './.data/comments-meta',
+				base: './.data/edgeone-kv',
 			},
 		},
 	},
@@ -180,7 +158,7 @@ export default defineNuxtConfig({
 			nodeVersion: process.version,
 			platform: process.platform,
 			arch: process.arch,
-			ci: process.env.TENCENTCLOUD_RUNENV === 'SCF' ? 'EdgeOne' : ci.name || '',
+			ci: process.env.EDGEONE || process.env.EDGEONE_PAGES || process.env.TENCENTCLOUD_RUNENV === 'SCF' ? 'EdgeOne' : ci.name || '',
 		},
 	},
 

@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 	const { ipHashSalt } = useRuntimeConfig()
 	const ipHash = hashIp(getClientIp(event), ipHashSalt as string)
 
-	enforce(ipHash, 'comment:like', [
+	await enforce(ipHash, 'comment:like', [
 		{ windowMs: 5_000, max: 5 },
 		{ windowMs: 60_000, max: 30 },
 	])

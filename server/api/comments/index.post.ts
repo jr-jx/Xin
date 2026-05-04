@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
 	const ip = getClientIp(event)
 	const ipHash = hashIp(ip, ipHashSalt as string)
 
-	enforce(ipHash, 'comment:post', [
+	await enforce(ipHash, 'comment:post', [
 		{ windowMs: 30_000, max: 2 },
 		{ windowMs: 60_000, max: 3 },
 		{ windowMs: 3_600_000, max: 20 },
