@@ -1,6 +1,6 @@
 {
   "name": "xin",
-  "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "pnpm install --frozen-lockfile --prod=false --config.optional=true",
   "buildCommand": "pnpm build",
   "outputDirectory": "./.output",
   "nodeVersion": "22.11.0",
