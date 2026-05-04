@@ -101,6 +101,7 @@ image: /path/to/image.webp
 
 ## 修改日志
 
+- 2026-05-05：新增 `edgeone.json`，声明 EdgeOne Pages 构建命令、输出目录、Node 版本、响应头和 Cloud Functions 原生依赖配置，便于 Nuxt SSR 产物部署；验证：`jq . edgeone.json`、`git diff --check`、`pnpm build`。
 - 2026-05-05：内嵌 `tencent-edgeone-skill` 到 `.codex/skills/tencent-edgeone/`，补充 EdgeOne API、加速、安全与可观测参考文档，便于仓库内处理 EdgeOne Pages/KV/Function 相关任务；验证：`node .codex/skills/project/scripts/skill_doctor.mjs`。
 - 2026-05-05：将评论与朋友圈点赞存储迁移到 EdgeOne Pages KV，新增 `server/utils/edgeKv.ts` 作为 `XIN_COMMENTS_KV` 绑定适配层，本地使用 `.data/edgeone-kv` 模拟；移除 Netlify Blobs 依赖和 `netlify.toml`，评论/点赞限流改用 KV；验证：`pnpm build`。
 - 2026-05-04：精简依赖，移除 `radash`、`parse-domain`、`aplayer`、`@nuxt/scripts`、`nuxt-content-twoslash`（含补丁）、`plain-shiki`、`zod-to-json-schema`，`app/utils/async.ts` 与 `app/utils/link.ts` 改为本地实现 throttle/debounce/域名解析，`@iconify/json` 拆成按需的 `@iconify-json/*` 子包并同步 `nuxt.config.ts` 的 icon `serverBundle.collections`，新增 vite `manualChunks`（shiki/katex/tippy/motion），nitro 开启 `minify` 与 gzip+brotli 压缩，新增 `@shikijs/transformers`，`netlify.toml` 追加 `NODE_OPTIONS=--max-old-space-size=4096`；验证：未运行。
