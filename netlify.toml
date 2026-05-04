@@ -3,13 +3,13 @@ command = "pnpm build"
 publish = "dist"
 
 [build.environment]
-NODE_VERSION = "22"
+NODE_VERSION = "24"
 PNPM_VERSION = "10.15.0"
 NPM_FLAGS = "--version"
 # FIXME: https://answers.netlify.com/t/corepack-and-pnpm-10-2-0-failing-on-build/138964
 COREPACK_INTEGRITY_KEYS = "0"
 NODE_OPTIONS = "--max-old-space-size=4096"
-AWS_LAMBDA_JS_RUNTIME = "nodejs22.x"
+AWS_LAMBDA_JS_RUNTIME = "nodejs24.x"
 
 [context.production.environment]
 # BUG: https://github.com/nuxt/image/issues/1353
