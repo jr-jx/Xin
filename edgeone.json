@@ -3,7 +3,7 @@
   "installCommand": "pnpm install --frozen-lockfile --prod=false --config.optional=true",
   "buildCommand": "pnpm build",
   "outputDirectory": "./.output",
-  "nodeVersion": "22.11.0",
+  "nodeVersion": "22.12.0",
   "headers": [
     {
       "source": "/_nuxt/*",
