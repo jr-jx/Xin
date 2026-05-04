@@ -18,12 +18,16 @@ export default defineNuxtConfig({
 			link: [
 				{ rel: 'icon', href: '/favicon.ico' },
 				{ rel: 'alternate', type: 'application/atom+xml', href: '/atom.xml' },
-				{ rel: 'stylesheet', href: 'https://lib.baomitu.com/KaTeX/0.16.9/katex.min.css' },
+				// KaTeX：异步加载，避免阻塞首屏
+				{ rel: 'preload', as: 'style', href: 'https://lib.baomitu.com/KaTeX/0.16.9/katex.min.css' },
+				{ rel: 'stylesheet', href: 'https://lib.baomitu.com/KaTeX/0.16.9/katex.min.css', media: 'print', onload: 'this.media=\'all\'' },
 				// 思源黑体 "Noto Sans SC", 思源宋体 "Noto Serif SC", "JetBrains Mono"
 				{ rel: 'preconnect', href: 'https://fonts.gstatic.cn', crossorigin: '' },
-				{ rel: 'stylesheet', href: 'https://fonts.googleapis.cn/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Sans+SC:wght@100..900&family=Noto+Serif+SC:wght@200..900&display=swap' },
+				{ rel: 'preconnect', href: 'https://fonts.googleapis.cn', crossorigin: '' },
+				{ rel: 'stylesheet', href: 'https://fonts.googleapis.cn/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Sans+SC:wght@100..900&family=Noto+Serif+SC:wght@200..900&display=swap', media: 'print', onload: 'this.media=\'all\'' },
 				// 小米字体 "MiSans"
-				{ rel: 'stylesheet', href: 'https://cdn-font.hyperos.mi.com/font/css?family=MiSans:100,200,300,400,450,500,600,650,700,900:Chinese_Simplify,Latin&display=swap' },
+				{ rel: 'preconnect', href: 'https://cdn-font.hyperos.mi.com', crossorigin: '' },
+				{ rel: 'stylesheet', href: 'https://cdn-font.hyperos.mi.com/font/css?family=MiSans:100,200,300,400,450,500,600,650,700,900:Chinese_Simplify,Latin&display=swap', media: 'print', onload: 'this.media=\'all\'' },
 			],
 			script: blogConfig.scripts,
 		},
@@ -41,7 +45,7 @@ export default defineNuxtConfig({
 		'~/assets/css/reusable.scss',
 		'~/assets/css/animation.scss',
 	],
-	modules: ['nuxt-content-twoslash', '@nuxt/content', '@nuxt/eslint', '@nuxt/image', '@nuxt/scripts', '@nuxtjs/color-mode', '@pinia/nuxt', '@nuxt/icon', 'unplugin-yaml/nuxt', '@vueuse/motion/nuxt'],
+	modules: ['@nuxt/content', '@nuxt/eslint', '@nuxt/image', '@nuxtjs/color-mode', '@pinia/nuxt', '@nuxt/icon', 'unplugin-yaml/nuxt', '@vueuse/motion/nuxt'],
 
 	vite: {
 		css: {
@@ -61,8 +65,6 @@ export default defineNuxtConfig({
 				'vue-tippy',
 				'date-fns',
 				'date-fns/locale/zh-CN',
-				'parse-domain',
-				'radash',
 				'@shikijs/colorized-brackets',
 				'@shikijs/transformers',
 				'shiki/core',
@@ -74,10 +76,28 @@ export default defineNuxtConfig({
 		},
 		build: {
 			minify: 'terser',
+			cssCodeSplit: true,
+			chunkSizeWarningLimit: 1024,
 			terserOptions: {
 				compress: {
 					drop_console: true,
 					drop_debugger: true,
+				},
+			},
+			rollupOptions: {
+				output: {
+					manualChunks(id) {
+						if (!id.includes('node_modules'))
+							return
+						if (id.includes('/shiki/') || id.includes('@shikijs/'))
+							return 'shiki'
+						if (id.includes('/katex/'))
+							return 'katex'
+						if (id.includes('vue-tippy') || id.includes('tippy.js'))
+							return 'tippy'
+						if (id.includes('@vueuse/motion') || id.includes('popmotion') || id.includes('framesync'))
+							return 'motion'
+					},
 				},
 			},
 		},
@@ -90,7 +110,8 @@ export default defineNuxtConfig({
 	},
 
 	nitro: {
-		compressPublicAssets: true,
+		minify: true,
+		compressPublicAssets: { gzip: true, brotli: true },
 		storage: {
 			'likes': {
 				driver: 'netlify-blobs',
@@ -123,7 +144,21 @@ export default defineNuxtConfig({
 
 	icon: {
 		serverBundle: {
-			collections: ['ri', 'mdi', 'material-symbols', 'carbon', 'ph', 'devicon', 'skill-icons'],
+			collections: [
+				'ant-design',
+				'devicon',
+				'icon-park-solid',
+				'material-symbols',
+				'mdi',
+				'mynaui',
+				'ph',
+				'ri',
+				'simple-icons',
+				'skill-icons',
+				'solar',
+				'tabler',
+				'twemoji',
+			],
 		},
 	},
 

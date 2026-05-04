@@ -101,6 +101,7 @@ image: /path/to/image.webp
 
 ## 修改日志
 
+- 2026-05-04：精简依赖，移除 `radash`、`parse-domain`、`aplayer`、`@nuxt/scripts`、`nuxt-content-twoslash`（含补丁）、`plain-shiki`、`zod-to-json-schema`，`app/utils/async.ts` 与 `app/utils/link.ts` 改为本地实现 throttle/debounce/域名解析，`@iconify/json` 拆成按需的 `@iconify-json/*` 子包并同步 `nuxt.config.ts` 的 icon `serverBundle.collections`，新增 vite `manualChunks`（shiki/katex/tippy/motion），nitro 开启 `minify` 与 gzip+brotli 压缩，新增 `@shikijs/transformers`，`netlify.toml` 追加 `NODE_OPTIONS=--max-old-space-size=4096`；验证：未运行。
 - 2026-05-03：升级 catalog 依赖（`nuxt` 4.4.4、`zod` 4.4.2、`@iconify/json` 2.2.469、`@vueuse/motion` 3.0.3、`@nuxt/scripts` 1.0.6、`@vueuse/core` 14.3.0、`isomorphic-dompurify` 3.12.0），新增 `nuxt-content-twoslash@0.4.0` 补丁，`nuxt.config.ts` 的 vite `optimizeDeps.include` 显式预构建常用依赖，并微调 `app/pages/about/index.vue` 中 `.personality-image` 定位至底部对齐；验证：未运行。
 - 2026-05-02：清理 `server/utils/comments.ts` 中未使用的 `getClientIp`、`hashIp`、`encodeLink` 及相关导入，评论接口改用 `rateLimit` 侧的 IP 处理；验证：未运行。
 - 2026-05-02：扩展 `netlify.toml`，显式声明 pnpm 构建命令与 Node 22、pnpm 10.15.0 版本，并补充 `/_nuxt`、`/assets` 长缓存、`atom.xml`/`efu.opml` XML 头与全站安全响应头；验证：未运行。
