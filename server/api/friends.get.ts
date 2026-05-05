@@ -84,7 +84,9 @@ async function aggregateFriends(): Promise<{ response: FriendsResponse, hasSucce
 	}
 }
 
-export default defineCachedEventHandler(async (): Promise<FriendsResponse> => {
+export default defineEventHandler(async (event): Promise<FriendsResponse> => {
+	setHeader(event, 'Cache-Control', 'public, max-age=60, stale-while-revalidate=3600')
+
 	const cached = await cache.getItem<CachedFriendsResponse>(CACHE_KEY)
 	const now = Date.now()
 	if (cached && now - cached.cachedAt < CACHE_TTL_MS)
@@ -104,9 +106,4 @@ export default defineCachedEventHandler(async (): Promise<FriendsResponse> => {
 	}
 
 	return response
-}, {
-	maxAge: 60 * 60, // 1 小时
-	name: 'friends',
-	getKey: () => 'feed',
-	swr: true,
 })

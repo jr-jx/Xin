@@ -33,6 +33,14 @@ function isEdgeOneRuntime(): boolean {
 	return !!(process.env.EDGEONE || process.env.EDGEONE_PAGES || process.env.TENCENTCLOUD_RUNENV === 'SCF')
 }
 
+function shouldUseLocalFallback(): boolean {
+	return import.meta.dev && !isEdgeOneRuntime()
+}
+
+function missingBindingError(bucket: EdgeKvBucket) {
+	return createError({ statusCode: 500, statusMessage: `${BINDING_NAMES[bucket]} binding is not configured` })
+}
+
 function kvBinding(bucket: EdgeKvBucket): EdgeOneKvBinding | null {
 	if (bucket === 'friends') {
 		return (
@@ -99,6 +107,72 @@ function encodeValue(value: unknown): string {
 	return JSON.stringify(value)
 }
 
+function bindingMethods(binding: EdgeOneKvBinding | null): string[] {
+	if (!binding)
+		return []
+	return ['get', 'put', 'delete', 'remove'].filter(method => typeof binding[method as keyof EdgeOneKvBinding] === 'function')
+}
+
+export function getEdgeKvBindingStatus(bucket: EdgeKvBucket) {
+	const binding = kvBinding(bucket)
+	return {
+		bucket,
+		bindingName: BINDING_NAMES[bucket],
+		available: !!binding,
+		methods: bindingMethods(binding),
+		localFallback: shouldUseLocalFallback(),
+	}
+}
+
+export async function probeEdgeKvBinding(bucket: EdgeKvBucket): Promise<{
+	bucket: EdgeKvBucket
+	bindingName: string
+	available: boolean
+	methods: string[]
+	writeOk: boolean
+	readOk: boolean
+	deleteOk: boolean
+	error?: string
+}> {
+	const binding = kvBinding(bucket)
+	const status = getEdgeKvBindingStatus(bucket)
+	const result = {
+		...status,
+		writeOk: false,
+		readOk: false,
+		deleteOk: false,
+	}
+
+	if (!binding)
+		return { ...result, error: `${BINDING_NAMES[bucket]} binding is not configured` }
+
+	const key = safeKey(bucket, 'diag', `${Date.now()}_${Math.random().toString(36).slice(2)}`)
+	const value = encodeValue({ ok: true })
+	try {
+		await binding.put(key, value)
+		result.writeOk = true
+		result.readOk = (await binding.get(key)) != null
+		if (typeof binding.delete === 'function') {
+			await binding.delete(key)
+			result.deleteOk = true
+		}
+		else if (typeof binding.remove === 'function') {
+			await binding.remove(key)
+			result.deleteOk = true
+		}
+		else {
+			result.deleteOk = false
+		}
+		return result
+	}
+	catch (err) {
+		return {
+			...result,
+			error: err instanceof Error ? err.message : String(err),
+		}
+	}
+}
+
 export function getEdgeKvStore(namespace: string, bucket: EdgeKvBucket = 'comments') {
 	return {
 		async getItem<T>(key: string): Promise<T | null> {
@@ -113,8 +187,8 @@ export function getEdgeKvStore(namespace: string, bucket: EdgeKvBucket = 'commen
 				return null
 			}
 
-			if (isEdgeOneRuntime())
-				throw createError({ statusCode: 500, statusMessage: `${BINDING_NAMES[bucket]} binding is not configured` })
+			if (!shouldUseLocalFallback())
+				throw missingBindingError(bucket)
 
 			return (await localStorage().getItem<T>(fullKey))
 				?? (bucket === 'comments' ? await localStorage().getItem<T>(legacySafeKey(namespace, key)) : null)
@@ -130,8 +204,8 @@ export function getEdgeKvStore(namespace: string, bucket: EdgeKvBucket = 'commen
 				return
 			}
 
-			if (isEdgeOneRuntime())
-				throw createError({ statusCode: 500, statusMessage: `${BINDING_NAMES[bucket]} binding is not configured` })
+			if (!shouldUseLocalFallback())
+				throw missingBindingError(bucket)
 
 			await localStorage().setItem(fullKey, value)
 		},
@@ -156,8 +230,8 @@ export function getEdgeKvStore(namespace: string, bucket: EdgeKvBucket = 'commen
 				return
 			}
 
-			if (isEdgeOneRuntime())
-				throw createError({ statusCode: 500, statusMessage: `${BINDING_NAMES[bucket]} binding is not configured` })
+			if (!shouldUseLocalFallback())
+				throw missingBindingError(bucket)
 
 			await localStorage().removeItem(fullKey)
 			if (bucket === 'comments') {

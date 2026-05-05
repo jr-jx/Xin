@@ -8,10 +8,17 @@ export default defineEventHandler(async (event) => {
 	const { commentAdminPassword, commentJwtSecret, ipHashSalt } = useRuntimeConfig()
 
 	const ipHash = hashIp(getClientIp(event), ipHashSalt as string)
-	await enforce(ipHash, 'comment:login', [
-		{ windowMs: 60_000, max: 5 },
-		{ windowMs: 3_600_000, max: 30 },
-	])
+	try {
+		await enforce(ipHash, 'comment:login', [
+			{ windowMs: 60_000, max: 5 },
+			{ windowMs: 3_600_000, max: 30 },
+		])
+	}
+	catch (err) {
+		const message = err instanceof Error ? err.message : String(err)
+		if (!message.includes('binding is not configured'))
+			throw err
+	}
 
 	if (!commentAdminPassword)
 		throw createError({ statusCode: 503, statusMessage: '管理员密码未配置' })

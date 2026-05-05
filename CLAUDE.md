@@ -81,6 +81,7 @@ EdgeOne Pages. Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are prerendered. P
 
 ## Change Log
 
+- 2026-05-05: Tightened EdgeOne Pages KV binding detection so production no longer silently falls back to local storage when `XIN_COMMENTS_KV`/`XIN_FRIENDS_KV` are missing; added an admin KV health endpoint with read-only status and write probes; changed `/api/friends` to rely on `XIN_FRIENDS_KV` caching directly so Nitro's outer cache cannot hide KV writes; verification: pending.
 - 2026-05-05: Split EdgeOne Pages KV bindings so `server/utils/edgeKv.ts` supports separate `XIN_COMMENTS_KV` and `XIN_FRIENDS_KV` buckets; moved friends likes and `/api/friends` aggregation cache to `XIN_FRIENDS_KV`; documented both bindings in `.env.example`; verification: `pnpm build`.
 - 2026-05-05: Added `edgeone.json` with EdgeOne Pages build command, output directory, Node version, response headers, and Cloud Functions native dependency configuration for Nuxt SSR deployment; verification: `jq . edgeone.json`, `git diff --check`, `pnpm build`.
 - 2026-05-05: Embedded `tencent-edgeone-skill` under `.codex/skills/tencent-edgeone/` with EdgeOne API, acceleration, security, and observability references for in-repo EdgeOne Pages/KV/Function work; verification: `node .codex/skills/project/scripts/skill_doctor.mjs`.
