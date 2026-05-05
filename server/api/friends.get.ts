@@ -85,7 +85,9 @@ async function aggregateFriends(): Promise<{ response: FriendsResponse, hasSucce
 }
 
 export default defineEventHandler(async (event): Promise<FriendsResponse> => {
-	setHeader(event, 'Cache-Control', 'public, max-age=60, stale-while-revalidate=3600')
+	const query = getQuery(event)
+	const forceRefresh = query.refresh != null || query.force === '1' || query.force === 'true'
+	setHeader(event, 'Cache-Control', forceRefresh ? 'no-store' : 'public, max-age=60, stale-while-revalidate=3600')
 
 	let cached: CachedFriendsResponse | null = null
 	try {
@@ -97,7 +99,7 @@ export default defineEventHandler(async (event): Promise<FriendsResponse> => {
 	}
 
 	const now = Date.now()
-	if (cached && now - cached.cachedAt < CACHE_TTL_MS)
+	if (!forceRefresh && cached && now - cached.cachedAt < CACHE_TTL_MS)
 		return cached.response
 
 	const { response, hasSuccess } = await aggregateFriends()

@@ -10,8 +10,12 @@ useSeoMeta({
 	description: '朋友们的最新动态',
 })
 
-const { data, pending, error, refresh, status } = await useFetch<FriendsResponse>('/api/friends', {
+const refreshToken = ref(0)
+const fetchQuery = computed(() => refreshToken.value ? { refresh: String(refreshToken.value) } : {})
+const { data, pending, error, status } = await useFetch<FriendsResponse>('/api/friends', {
 	key: 'friends-feed',
+	query: fetchQuery,
+	cache: 'no-store',
 	default: () => ({ items: [], sources: [], generatedAt: '' }),
 })
 
@@ -108,8 +112,8 @@ function toggleExpand(key: string) {
 	expanded.value = next
 }
 
-async function onRefresh() {
-	await refresh()
+function onRefresh() {
+	refreshToken.value = Date.now()
 }
 </script>
 
@@ -310,8 +314,9 @@ async function onRefresh() {
 	padding: 1.5rem 0.75rem 0;
 
 	@media (max-width: 1199px) {
-		grid-template-columns: minmax(0, 720px) 280px;
+		grid-template-columns: minmax(0, 720px) clamp(240px, 26vw, 280px);
 		justify-content: center;
+		gap: 0.75rem;
 
 		.col.left {
 			display: none;
@@ -333,6 +338,14 @@ async function onRefresh() {
 
 	&.center {
 		grid-column: 2 / 3;
+
+		@media (max-width: 1199px) {
+			grid-column: 1 / 2;
+		}
+
+		@media (max-width: 899px) {
+			grid-column: 1 / -1;
+		}
 	}
 
 	&.left {
