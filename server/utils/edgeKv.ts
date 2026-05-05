@@ -29,6 +29,11 @@ const BINDING_NAMES: Record<EdgeKvBucket, 'XIN_COMMENTS_KV' | 'XIN_FRIENDS_KV'> 
 	friends: 'XIN_FRIENDS_KV',
 }
 
+interface EdgeKvBindingLookup {
+	binding: EdgeOneKvBinding | null
+	source: string
+}
+
 function isEdgeOneRuntime(): boolean {
 	return !!(process.env.EDGEONE || process.env.EDGEONE_PAGES || process.env.TENCENTCLOUD_RUNENV === 'SCF')
 }
@@ -41,21 +46,56 @@ function missingBindingError(bucket: EdgeKvBucket) {
 	return createError({ statusCode: 500, statusMessage: `${BINDING_NAMES[bucket]} binding is not configured` })
 }
 
-function kvBinding(bucket: EdgeKvBucket): EdgeOneKvBinding | null {
-	if (bucket === 'friends') {
-		return (
-			globalThis.XIN_FRIENDS_KV
-			|| (typeof XIN_FRIENDS_KV !== 'undefined' ? XIN_FRIENDS_KV : undefined)
-			|| null
-		)
+export function isMissingEdgeKvBindingError(err: unknown): boolean {
+	const message = err instanceof Error ? err.message : String(err)
+	return message.includes('binding is not configured')
+}
+
+function isKvBinding(value: unknown): value is EdgeOneKvBinding {
+	return !!value && typeof value === 'object' && typeof (value as EdgeOneKvBinding).get === 'function' && typeof (value as EdgeOneKvBinding).put === 'function'
+}
+
+function requestContextBinding(bucket: EdgeKvBucket): EdgeKvBindingLookup {
+	const event = useRequestEvent()
+	const name = BINDING_NAMES[bucket]
+	const context = event?.context as Record<string, any> | undefined
+	const candidates: Array<[string, unknown]> = [
+		[`event.context.env.${name}`, context?.env?.[name]],
+		[`event.context.edgeone.env.${name}`, context?.edgeone?.env?.[name]],
+		[`event.context.cloudflare.env.${name}`, context?.cloudflare?.env?.[name]],
+		[`event.context.platform.env.${name}`, context?.platform?.env?.[name]],
+		[`event.context.${name}`, context?.[name]],
+	]
+
+	for (const [source, value] of candidates) {
+		if (isKvBinding(value))
+			return { binding: value, source }
 	}
-	return (
-		globalThis.XIN_COMMENTS_KV
-		|| (typeof XIN_COMMENTS_KV !== 'undefined' ? XIN_COMMENTS_KV : undefined)
-		|| globalThis.my_kv
-		|| (typeof my_kv !== 'undefined' ? my_kv : undefined)
-		|| null
-	)
+
+	return { binding: null, source: '' }
+}
+
+function kvBindingLookup(bucket: EdgeKvBucket): EdgeKvBindingLookup {
+	if (bucket === 'friends') {
+		if (isKvBinding(globalThis.XIN_FRIENDS_KV))
+			return { binding: globalThis.XIN_FRIENDS_KV, source: 'globalThis.XIN_FRIENDS_KV' }
+		if (typeof XIN_FRIENDS_KV !== 'undefined' && isKvBinding(XIN_FRIENDS_KV))
+			return { binding: XIN_FRIENDS_KV, source: 'XIN_FRIENDS_KV' }
+		return requestContextBinding(bucket)
+	}
+	if (isKvBinding(globalThis.XIN_COMMENTS_KV))
+		return { binding: globalThis.XIN_COMMENTS_KV, source: 'globalThis.XIN_COMMENTS_KV' }
+	if (typeof XIN_COMMENTS_KV !== 'undefined' && isKvBinding(XIN_COMMENTS_KV))
+		return { binding: XIN_COMMENTS_KV, source: 'XIN_COMMENTS_KV' }
+	if (isKvBinding(globalThis.my_kv))
+		return { binding: globalThis.my_kv, source: 'globalThis.my_kv' }
+	if (typeof my_kv !== 'undefined' && isKvBinding(my_kv))
+		return { binding: my_kv, source: 'my_kv' }
+	return requestContextBinding(bucket)
+}
+
+function kvBinding(bucket: EdgeKvBucket): EdgeOneKvBinding | null {
+	return kvBindingLookup(bucket).binding
 }
 
 function localStorage() {
@@ -114,11 +154,12 @@ function bindingMethods(binding: EdgeOneKvBinding | null): string[] {
 }
 
 export function getEdgeKvBindingStatus(bucket: EdgeKvBucket) {
-	const binding = kvBinding(bucket)
+	const { binding, source } = kvBindingLookup(bucket)
 	return {
 		bucket,
 		bindingName: BINDING_NAMES[bucket],
 		available: !!binding,
+		source,
 		methods: bindingMethods(binding),
 		localFallback: shouldUseLocalFallback(),
 	}
@@ -128,6 +169,7 @@ export async function probeEdgeKvBinding(bucket: EdgeKvBucket): Promise<{
 	bucket: EdgeKvBucket
 	bindingName: string
 	available: boolean
+	source: string
 	methods: string[]
 	writeOk: boolean
 	readOk: boolean

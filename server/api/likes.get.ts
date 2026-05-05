@@ -1,3 +1,4 @@
+import { isMissingEdgeKvBindingError } from '../utils/edgeKv'
 import {
 	getClientIp,
 	getCountsFor,
@@ -16,10 +17,20 @@ export default defineEventHandler(async (event) => {
 	const ip = getClientIp(event)
 	const ipHash = hashIp(ip, ipHashSalt as string)
 
-	const [counts, likedByMe] = await Promise.all([
-		getCountsFor(links),
-		getLikedByIp(ipHash, links),
-	])
+	let counts: Awaited<ReturnType<typeof getCountsFor>>
+	let likedByMe: Awaited<ReturnType<typeof getLikedByIp>>
+	try {
+		[counts, likedByMe] = await Promise.all([
+			getCountsFor(links),
+			getLikedByIp(ipHash, links),
+		])
+	}
+	catch (err) {
+		if (!isMissingEdgeKvBindingError(err))
+			throw err
+		counts = {}
+		likedByMe = {}
+	}
 
 	return { counts, likedByMe }
 })

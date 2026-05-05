@@ -1,6 +1,6 @@
 import type { FeedEntry, FriendItem, FriendSourceStatus, FriendsResponse } from '~/types/feed'
 import feeds from '~/feeds'
-import { getEdgeKvStore } from '../utils/edgeKv'
+import { getEdgeKvStore, isMissingEdgeKvBindingError } from '../utils/edgeKv'
 import { parseFeedXml } from '../utils/parseFeed'
 
 const PER_FEED_LIMIT = 10
@@ -87,14 +87,28 @@ async function aggregateFriends(): Promise<{ response: FriendsResponse, hasSucce
 export default defineEventHandler(async (event): Promise<FriendsResponse> => {
 	setHeader(event, 'Cache-Control', 'public, max-age=60, stale-while-revalidate=3600')
 
-	const cached = await cache.getItem<CachedFriendsResponse>(CACHE_KEY)
+	let cached: CachedFriendsResponse | null = null
+	try {
+		cached = await cache.getItem<CachedFriendsResponse>(CACHE_KEY)
+	}
+	catch (err) {
+		if (!isMissingEdgeKvBindingError(err))
+			throw err
+	}
+
 	const now = Date.now()
 	if (cached && now - cached.cachedAt < CACHE_TTL_MS)
 		return cached.response
 
 	const { response, hasSuccess } = await aggregateFriends()
 	if (hasSuccess) {
-		await cache.setItem(CACHE_KEY, { response, cachedAt: now } satisfies CachedFriendsResponse)
+		try {
+			await cache.setItem(CACHE_KEY, { response, cachedAt: now } satisfies CachedFriendsResponse)
+		}
+		catch (err) {
+			if (!isMissingEdgeKvBindingError(err))
+				throw err
+		}
 		return response
 	}
 

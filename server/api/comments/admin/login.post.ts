@@ -1,6 +1,7 @@
 import { Buffer } from 'node:buffer'
 import { timingSafeEqual } from 'node:crypto'
 import { issueToken, setAdminCookie } from '../../../utils/adminAuth'
+import { isMissingEdgeKvBindingError } from '../../../utils/edgeKv'
 import { enforce } from '../../../utils/rateLimit'
 
 export default defineEventHandler(async (event) => {
@@ -15,8 +16,7 @@ export default defineEventHandler(async (event) => {
 		])
 	}
 	catch (err) {
-		const message = err instanceof Error ? err.message : String(err)
-		if (!message.includes('binding is not configured'))
+		if (!isMissingEdgeKvBindingError(err))
 			throw err
 	}
 
