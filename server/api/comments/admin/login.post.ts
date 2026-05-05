@@ -3,6 +3,7 @@ import { timingSafeEqual } from 'node:crypto'
 import { issueToken, setAdminCookie } from '../../../utils/adminAuth'
 import { isMissingEdgeKvBindingError } from '../../../utils/edgeKv'
 import { enforce } from '../../../utils/rateLimit'
+import { getClientIp, hashIp } from '../../../utils/requestIdentity'
 
 export default defineEventHandler(async (event) => {
 	const body = await readBody<{ password?: string }>(event)

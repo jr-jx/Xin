@@ -1,11 +1,10 @@
 import { isMissingEdgeKvBindingError } from '../utils/edgeKv'
 import {
-	getClientIp,
 	getCountsFor,
 	getLikedByIp,
-	hashIp,
 	parseLinks,
 } from '../utils/likes'
+import { getClientIp, hashIp } from '../utils/requestIdentity'
 
 export default defineEventHandler(async (event) => {
 	const query = getQuery(event)

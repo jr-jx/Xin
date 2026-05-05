@@ -5,6 +5,7 @@ import {
 	normalizeSlug,
 	toPublicComment,
 } from '../../utils/comments'
+import { getClientIp, hashIp } from '../../utils/requestIdentity'
 
 export default defineEventHandler(async (event) => {
 	const query = getQuery(event)

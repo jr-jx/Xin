@@ -1,17 +1,4 @@
-const BINDING_NAMES = {
-	comments: 'XIN_COMMENTS_KV',
-	friends: 'XIN_FRIENDS_KV',
-}
-
-function json(data, status = 200) {
-	return new Response(JSON.stringify(data), {
-		status,
-		headers: {
-			'content-type': 'application/json; charset=utf-8',
-			'cache-control': 'no-store',
-		},
-	})
-}
+import { BINDING_NAMES, getBinding, isBinding, json } from '../../_shared/edge-core.js'
 
 function getHeader(headers, name) {
 	return headers.get(name) || headers.get(name.toLowerCase()) || ''
@@ -19,17 +6,6 @@ function getHeader(headers, name) {
 
 function getSecret(context) {
 	return context?.env?.EDGE_KV_PROXY_SECRET || globalThis.EDGE_KV_PROXY_SECRET || ''
-}
-
-function getBinding(context, bucket) {
-	const name = BINDING_NAMES[bucket]
-	if (!name)
-		return null
-	return context?.env?.[name] || globalThis[name] || null
-}
-
-function isBinding(value) {
-	return !!value && typeof value.get === 'function' && typeof value.put === 'function'
 }
 
 async function applyOperation(binding, operation) {

@@ -1,10 +1,9 @@
 import {
-	getClientIp,
-	hashIp,
 	isReactionKey,
 	tryBumpLike,
 } from '../utils/likes'
 import { enforce } from '../utils/rateLimit'
+import { getClientIp, hashIp } from '../utils/requestIdentity'
 
 export default defineEventHandler(async (event) => {
 	const body = await readBody<{ link?: string, key?: string }>(event)
@@ -20,7 +19,7 @@ export default defineEventHandler(async (event) => {
 	const ip = getClientIp(event)
 	const ipHash = hashIp(ip, ipHashSalt as string)
 
-	await enforce(ipHash, 'friends-like:post', [{ windowMs: 1000, max: 10 }])
+	await enforce(ipHash, 'friends-like:post', [{ windowMs: 1000, max: 10 }], 'friends')
 
 	const result = await tryBumpLike(ipHash, body.link, body.key)
 

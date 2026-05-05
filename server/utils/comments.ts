@@ -3,6 +3,7 @@ import DOMPurify from 'isomorphic-dompurify'
 import { marked } from 'marked'
 import blogConfig from '../../blog.config'
 import { getEdgeKvStore } from './edgeKv'
+import { encodeLink } from './requestIdentity'
 
 /** 服务端评论记录（完整存储字段） */
 export interface CommentRecord {

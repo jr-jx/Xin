@@ -38,7 +38,7 @@ declare global {
 	var my_kv: EdgeOneKvBinding | undefined
 }
 
-type EdgeKvBucket = 'comments' | 'friends'
+export type EdgeKvBucket = 'comments' | 'friends'
 type EdgeKvMode = 'direct' | 'proxy' | 'local' | 'missing'
 
 const LOCAL_STORE = 'edgeone-kv-local'
@@ -113,8 +113,12 @@ function proxySecret(): string {
 	return String(config.edgeKvProxySecret || process.env.EDGE_KV_PROXY_SECRET || '')
 }
 
+function hasProxySecret(): boolean {
+	return !!proxySecret()
+}
+
 function canUseProxy(): boolean {
-	return !shouldUseLocalFallback() && !!proxySecret()
+	return !shouldUseLocalFallback() && hasProxySecret()
 }
 
 function proxyUrl(): string {
@@ -194,7 +198,7 @@ function legacySafeKey(namespace: string, key: string): string {
 }
 
 function decodeValue<T>(value: unknown): T | null {
-	if (value == null)
+	if (value == null || value === '')
 		return null
 	if (typeof value !== 'string')
 		return value as T
@@ -225,15 +229,22 @@ export function getEdgeKvBindingStatus(bucket: EdgeKvBucket) {
 			: canUseProxy()
 				? 'proxy'
 				: 'missing'
+	const statusSource = mode === 'direct'
+		? source
+		: mode === 'proxy'
+			? PROXY_PATH
+			: mode === 'local'
+				? LOCAL_STORE
+				: `missing:${BINDING_NAMES[bucket]}`
 	return {
 		bucket,
 		bindingName: BINDING_NAMES[bucket],
 		available: mode !== 'missing',
 		mode,
-		source: source || (mode === 'proxy' ? PROXY_PATH : mode === 'local' ? LOCAL_STORE : ''),
+		source: statusSource,
 		methods: bindingMethods(binding),
 		localFallback: shouldUseLocalFallback(),
-		proxyConfigured: canUseProxy(),
+		proxyConfigured: hasProxySecret(),
 	}
 }
 

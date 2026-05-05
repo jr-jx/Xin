@@ -11,6 +11,7 @@ import {
 } from '../../utils/comments'
 import { notifyAdmin, notifyReply } from '../../utils/mailer'
 import { enforce } from '../../utils/rateLimit'
+import { getClientIp, hashIp } from '../../utils/requestIdentity'
 import { checkSpam } from '../../utils/spam'
 
 interface Payload {

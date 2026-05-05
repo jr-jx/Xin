@@ -1,11 +1,10 @@
+import type { EdgeKvBucket } from './edgeKv'
 import { getEdgeKvStore } from './edgeKv'
 
 interface Bucket {
 	windowStart: number
 	count: number
 }
-
-const store = getEdgeKvStore('ratelimit')
 
 export interface RateRule {
 	/** 窗口毫秒数 */
@@ -14,7 +13,8 @@ export interface RateRule {
 	max: number
 }
 
-export async function rateLimit(key: string, rule: RateRule): Promise<{ ok: boolean, remaining: number }> {
+export async function rateLimit(key: string, rule: RateRule, bucket: EdgeKvBucket = 'comments'): Promise<{ ok: boolean, remaining: number }> {
+	const store = getEdgeKvStore('ratelimit', bucket)
 	const now = Date.now()
 	const b = await store.getItem<Bucket>(key)
 	if (!b || now - b.windowStart > rule.windowMs) {
@@ -28,10 +28,10 @@ export async function rateLimit(key: string, rule: RateRule): Promise<{ ok: bool
 	return { ok: true, remaining: rule.max - b.count }
 }
 
-export async function enforce(ipHash: string, scope: string, rules: RateRule[]): Promise<void> {
+export async function enforce(ipHash: string, scope: string, rules: RateRule[], bucket: EdgeKvBucket = 'comments'): Promise<void> {
 	for (const r of rules) {
 		const k = `${scope}:${r.windowMs}:${ipHash}`
-		const { ok } = await rateLimit(k, r)
+		const { ok } = await rateLimit(k, r, bucket)
 		if (!ok)
 			throw createError({ statusCode: 429, statusMessage: '请求过于频繁，稍后再试' })
 	}

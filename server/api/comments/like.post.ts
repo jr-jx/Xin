@@ -1,5 +1,6 @@
 import { normalizeSlug, tryLike } from '../../utils/comments'
 import { enforce } from '../../utils/rateLimit'
+import { getClientIp, hashIp } from '../../utils/requestIdentity'
 
 export default defineEventHandler(async (event) => {
 	const body = await readBody<{ slug?: string, id?: string }>(event)
