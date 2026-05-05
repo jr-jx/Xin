@@ -59,7 +59,7 @@ function ipKey(ipHash: string, linkHash: string, key: ReactionKey): string {
 
 /** 获取多个链接的完整计数 */
 export async function getCountsFor(links: string[]): Promise<Record<string, CountMap>> {
-	const storage = getEdgeKvStore('friends-like')
+	const storage = getEdgeKvStore('friends-like', 'friends')
 	const result: Record<string, CountMap> = {}
 	await Promise.all(links.map(async (link) => {
 		const h = encodeLink(link)
@@ -75,7 +75,7 @@ export async function getCountsFor(links: string[]): Promise<Record<string, Coun
 
 /** 当前 IP 对多个链接上已点过的表情 */
 export async function getLikedByIp(ipHash: string, links: string[]): Promise<Record<string, ReactionKey[]>> {
-	const storage = getEdgeKvStore('friends-like')
+	const storage = getEdgeKvStore('friends-like', 'friends')
 	const result: Record<string, ReactionKey[]> = {}
 	await Promise.all(links.map(async (link) => {
 		const h = encodeLink(link)
@@ -99,7 +99,7 @@ export async function tryBumpLike(
 	link: string,
 	key: ReactionKey,
 ): Promise<{ ok: true, count: number } | { ok: false, reason: 'duplicate', count: number }> {
-	const storage = getEdgeKvStore('friends-like')
+	const storage = getEdgeKvStore('friends-like', 'friends')
 	const linkHash = encodeLink(link)
 	const ipK = ipKey(ipHash, linkHash, key)
 	const cK = countKey(linkHash, key)

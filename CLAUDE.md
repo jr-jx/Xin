@@ -81,6 +81,7 @@ EdgeOne Pages. Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are prerendered. P
 
 ## Change Log
 
+- 2026-05-05: Split EdgeOne Pages KV bindings so `server/utils/edgeKv.ts` supports separate `XIN_COMMENTS_KV` and `XIN_FRIENDS_KV` buckets; moved friends likes and `/api/friends` aggregation cache to `XIN_FRIENDS_KV`; documented both bindings in `.env.example`; verification: `pnpm build`.
 - 2026-05-05: Added `edgeone.json` with EdgeOne Pages build command, output directory, Node version, response headers, and Cloud Functions native dependency configuration for Nuxt SSR deployment; verification: `jq . edgeone.json`, `git diff --check`, `pnpm build`.
 - 2026-05-05: Embedded `tencent-edgeone-skill` under `.codex/skills/tencent-edgeone/` with EdgeOne API, acceleration, security, and observability references for in-repo EdgeOne Pages/KV/Function work; verification: `node .codex/skills/project/scripts/skill_doctor.mjs`.
 - 2026-05-05: Moved comments and friends likes storage to EdgeOne Pages KV, adding `server/utils/edgeKv.ts` for the `XIN_COMMENTS_KV` binding with local `.data/edgeone-kv` fallback; removed Netlify Blobs and `netlify.toml`; moved comment/like rate limiting to KV; verification: `pnpm build`.

@@ -1,10 +1,19 @@
 import type { FeedEntry, FriendItem, FriendSourceStatus, FriendsResponse } from '~/types/feed'
 import feeds from '~/feeds'
+import { getEdgeKvStore } from '../utils/edgeKv'
 import { parseFeedXml } from '../utils/parseFeed'
 
 const PER_FEED_LIMIT = 10
 const TOTAL_LIMIT = 100
 const FETCH_TIMEOUT_MS = 8000
+const CACHE_TTL_MS = 60 * 60 * 1000
+const CACHE_KEY = 'feed_latest'
+const cache = getEdgeKvStore('friends-feed', 'friends')
+
+interface CachedFriendsResponse {
+	response: FriendsResponse
+	cachedAt: number
+}
 
 function flatten(): FeedEntry[] {
 	return feeds.flatMap(g => g.entries.filter(e => e.feed))
@@ -56,7 +65,7 @@ async function fetchOne(entry: FeedEntry): Promise<{ items: FriendItem[], status
 	}
 }
 
-export default defineCachedEventHandler(async (): Promise<FriendsResponse> => {
+async function aggregateFriends(): Promise<{ response: FriendsResponse, hasSuccess: boolean }> {
 	const entries = flatten()
 	const results = await Promise.all(entries.map(fetchOne))
 
@@ -66,10 +75,35 @@ export default defineCachedEventHandler(async (): Promise<FriendsResponse> => {
 		.slice(0, TOTAL_LIMIT)
 
 	return {
-		items,
-		sources: results.map(r => r.status),
-		generatedAt: new Date().toISOString(),
+		response: {
+			items,
+			sources: results.map(r => r.status),
+			generatedAt: new Date().toISOString(),
+		},
+		hasSuccess: results.some(r => r.status.ok),
 	}
+}
+
+export default defineCachedEventHandler(async (): Promise<FriendsResponse> => {
+	const cached = await cache.getItem<CachedFriendsResponse>(CACHE_KEY)
+	const now = Date.now()
+	if (cached && now - cached.cachedAt < CACHE_TTL_MS)
+		return cached.response
+
+	const { response, hasSuccess } = await aggregateFriends()
+	if (hasSuccess) {
+		await cache.setItem(CACHE_KEY, { response, cachedAt: now } satisfies CachedFriendsResponse)
+		return response
+	}
+
+	if (cached) {
+		return {
+			...cached.response,
+			sources: response.sources,
+		}
+	}
+
+	return response
 }, {
 	maxAge: 60 * 60, // 1 小时
 	name: 'friends',

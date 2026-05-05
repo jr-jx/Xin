@@ -101,6 +101,7 @@ image: /path/to/image.webp
 
 ## 修改日志
 
+- 2026-05-05：拆分 EdgeOne Pages KV 绑定，`server/utils/edgeKv.ts` 支持 `XIN_COMMENTS_KV` 与 `XIN_FRIENDS_KV` 两个 bucket，朋友圈点赞与 `/api/friends` 聚合缓存改用独立的 `XIN_FRIENDS_KV`，`.env.example` 同步新增绑定说明；验证：`pnpm build`。
 - 2026-05-05：新增 `edgeone.json`，声明 EdgeOne Pages 构建命令、输出目录、Node 版本、响应头和 Cloud Functions 原生依赖配置，便于 Nuxt SSR 产物部署；验证：`jq . edgeone.json`、`git diff --check`、`pnpm build`。
 - 2026-05-05：内嵌 `tencent-edgeone-skill` 到 `.codex/skills/tencent-edgeone/`，补充 EdgeOne API、加速、安全与可观测参考文档，便于仓库内处理 EdgeOne Pages/KV/Function 相关任务；验证：`node .codex/skills/project/scripts/skill_doctor.mjs`。
 - 2026-05-05：将评论与朋友圈点赞存储迁移到 EdgeOne Pages KV，新增 `server/utils/edgeKv.ts` 作为 `XIN_COMMENTS_KV` 绑定适配层，本地使用 `.data/edgeone-kv` 模拟；移除 Netlify Blobs 依赖和 `netlify.toml`，评论/点赞限流改用 KV；验证：`pnpm build`。
