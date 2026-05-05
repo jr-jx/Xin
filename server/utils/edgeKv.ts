@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import process from 'node:process'
+import blogConfig from '../../blog.config'
 
 interface EdgeOneKvBinding {
 	get: (key: string) => Promise<unknown>
@@ -76,23 +77,8 @@ function isKvBinding(value: unknown): value is EdgeOneKvBinding {
 }
 
 function requestContextBinding(bucket: EdgeKvBucket): EdgeKvBindingLookup {
-	const event = useRequestEvent()
 	const name = BINDING_NAMES[bucket]
-	const context = event?.context as Record<string, any> | undefined
-	const candidates: Array<[string, unknown]> = [
-		[`event.context.env.${name}`, context?.env?.[name]],
-		[`event.context.edgeone.env.${name}`, context?.edgeone?.env?.[name]],
-		[`event.context.cloudflare.env.${name}`, context?.cloudflare?.env?.[name]],
-		[`event.context.platform.env.${name}`, context?.platform?.env?.[name]],
-		[`event.context.${name}`, context?.[name]],
-	]
-
-	for (const [source, value] of candidates) {
-		if (isKvBinding(value))
-			return { binding: value, source }
-	}
-
-	return { binding: null, source: '' }
+	return { binding: null, source: `missing:${name}` }
 }
 
 function kvBindingLookup(bucket: EdgeKvBucket): EdgeKvBindingLookup {
@@ -132,10 +118,8 @@ function canUseProxy(): boolean {
 }
 
 function proxyUrl(): string {
-	const event = useRequestEvent()
-	if (!event)
-		throw createError({ statusCode: 500, statusMessage: 'KV proxy request context is unavailable' })
-	return new URL(PROXY_PATH, getRequestURL(event).origin).toString()
+	const origin = process.env.NUXT_EDGE_KV_PROXY_ORIGIN || process.env.URL || blogConfig.site.url
+	return new URL(PROXY_PATH, origin).toString()
 }
 
 async function proxyKvOperations(bucket: EdgeKvBucket, operations: EdgeKvProxyOperation[]): Promise<EdgeKvProxyOperationResult[]> {
