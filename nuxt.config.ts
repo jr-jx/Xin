@@ -141,6 +141,7 @@ export default defineNuxtConfig({
 	},
 
 	runtimeConfig: {
+		edgeKvProxySecret: process.env.EDGE_KV_PROXY_SECRET || '',
 		ipHashSalt: process.env.NUXT_IP_HASH_SALT || 'xin-friends-likes-v1',
 		commentAdminPassword: process.env.NUXT_COMMENT_ADMIN_PASSWORD || '',
 		commentJwtSecret: process.env.NUXT_COMMENT_JWT_SECRET || 'xin-comment-jwt-dev-secret-change-me',

@@ -8,6 +8,24 @@ interface EdgeOneKvBinding {
 	remove?: (key: string) => Promise<unknown>
 }
 
+interface EdgeKvProxyOperation {
+	action: 'get' | 'put' | 'delete'
+	key: string
+	value?: string
+}
+
+interface EdgeKvProxyOperationResult {
+	ok: boolean
+	value?: unknown
+	error?: string
+}
+
+interface EdgeKvProxyResponse {
+	ok: boolean
+	results?: EdgeKvProxyOperationResult[]
+	error?: string
+}
+
 declare global {
 	// EdgeOne Pages injects KV bindings as global variables in functions.
 	// eslint-disable-next-line vars-on-top
@@ -20,9 +38,11 @@ declare global {
 }
 
 type EdgeKvBucket = 'comments' | 'friends'
+type EdgeKvMode = 'direct' | 'proxy' | 'local' | 'missing'
 
 const LOCAL_STORE = 'edgeone-kv-local'
 const KEY_PREFIX = 'xin'
+const PROXY_PATH = '/api/__edge-kv'
 
 const BINDING_NAMES: Record<EdgeKvBucket, 'XIN_COMMENTS_KV' | 'XIN_FRIENDS_KV'> = {
 	comments: 'XIN_COMMENTS_KV',
@@ -48,7 +68,7 @@ function missingBindingError(bucket: EdgeKvBucket) {
 
 export function isMissingEdgeKvBindingError(err: unknown): boolean {
 	const message = err instanceof Error ? err.message : String(err)
-	return message.includes('binding is not configured')
+	return message.includes('binding is not configured') || message.includes('KV proxy is not configured')
 }
 
 function isKvBinding(value: unknown): value is EdgeOneKvBinding {
@@ -100,6 +120,65 @@ function kvBinding(bucket: EdgeKvBucket): EdgeOneKvBinding | null {
 
 function localStorage() {
 	return useStorage(LOCAL_STORE)
+}
+
+function proxySecret(): string {
+	const config = useRuntimeConfig()
+	return String(config.edgeKvProxySecret || process.env.EDGE_KV_PROXY_SECRET || '')
+}
+
+function canUseProxy(): boolean {
+	return !shouldUseLocalFallback() && !!proxySecret()
+}
+
+function proxyUrl(): string {
+	const event = useRequestEvent()
+	if (!event)
+		throw createError({ statusCode: 500, statusMessage: 'KV proxy request context is unavailable' })
+	return new URL(PROXY_PATH, getRequestURL(event).origin).toString()
+}
+
+async function proxyKvOperations(bucket: EdgeKvBucket, operations: EdgeKvProxyOperation[]): Promise<EdgeKvProxyOperationResult[]> {
+	const secret = proxySecret()
+	if (!secret)
+		throw createError({ statusCode: 500, statusMessage: 'KV proxy is not configured' })
+
+	const response = await $fetch<EdgeKvProxyResponse>(proxyUrl(), {
+		method: 'POST',
+		body: { bucket, operations },
+		headers: {
+			'x-edge-kv-secret': secret,
+		},
+		ignoreResponseError: true,
+		retry: 0,
+	})
+
+	if (!response?.ok)
+		throw createError({ statusCode: 500, statusMessage: response?.error || `${BINDING_NAMES[bucket]} binding is not configured` })
+
+	const results = response.results || []
+	const failed = results.find(result => !result.ok)
+	if (failed)
+		throw createError({ statusCode: 500, statusMessage: failed.error || 'KV proxy operation failed' })
+
+	return results
+}
+
+async function proxyGetItem<T>(bucket: EdgeKvBucket, keys: string[]): Promise<T | null> {
+	const results = await proxyKvOperations(bucket, keys.map(key => ({ action: 'get', key })))
+	for (const result of results) {
+		if (result.value != null)
+			return decodeValue<T>(result.value)
+	}
+	return null
+}
+
+async function proxySetItem(bucket: EdgeKvBucket, key: string, value: unknown): Promise<void> {
+	await proxyKvOperations(bucket, [{ action: 'put', key, value: encodeValue(value) }])
+}
+
+async function proxyRemoveItems(bucket: EdgeKvBucket, keys: string[]): Promise<void> {
+	await proxyKvOperations(bucket, keys.map(key => ({ action: 'delete', key })))
 }
 
 function legacyPrefixed(namespace: string, key: string): string {
@@ -155,13 +234,22 @@ function bindingMethods(binding: EdgeOneKvBinding | null): string[] {
 
 export function getEdgeKvBindingStatus(bucket: EdgeKvBucket) {
 	const { binding, source } = kvBindingLookup(bucket)
+	const mode: EdgeKvMode = binding
+		? 'direct'
+		: shouldUseLocalFallback()
+			? 'local'
+			: canUseProxy()
+				? 'proxy'
+				: 'missing'
 	return {
 		bucket,
 		bindingName: BINDING_NAMES[bucket],
-		available: !!binding,
-		source,
+		available: mode !== 'missing',
+		mode,
+		source: source || (mode === 'proxy' ? PROXY_PATH : mode === 'local' ? LOCAL_STORE : ''),
 		methods: bindingMethods(binding),
 		localFallback: shouldUseLocalFallback(),
+		proxyConfigured: canUseProxy(),
 	}
 }
 
@@ -169,8 +257,11 @@ export async function probeEdgeKvBinding(bucket: EdgeKvBucket): Promise<{
 	bucket: EdgeKvBucket
 	bindingName: string
 	available: boolean
+	mode: EdgeKvMode
 	source: string
 	methods: string[]
+	localFallback: boolean
+	proxyConfigured: boolean
 	writeOk: boolean
 	readOk: boolean
 	deleteOk: boolean
@@ -185,11 +276,50 @@ export async function probeEdgeKvBinding(bucket: EdgeKvBucket): Promise<{
 		deleteOk: false,
 	}
 
-	if (!binding)
-		return { ...result, error: `${BINDING_NAMES[bucket]} binding is not configured` }
-
 	const key = safeKey(bucket, 'diag', `${Date.now()}_${Math.random().toString(36).slice(2)}`)
 	const value = encodeValue({ ok: true })
+
+	if (!binding) {
+		if (shouldUseLocalFallback()) {
+			try {
+				await localStorage().setItem(key, value)
+				result.writeOk = true
+				result.readOk = (await localStorage().getItem(key)) != null
+				await localStorage().removeItem(key)
+				result.deleteOk = true
+				return result
+			}
+			catch (err) {
+				return {
+					...result,
+					error: err instanceof Error ? err.message : String(err),
+				}
+			}
+		}
+
+		if (canUseProxy()) {
+			try {
+				const results = await proxyKvOperations(bucket, [
+					{ action: 'put', key, value },
+					{ action: 'get', key },
+					{ action: 'delete', key },
+				])
+				result.writeOk = !!results[0]?.ok
+				result.readOk = results[1]?.value != null
+				result.deleteOk = !!results[2]?.ok
+				return result
+			}
+			catch (err) {
+				return {
+					...result,
+					error: err instanceof Error ? err.message : String(err),
+				}
+			}
+		}
+
+		return { ...result, error: `${BINDING_NAMES[bucket]} binding is not configured` }
+	}
+
 	try {
 		await binding.put(key, value)
 		result.writeOk = true
@@ -229,8 +359,15 @@ export function getEdgeKvStore(namespace: string, bucket: EdgeKvBucket = 'commen
 				return null
 			}
 
-			if (!shouldUseLocalFallback())
+			const fallbackKeys = bucket === 'comments'
+				? [fullKey, legacySafeKey(namespace, key)]
+				: [fullKey]
+
+			if (!shouldUseLocalFallback()) {
+				if (canUseProxy())
+					return proxyGetItem<T>(bucket, fallbackKeys)
 				throw missingBindingError(bucket)
+			}
 
 			return (await localStorage().getItem<T>(fullKey))
 				?? (bucket === 'comments' ? await localStorage().getItem<T>(legacySafeKey(namespace, key)) : null)
@@ -246,8 +383,13 @@ export function getEdgeKvStore(namespace: string, bucket: EdgeKvBucket = 'commen
 				return
 			}
 
-			if (!shouldUseLocalFallback())
+			if (!shouldUseLocalFallback()) {
+				if (canUseProxy()) {
+					await proxySetItem(bucket, fullKey, value)
+					return
+				}
 				throw missingBindingError(bucket)
+			}
 
 			await localStorage().setItem(fullKey, value)
 		},
@@ -272,8 +414,17 @@ export function getEdgeKvStore(namespace: string, bucket: EdgeKvBucket = 'commen
 				return
 			}
 
-			if (!shouldUseLocalFallback())
+			const fallbackKeys = bucket === 'comments'
+				? [fullKey, legacySafeKey(namespace, key)]
+				: [fullKey]
+
+			if (!shouldUseLocalFallback()) {
+				if (canUseProxy()) {
+					await proxyRemoveItems(bucket, fallbackKeys)
+					return
+				}
 				throw missingBindingError(bucket)
+			}
 
 			await localStorage().removeItem(fullKey)
 			if (bucket === 'comments') {

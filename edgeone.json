@@ -74,5 +74,6 @@
       ],
       "maxDuration": 60
     }
-  }
+  },
+  "edge-functions": {}
 }
