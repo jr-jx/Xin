@@ -7,12 +7,47 @@ export type ReactionKey = typeof REACTION_KEYS[number]
 
 export type CountMap = Record<ReactionKey, number>
 
+const LIKE_READ_CONCURRENCY = 4
+
 function emptyCounts(): CountMap {
 	return { 'heart': 0, 'fire': 0, 'thumbs-up': 0, 'smile': 0 }
 }
 
 export function isReactionKey(x: unknown): x is ReactionKey {
 	return typeof x === 'string' && (REACTION_KEYS as readonly string[]).includes(x)
+}
+
+function isTransientKvReadError(err: unknown): boolean {
+	const message = err instanceof Error ? err.message : String(err)
+	return message.includes('KvStore Get failed') || message.includes('net_exception_peer_close')
+}
+
+async function mapWithConcurrency<T>(
+	items: T[],
+	limit: number,
+	worker: (item: T) => Promise<void>,
+): Promise<void> {
+	let nextIndex = 0
+	await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+		while (nextIndex < items.length) {
+			const item = items[nextIndex++]!
+			await worker(item)
+		}
+	}))
+}
+
+async function safeGetLikeItem<T>(
+	storage: ReturnType<typeof getEdgeKvStore>,
+	key: string,
+): Promise<T | null> {
+	try {
+		return await storage.getItem<T>(key)
+	}
+	catch (err) {
+		if (isTransientKvReadError(err))
+			return null
+		throw err
+	}
 }
 
 /** 计数键 */
@@ -29,15 +64,15 @@ function ipKey(ipHash: string, linkHash: string, key: ReactionKey): string {
 export async function getCountsFor(links: string[]): Promise<Record<string, CountMap>> {
 	const storage = getEdgeKvStore('friends-like', 'friends')
 	const result: Record<string, CountMap> = {}
-	await Promise.all(links.map(async (link) => {
+	await mapWithConcurrency(links, LIKE_READ_CONCURRENCY, async (link) => {
 		const h = encodeLink(link)
 		const counts = emptyCounts()
 		await Promise.all(REACTION_KEYS.map(async (k) => {
-			const raw = await storage.getItem<number>(countKey(h, k))
+			const raw = await safeGetLikeItem<number>(storage, countKey(h, k))
 			counts[k] = typeof raw === 'number' ? raw : 0
 		}))
 		result[link] = counts
-	}))
+	})
 	return result
 }
 
@@ -45,16 +80,16 @@ export async function getCountsFor(links: string[]): Promise<Record<string, Coun
 export async function getLikedByIp(ipHash: string, links: string[]): Promise<Record<string, ReactionKey[]>> {
 	const storage = getEdgeKvStore('friends-like', 'friends')
 	const result: Record<string, ReactionKey[]> = {}
-	await Promise.all(links.map(async (link) => {
+	await mapWithConcurrency(links, LIKE_READ_CONCURRENCY, async (link) => {
 		const h = encodeLink(link)
 		const liked: ReactionKey[] = []
 		await Promise.all(REACTION_KEYS.map(async (k) => {
-			const raw = await storage.getItem(ipKey(ipHash, h, k))
+			const raw = await safeGetLikeItem(storage, ipKey(ipHash, h, k))
 			if (raw)
 				liked.push(k)
 		}))
 		result[link] = liked
-	}))
+	})
 	return result
 }
 

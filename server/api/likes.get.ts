@@ -19,10 +19,8 @@ export default defineEventHandler(async (event) => {
 	let counts: Awaited<ReturnType<typeof getCountsFor>>
 	let likedByMe: Awaited<ReturnType<typeof getLikedByIp>>
 	try {
-		[counts, likedByMe] = await Promise.all([
-			getCountsFor(links),
-			getLikedByIp(ipHash, links),
-		])
+		counts = await getCountsFor(links)
+		likedByMe = await getLikedByIp(ipHash, links)
 	}
 	catch (err) {
 		if (!isMissingEdgeKvBindingError(err))

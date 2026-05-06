@@ -15,6 +15,7 @@ import {
 import { base64UrlToString } from './edge-crypto.js'
 
 const REACTION_KEYS = ['heart', 'fire', 'thumbs-up', 'smile']
+const LIKE_READ_CONCURRENCY = 4
 
 function isReactionKey(value) {
 	return REACTION_KEYS.includes(value)
@@ -32,31 +33,57 @@ function ipKey(ipHash, linkHash, key) {
 	return `ip:${ipHash}:${linkHash}:${key}`
 }
 
+function isTransientKvReadError(err) {
+	const message = String(err?.message || err)
+	return message.includes('KvStore Get failed') || message.includes('net_exception_peer_close')
+}
+
+async function mapWithConcurrency(items, limit, worker) {
+	let nextIndex = 0
+	await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+		while (nextIndex < items.length) {
+			const item = items[nextIndex++]
+			await worker(item)
+		}
+	}))
+}
+
+async function safeStoreGet(context, bucket, namespace, key) {
+	try {
+		return await storeGet(context, bucket, namespace, key)
+	}
+	catch (err) {
+		if (isTransientKvReadError(err))
+			return null
+		throw err
+	}
+}
+
 async function getCountsFor(context, links) {
 	const result = {}
-	await Promise.all(links.map(async (link) => {
+	await mapWithConcurrency(links, LIKE_READ_CONCURRENCY, async (link) => {
 		const linkHash = await encodeLink(link)
 		const counts = emptyCounts()
 		await Promise.all(REACTION_KEYS.map(async (key) => {
-			const raw = await storeGet(context, 'friends', 'friends-like', countKey(linkHash, key))
+			const raw = await safeStoreGet(context, 'friends', 'friends-like', countKey(linkHash, key))
 			counts[key] = typeof raw === 'number' ? raw : 0
 		}))
 		result[link] = counts
-	}))
+	})
 	return result
 }
 
 async function getLikedByIp(context, ipHash, links) {
 	const result = {}
-	await Promise.all(links.map(async (link) => {
+	await mapWithConcurrency(links, LIKE_READ_CONCURRENCY, async (link) => {
 		const linkHash = await encodeLink(link)
 		const liked = []
 		await Promise.all(REACTION_KEYS.map(async (key) => {
-			if (await storeGet(context, 'friends', 'friends-like', ipKey(ipHash, linkHash, key)))
+			if (await safeStoreGet(context, 'friends', 'friends-like', ipKey(ipHash, linkHash, key)))
 				liked.push(key)
 		}))
 		result[link] = liked
-	}))
+	})
 	return result
 }
 
@@ -96,10 +123,8 @@ export const handleLikes = withErrorHandling(async (context) => {
 		if (!links.length)
 			return json({ counts: {}, likedByMe: {} })
 		try {
-			const [counts, likedByMe] = await Promise.all([
-				getCountsFor(context, links),
-				getLikedByIp(context, ipHash, links),
-			])
+			const counts = await getCountsFor(context, links)
+			const likedByMe = await getLikedByIp(context, ipHash, links)
 			return json({ counts, likedByMe })
 		}
 		catch (err) {
