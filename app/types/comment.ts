@@ -3,7 +3,7 @@ import type { BaseEntity } from './common'
 export interface Comment extends BaseEntity {
 	/** 昵称 */
 	nick: string
-	/** 邮箱 MD5（用于 Gravatar） */
+	/** 邮箱 MD5（用于生成评论头像） */
 	mailMd5: string
 	/** 头像 URL */
 	avatar: string
@@ -31,6 +31,10 @@ export interface Comment extends BaseEntity {
 	liked?: boolean
 	/** 是否被隐藏 */
 	hidden?: boolean
+	/** 是否被管理员置顶 */
+	pinned?: boolean
+	/** 当前回复指向的昵称 */
+	replyToNick?: string
 	/** 是否管理员评论 */
 	isAdmin?: boolean
 	/** 相对时间文案 */
@@ -48,6 +52,33 @@ export interface CommentListResponse {
 	hasMore: boolean
 }
 
+export type CommentAdminStatus = 'all' | 'visible' | 'hidden' | 'pinned'
+export type CommentAdminKind = 'all' | 'root' | 'reply'
+
+export interface CommentAdminStats {
+	total: number
+	visible: number
+	hidden: number
+	pinned: number
+	roots: number
+	replies: number
+}
+
+export interface CommentAdminListResponse {
+	items: Comment[]
+	total: number
+	page: number
+	pageSize: number
+	hasMore: boolean
+	stats: CommentAdminStats
+}
+
+export interface CommentAdminSettings {
+	avatarProxy: string
+}
+
+export type CommentSubmitMode = 'manual' | 'anonymous'
+
 export interface CommentSubmitPayload {
 	slug: string
 	url?: string
@@ -55,6 +86,7 @@ export interface CommentSubmitPayload {
 	mail?: string
 	link?: string
 	content: string
+	mode?: CommentSubmitMode
 	pid?: string | null
 	rid?: string | null
 }

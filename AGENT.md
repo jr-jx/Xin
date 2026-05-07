@@ -101,6 +101,7 @@ image: /path/to/image.webp
 
 ## 修改日志
 
+- 2026-05-07：新增评论管理页与管理接口，支持评论筛选、隐藏/恢复、置顶、头像代理配置和 Edge Functions 同步实现，并移除旧项目级 skill 目录；验证：`pnpm lint:fix`，`pnpm build` 因本地 x64 Node 加载 arm64 `better-sqlite3` 原生模块失败。
 - 2026-05-05：拆分 Edge Functions KV 处理为 admin/comments/friends-likes/core/crypto 共享模块，Nuxt 服务端复用请求身份哈希工具，并将朋友圈点赞限流写入 `XIN_FRIENDS_KV`；验证：`pnpm lint:fix`、`pnpm build`、`git diff --check`。
 - 2026-05-05：收紧 EdgeOne Pages KV 绑定检测，生产缺失 `XIN_COMMENTS_KV`/`XIN_FRIENDS_KV` 时不再静默回退本地 storage；新增管理员 KV 健康检查接口，支持只读状态与写入探测，并将 `/api/friends` 改为由 `XIN_FRIENDS_KV` 自行缓存，KV 缺失时朋友圈列表与点赞读取降级为无缓存/空计数，避免公开页面 500；验证：待运行。
 - 2026-05-05：拆分 EdgeOne Pages KV 绑定，`server/utils/edgeKv.ts` 支持 `XIN_COMMENTS_KV` 与 `XIN_FRIENDS_KV` 两个 bucket，朋友圈点赞与 `/api/friends` 聚合缓存改用独立的 `XIN_FRIENDS_KV`，`.env.example` 同步新增绑定说明；验证：`pnpm build`。

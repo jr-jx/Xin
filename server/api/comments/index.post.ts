@@ -2,6 +2,7 @@ import type { CommentRecord } from '../../utils/comments'
 import { isAdmin } from '../../utils/adminAuth'
 import {
 	getComment,
+	getCommentAvatarProxy,
 	md5,
 	newCommentId,
 	normalizeSlug,
@@ -21,6 +22,7 @@ interface Payload {
 	mail?: string
 	link?: string
 	content?: string
+	mode?: 'manual' | 'anonymous'
 	pid?: string | null
 	rid?: string | null
 }
@@ -44,9 +46,13 @@ export default defineEventHandler(async (event) => {
 		{ windowMs: 3_600_000, max: 20 },
 	])
 
-	const nick = (body.nick || '').trim()
-	const mail = (body.mail || '').trim().toLowerCase()
-	const link = (body.link || '').trim()
+	const mode = body.mode === 'anonymous' ? 'anonymous' : 'manual'
+
+	const nick = mode === 'anonymous'
+		? '匿名访客'
+		: (body.nick || '').trim()
+	const mail = mode === 'anonymous' ? '' : (body.mail || '').trim().toLowerCase()
+	const link = mode === 'anonymous' ? '' : (body.link || '').trim()
 	const content = (body.content || '').trim()
 
 	const blacklist = String(commentKeywordBlacklist || '')
@@ -59,11 +65,13 @@ export default defineEventHandler(async (event) => {
 	// 处理回复关系
 	let pid: string | null = body.pid || null
 	let rid: string | null = body.rid || null
+	let replyToNick = ''
 	if (pid) {
 		const parent = await getComment(slug, pid)
 		if (!parent)
 			throw createError({ statusCode: 404, statusMessage: '被回复的评论不存在' })
 		rid = parent.rid || parent.id
+		replyToNick = parent.nick
 	}
 	else {
 		pid = null
@@ -92,8 +100,10 @@ export default defineEventHandler(async (event) => {
 		createdAt: now,
 		updatedAt: now,
 		hidden: false,
+		pinned: false,
 		likes: 0,
 		isAdmin: isAdmin(event),
+		replyToNick,
 	}
 
 	await saveComment(rec)
@@ -110,5 +120,5 @@ export default defineEventHandler(async (event) => {
 	})
 
 	setResponseStatus(event, 201)
-	return { comment: toPublicComment(rec, false), text }
+	return { comment: toPublicComment(rec, false, await getCommentAvatarProxy()), text }
 })

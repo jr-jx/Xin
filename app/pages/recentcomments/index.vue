@@ -1,13 +1,11 @@
 <script setup lang="ts">
 const commentsStore = useCommentsStore()
 
-// SEO 设置
 useSeoMeta({
-	title: `最近评论`,
-	description: `最近评论`,
+	title: '最近评论',
+	description: '伍拾柒博客最近评论',
 })
 
-// 从 store 获取数据
 const { comments, loading, error, hasComments } = storeToRefs(commentsStore)
 
 onMounted(async () => {
@@ -16,313 +14,239 @@ onMounted(async () => {
 		if (timeDiff < 5 * 60 * 1000)
 			return
 	}
-	await commentsStore.fetchRecentComments(50, false)
+	await commentsStore.fetchRecentComments(50, true)
 })
-
-async function refreshComments() {
-	await commentsStore.fetchRecentComments(50, false)
-}
 </script>
 
 <template>
 <div v-fade-up class="recentcomments-page">
 	<PageBanner
 		title="最近评论"
-		desc="最近评论"
-		footer="最近评论"
+		desc="博客里的新讨论"
+		footer="Comments"
 		image="https://cdn.lightxi.com/cloudreve/uploads/2025/08/03/S9ethiQA_9298cf4b972a1ea927236a66a18e4e27.jpg"
 	/>
 	<div class="container">
-		<!-- 加载状态 -->
-		<div v-if="loading" class="loading-state">
-			<div class="loading-spinner" />
-			<p>正在加载评论...</p>
+		<div v-if="loading && !hasComments" class="state">
+			<Icon name="ph:circle-notch-bold" class="spin" />
+			<span>正在加载评论…</span>
 		</div>
 
-		<!-- 错误状态 -->
-		<div v-else-if="error" class="error-state">
-			<p class="error-message">
-				{{ error }}
-			</p>
-			<button class="retry-button" @click="refreshComments">
-				重试
-			</button>
+		<div v-else-if="error" class="state error-state">
+			<Icon name="ph:warning-circle-bold" />
+			<span>{{ error }}</span>
 		</div>
 
-		<!-- 评论网格 -->
-		<div v-else class="comment-grid">
+		<div v-else-if="hasComments" class="comment-feed">
 			<NuxtLink
 				v-for="(comment, index) in comments"
 				:key="comment.id"
-				v-fade-up="50 * index"
+				v-fade-up="36 * index"
 				:to="`${comment.url}#${comment.id}`"
-				class="comment-card"
+				class="feed-item"
 			>
-				<div class="comment-header">
-					<div class="comment-avatar">
-						<img :src="comment.avatar" :alt="comment.nick">
+				<img class="avatar" :src="comment.avatar" :alt="comment.nick" loading="lazy">
+				<div class="feed-body">
+					<div class="feed-meta">
+						<strong>{{ comment.nick }}</strong>
+						<span v-if="comment.isAdmin" class="badge">博主</span>
+						<span v-if="comment.replyToNick" class="reply-mark">回复 @{{ comment.replyToNick }}</span>
+						<time>{{ formatDate(new Date(comment.created || Date.now())) }}</time>
 					</div>
-					<div class="comment-info">
-						<div class="comment-nick">
-							{{ comment.nick }}
-						</div>
-						<div class="comment-time">
-							{{ formatDate(new Date(comment.created || Date.now())) }}
-						</div>
-					</div>
-				</div>
-				<div class="comment-content">
-					<div class="comment-text">
-						{{ comment.commentText }}
+					<p>{{ comment.commentText }}</p>
+					<div class="feed-foot">
+						<span>
+							<Icon name="ph:article-bold" />
+							{{ comment.url }}
+						</span>
+						<span>
+							<Icon name="ph:heart-bold" />
+							{{ comment.likes || 0 }}
+						</span>
 					</div>
 				</div>
 			</NuxtLink>
+		</div>
 
-			<!-- 空状态 -->
-			<div v-if="!hasComments && !loading" class="empty-state">
-				<p>暂无评论</p>
-			</div>
+		<div v-else class="state empty-state">
+			<Icon name="ph:chat-circle-dots-bold" />
+			<span>暂无评论</span>
 		</div>
 	</div>
 </div>
 </template>
 
 <style lang="scss" scoped>
-// 容器样式
 .container {
 	margin: 0 auto;
-	padding: 0 0.5rem;
+	padding: 1rem 0.5rem 0;
 }
 
-// 网格布局
-.comment-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	align-items: start;
-	gap: 0.5rem;
-	margin-top: 0.5rem;
-
-	// 中等屏幕：2列布局
-	@media (max-width: 1199px) and (min-width: 768px) {
-		grid-template-columns: repeat(2, 1fr);
-	}
-
-	// 小屏幕：1列布局
-	@media (max-width: 767px) {
-		grid-template-columns: 1fr;
-	}
-
-	// 空状态样式
-	&:empty::after {
-		content: "暂无评论";
-		display: block;
-		grid-column: 1 / -1;
-		padding: 3rem;
-		font-size: 1.1rem;
-		text-align: center;
-		color: var(--font-color-3);
-	}
-
-	// 加载状态
-	&:has(.loading) {
-		opacity: 0.7;
-	}
-}
-
-// 评论卡片
-.comment-card {
+.comment-feed {
 	display: flex;
 	flex-direction: column;
-	height: 120px;
-	padding: 0.725rem;
-	border: var(--border);
-	border-radius: var(--radius-md);
-	box-shadow: var(--shadow-sm);
+	gap: 0.45rem;
+}
+
+.feed-item {
+	display: grid;
+	grid-template-columns: 2.75rem minmax(0, 1fr);
+	gap: 0.75rem;
+	padding: 0.85rem;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius);
 	background: var(--card-bg);
 	text-decoration: none;
 	color: inherit;
-	transition: all 0.2s ease;
 
 	&:hover {
 		border-color: var(--main-color);
+		background: var(--c-bg-1);
+
+		strong {
+			color: var(--main-color);
+		}
 	}
 
-	// 内容区域对齐
-	.comment-content {
-		justify-content: space-between;
+	@media (max-width: 520px) {
+		grid-template-columns: 2.35rem minmax(0, 1fr);
+		padding: 0.7rem;
 	}
 }
 
-// 评论头部
-.comment-header {
-	display: flex;
-	flex-shrink: 0;
-	align-items: center;
-	gap: 0.5rem;
-	margin-bottom: 0.5rem;
-	padding-bottom: 0.5rem;
-	border-bottom: 1px solid var(--border-color);
-	transition: border-color 0.3s ease;
-	will-change: border-color;
-}
-
-// 头像样式
-.comment-avatar {
-	flex-shrink: 0;
-	overflow: hidden;
-	width: 32px;
-	height: 32px;
+.avatar {
+	width: 2.75rem;
+	height: 2.75rem;
 	border: 1px solid var(--border-color);
 	border-radius: var(--radius-full);
-	transition: border-color 0.3s ease;
-	will-change: border-color;
+	background: var(--c-bg-2);
+	object-fit: cover;
 
-	img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
+	@media (max-width: 520px) {
+		width: 2.35rem;
+		height: 2.35rem;
 	}
 }
 
-// 评论信息
-.comment-info {
-	display: flex;
-	flex: 1;
-	flex-direction: row;
-	justify-content: space-between;
+.feed-body {
 	min-width: 0;
-}
 
-.comment-nick {
-	overflow: hidden;
-	font-size: 0.85rem;
-	font-weight: 600;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	color: var(--font-color);
-}
-
-.comment-time {
-	font-size: 0.8rem;
-	white-space: nowrap;
-	color: var(--font-color-3);
-}
-
-// 评论内容
-.comment-content {
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-	overflow: hidden;
-
-	.comment-text {
+	p {
 		display: -webkit-box;
-		flex: 1;
 		overflow: hidden;
-		max-height: calc(1.5em * 2);
+		margin: 0.35rem 0 0.55rem;
 		font-size: 0.9rem;
 		-webkit-line-clamp: 2;
-		line-height: 1.5;
+		line-clamp: 2;
+		line-height: 1.55;
 		text-overflow: ellipsis;
 		color: var(--font-color-2);
 		-webkit-box-orient: vertical;
 	}
 }
 
-// 加载状态
-.loading-state {
+.feed-meta {
 	display: flex;
-	flex-direction: column;
+	flex-wrap: wrap;
 	align-items: center;
-	justify-content: center;
-	padding: 3rem 1rem;
-	text-align: center;
+	gap: 0.35rem 0.5rem;
+	min-width: 0;
 
-	.loading-spinner {
-		width: 40px;
-		height: 40px;
-		margin-bottom: 1rem;
-		border: 3px solid var(--border-color);
-		border-top: 3px solid var(--main-color);
-		border-radius: var(--radius-full);
-		animation: spin 1s linear infinite;
-	}
-
-	p {
-		font-size: 1rem;
-		color: var(--font-color-2);
-	}
-}
-
-@keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-}
-
-// 错误状态
-.error-state {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 3rem 1rem;
-	text-align: center;
-
-	.error-message {
-		margin-bottom: 1rem;
-		font-size: 1rem;
-		color: var(--error-color, #EF4444);
-	}
-
-	.retry-button {
-		padding: 0.5rem 1rem;
-		border: none;
-		border-radius: var(--radius);
-		background: var(--main-color);
+	strong {
+		overflow: hidden;
+		max-width: 12rem;
 		font-size: 0.9rem;
-		color: white;
-		transition: all 0.2s ease;
-		cursor: pointer;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		color: var(--font-color);
+		transition: color 0.2s;
+	}
 
-		&:hover {
-			opacity: 0.8;
+	time {
+		margin-left: auto;
+		font-size: 0.74rem;
+		white-space: nowrap;
+		color: var(--font-color-3);
+	}
+}
+
+.badge,
+.reply-mark {
+	display: inline-flex;
+	align-items: center;
+	min-height: 1.1rem;
+	padding: 0.08rem 0.36rem;
+	border-radius: var(--radius-sm);
+	font-size: 0.66rem;
+	line-height: 1;
+}
+
+.badge {
+	border: 1px solid var(--main-color);
+	background: var(--main-color-bg);
+	color: var(--main-color);
+}
+
+.reply-mark {
+	background: var(--main-color-bg);
+	color: var(--main-color);
+}
+
+.feed-foot {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem 0.8rem;
+	font-size: 0.74rem;
+	color: var(--font-color-3);
+
+	span {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		min-width: 0;
+
+		&:first-child {
+			overflow: hidden;
+			max-width: 100%;
+			white-space: nowrap;
+			text-overflow: ellipsis;
 		}
 	}
 }
 
-// 空状态
-.empty-state {
-	grid-column: 1 / -1;
-	padding: 3rem;
-	font-size: 1.1rem;
-	text-align: center;
+.state {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	min-height: 10rem;
+	padding: 2rem;
+	border: 1px dashed var(--border-color);
+	border-radius: var(--radius);
+	background: var(--card-bg);
+	font-size: 0.9rem;
 	color: var(--font-color-3);
+
+	button {
+		padding: 0.25rem 0.65rem;
+		border: 1px solid currentcolor;
+		border-radius: var(--radius-sm);
+	}
 }
 
-// 响应式优化
-@media (max-width: 480px) {
-	.container {
-		padding: 0 0.5rem;
-	}
+.error-state {
+	color: var(--error, #EF4444);
+}
 
-	.comment-card {
-		height: 120px;
-		padding: 1.25rem;
-	}
+.empty-state {
+	background: color-mix(in srgb, var(--card-bg) 42%, transparent);
+}
 
-	.comment-avatar {
-		width: 38px;
-		height: 38px;
-	}
+.spin {
+	animation: spin 1s linear infinite;
+}
 
-	.comment-nick {
-		font-size: 0.9rem;
-	}
-
-	.comment-text {
-		max-height: calc(1.4em * 2);
-		font-size: 0.85rem;
-		line-height: 1.4;
-	}
+@keyframes spin {
+	to { transform: rotate(360deg); }
 }
 </style>

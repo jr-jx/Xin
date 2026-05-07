@@ -81,6 +81,7 @@ EdgeOne Pages. Atom feed (`/atom.xml`) and OPML (`/efu.opml`) are prerendered. P
 
 ## Change Log
 
+- 2026-05-07: Added the comment admin page and admin APIs for filtering, hide/restore, pinning, avatar proxy settings, and matching Edge Functions support, and removed the old project-level skill directories; verification: `pnpm lint:fix`, `pnpm build` failed because local x64 Node loaded an arm64 `better-sqlite3` native module.
 - 2026-05-05: Split Edge Functions KV handling into admin/comments/friends-likes/core/crypto shared modules, reused the request identity hashing helpers on the Nuxt server, and moved friends like rate limiting into `XIN_FRIENDS_KV`; verification: `pnpm lint:fix`, `pnpm build`, `git diff --check`.
 - 2026-05-05: Tightened EdgeOne Pages KV binding detection so production no longer silently falls back to local storage when `XIN_COMMENTS_KV`/`XIN_FRIENDS_KV` are missing; added an admin KV health endpoint with read-only status and write probes; changed `/api/friends` to rely on `XIN_FRIENDS_KV` caching directly, while friends list and like reads degrade to uncached/empty counts if the binding is missing to avoid public page 500s; verification: pending.
 - 2026-05-05: Split EdgeOne Pages KV bindings so `server/utils/edgeKv.ts` supports separate `XIN_COMMENTS_KV` and `XIN_FRIENDS_KV` buckets; moved friends likes and `/api/friends` aggregation cache to `XIN_FRIENDS_KV`; documented both bindings in `.env.example`; verification: `pnpm build`.

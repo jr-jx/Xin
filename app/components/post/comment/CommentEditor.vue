@@ -7,64 +7,80 @@ interface Props {
 	compact?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
 	submitting: false,
 	replyTo: null,
 	compact: false,
 })
 
 const emit = defineEmits<{
-	(e: 'submit', payload: { nick: string, mail: string, link: string, content: string }): void
+	(e: 'submit', payload: { mode: 'manual', nick: string, mail: string, link: string, content: string }): void
 	(e: 'cancel'): void
 	(e: 'mailChange', value: string): void
 }>()
 
-const STORAGE_KEY = 'xin_comment_profile'
+const route = useRoute()
+const PROFILE_KEY = 'xin_comment_profile'
+const draftKey = computed(() => `xin_comment_draft:${route.path}`)
 
 const nick = ref('')
 const mail = ref('')
 const link = ref('')
 const content = ref('')
-const preview = ref(false)
 const errorMsg = ref<string | null>(null)
+const showOwo = ref(false)
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const emojiPopoverRef = ref<HTMLElement | null>(null)
+
+const maxLength = blogConfig.comment.maxLength
+const contentLength = computed(() => content.value.length)
+const hasDraft = computed(() => !!content.value.trim())
+const submitText = computed(() => props.submitting ? '提交中…' : '发表评论')
 
 onMounted(() => {
+	loadProfile()
+	content.value = localStorage.getItem(draftKey.value) || ''
+	document.addEventListener('pointerdown', closeOwoOnOutside)
+	document.addEventListener('keydown', closeOwoOnEscape)
+})
+
+onBeforeUnmount(() => {
+	document.removeEventListener('pointerdown', closeOwoOnOutside)
+	document.removeEventListener('keydown', closeOwoOnEscape)
+})
+
+watch(mail, (value) => {
+	emit('mailChange', value)
+})
+
+watch(content, (value) => {
 	try {
-		const raw = localStorage.getItem(STORAGE_KEY)
-		if (raw) {
-			const p = JSON.parse(raw)
-			nick.value = p.nick || ''
-			mail.value = p.mail || ''
-			link.value = p.link || ''
-			if (mail.value)
-				emit('mailChange', mail.value)
-		}
+		if (value)
+			localStorage.setItem(draftKey.value, value)
+		else
+			localStorage.removeItem(draftKey.value)
 	}
 	catch {}
 })
 
-watch(mail, (v) => {
-	emit('mailChange', v)
-})
-
-const maxLength = blogConfig.comment.maxLength
-const remaining = computed(() => maxLength - content.value.length)
-
-const previewHtml = computed(() => renderPreview(content.value))
-
-function renderPreview(src: string): string {
-	// 极简预览：仅换行、基础 inline markdown
-	const escape = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[c] as string))
-	return escape(src)
-		.replace(/`([^`]+)`/g, '<code>$1</code>')
-		.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-		.replace(/\*([^*]+)\*/g, '<em>$1</em>')
-		.replace(/\n/g, '<br>')
+function loadProfile() {
+	try {
+		const raw = localStorage.getItem(PROFILE_KEY)
+		if (!raw)
+			return
+		const profile = JSON.parse(raw)
+		nick.value = profile.nick || ''
+		mail.value = profile.mail || ''
+		link.value = profile.link || ''
+		if (mail.value)
+			emit('mailChange', mail.value)
+	}
+	catch {}
 }
 
 function persistProfile() {
 	try {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify({
+		localStorage.setItem(PROFILE_KEY, JSON.stringify({
 			nick: nick.value,
 			mail: mail.value,
 			link: link.value,
@@ -73,22 +89,65 @@ function persistProfile() {
 	catch {}
 }
 
-async function handleSubmit() {
+function toggleOwo() {
+	showOwo.value = !showOwo.value
+}
+
+function closeOwoOnOutside(event: PointerEvent) {
+	if (!showOwo.value)
+		return
+	const target = event.target
+	if (target instanceof Node && emojiPopoverRef.value?.contains(target))
+		return
+	showOwo.value = false
+}
+
+function closeOwoOnEscape(event: KeyboardEvent) {
+	if (event.key === 'Escape')
+		showOwo.value = false
+}
+
+function insertEmoji(token: string) {
+	const textarea = textareaRef.value
+	const start = textarea?.selectionStart ?? content.value.length
+	const end = textarea?.selectionEnd ?? content.value.length
+	content.value = `${content.value.slice(0, start)}${token}${content.value.slice(end)}`
+	nextTick(() => {
+		textareaRef.value?.focus()
+		const cursor = start + token.length
+		textareaRef.value?.setSelectionRange(cursor, cursor)
+	})
+}
+
+function handleEmojiSelect(token: string) {
+	insertEmoji(token)
+	showOwo.value = false
+}
+
+function validateContent(): boolean {
 	errorMsg.value = null
+	if (!content.value.trim()) {
+		errorMsg.value = '请填写评论内容'
+		return false
+	}
+	if (content.value.length > maxLength) {
+		errorMsg.value = `评论不能超过 ${maxLength} 字`
+		return false
+	}
+	return true
+}
+
+function handleSubmit() {
+	if (props.submitting || !validateContent())
+		return
 	if (!nick.value.trim()) {
 		errorMsg.value = '请填写昵称'
 		return
 	}
-	if (!content.value.trim()) {
-		errorMsg.value = '请填写评论内容'
-		return
-	}
-	if (content.value.length > maxLength) {
-		errorMsg.value = `评论不能超过 ${maxLength} 字`
-		return
-	}
 	persistProfile()
+
 	emit('submit', {
+		mode: 'manual',
 		nick: nick.value.trim(),
 		mail: mail.value.trim(),
 		link: link.value.trim(),
@@ -98,72 +157,99 @@ async function handleSubmit() {
 
 function clearAfterSubmit() {
 	content.value = ''
-	preview.value = false
+	showOwo.value = false
+	errorMsg.value = null
+	try {
+		localStorage.removeItem(draftKey.value)
+	}
+	catch {}
 }
 
 defineExpose({ clearAfterSubmit })
-
-// 插入 OWO 表情
-function insertEmoji(token: string) {
-	content.value += token
-}
-
-const showOwo = ref(false)
 </script>
 
 <template>
 <div class="comment-editor" :class="{ compact }">
 	<div v-if="replyTo" class="reply-to">
 		<Icon name="ph:arrow-bend-up-left-bold" />
-		正在回复 <b>@{{ replyTo.nick }}</b>
-		<button type="button" class="cancel-reply" @click="emit('cancel')">
-			取消
+		<span>正在回复 <b>@{{ replyTo.nick }}</b></span>
+		<button type="button" class="cancel-reply" title="取消回复" @click="emit('cancel')">
+			<Icon name="ph:x-bold" />
 		</button>
 	</div>
 
-	<div class="fields">
-		<input v-model="nick" type="text" placeholder="昵称 *" maxlength="40" class="input">
-		<input v-model="mail" type="email" placeholder="邮箱（可选，用于头像与回复通知）" maxlength="120" class="input">
-		<input v-model="link" type="url" placeholder="网址（可选）" maxlength="200" class="input">
-	</div>
-
-	<div class="editor-body">
-		<textarea
-			v-if="!preview"
-			v-model="content"
-			class="textarea"
-			:placeholder="replyTo ? `回复 @${replyTo.nick}…（支持 Markdown）` : '说点什么吧…（支持 Markdown）'"
-			:maxlength="maxLength"
-			rows="4"
-		/>
-		<div v-else class="preview prose" v-html="previewHtml" />
-	</div>
-
-	<div class="toolbar">
-		<div class="toolbar-left">
-			<button type="button" class="tool-btn" title="表情" @click="showOwo = !showOwo">
-				<Icon name="ph:smiley" />
-			</button>
-			<button type="button" class="tool-btn" :class="{ active: preview }" title="预览" @click="preview = !preview">
-				<Icon name="ph:eye" />
-			</button>
-			<span class="counter" :class="{ warn: remaining < 50, over: remaining < 0 }">{{ remaining }}</span>
+	<div class="composer-card">
+		<div class="identity-row">
+			<label class="identity-field">
+				<span class="identity-label">昵称</span>
+				<input v-model="nick" type="text" placeholder="怎么称呼你" maxlength="40" class="input">
+			</label>
+			<label class="identity-field">
+				<span class="identity-label">邮箱</span>
+				<input v-model="mail" type="email" placeholder="name@example.com" maxlength="120" class="input">
+			</label>
+			<label class="identity-field">
+				<span class="identity-label">网站</span>
+				<input v-model="link" type="url" placeholder="https://example.com" maxlength="200" class="input">
+			</label>
 		</div>
-		<div class="toolbar-right">
-			<span v-if="errorMsg" class="err">{{ errorMsg }}</span>
-			<button
-				type="button"
-				class="submit-btn"
-				:disabled="submitting"
-				@click="handleSubmit"
-			>
-				<Icon v-if="submitting" name="ph:circle-notch-bold" class="spin" />
-				{{ submitting ? '提交中…' : '发表评论' }}
-			</button>
+
+		<div class="editor-shell">
+			<div class="editor-body">
+				<textarea
+					ref="textareaRef"
+					v-model="content"
+					class="textarea"
+					:placeholder="replyTo ? `回复 @${replyTo.nick}` : '写下你的想法...'"
+					:maxlength="maxLength"
+					rows="5"
+				/>
+
+				<div class="editor-inline-bar">
+					<div ref="emojiPopoverRef" class="tool-group" aria-label="评论工具">
+						<button
+							type="button"
+							class="tool-btn"
+							:class="{ active: showOwo }"
+							:aria-expanded="showOwo"
+							aria-haspopup="dialog"
+							title="表情"
+							@click="toggleOwo"
+						>
+							<Icon name="ph:smiley-bold" />
+						</button>
+						<Transition name="owo-popover">
+							<PostCommentOwoPicker v-if="showOwo" class="picker" @select="handleEmojiSelect" />
+						</Transition>
+					</div>
+
+					<div class="editor-meta">
+						<span v-if="hasDraft" class="draft-state">
+							<Icon name="ph:floppy-disk-back-bold" />
+							草稿已保存
+						</span>
+						<span class="counter" :class="{ warn: maxLength - contentLength < 80, over: maxLength - contentLength < 0 }">
+							{{ contentLength }}/{{ maxLength }}
+						</span>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 
-	<PostCommentOwoPicker v-if="showOwo" @select="insertEmoji" />
+	<div class="action-row">
+		<span v-if="errorMsg" class="err">{{ errorMsg }}</span>
+		<button
+			type="button"
+			class="submit-btn primary"
+			:disabled="submitting"
+			@click="handleSubmit"
+		>
+			<Icon v-if="submitting" name="ph:circle-notch-bold" class="spin" />
+			<Icon v-else name="ph:paper-plane-tilt-bold" />
+			{{ submitText }}
+		</button>
+	</div>
 </div>
 </template>
 
@@ -171,177 +257,337 @@ const showOwo = ref(false)
 .comment-editor {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
-	padding: 1rem;
-	border: var(--border);
-	border-radius: var(--radius-md);
-	background: var(--card-bg);
-	transition: border-color 0.2s, box-shadow 0.2s;
-
-	&:focus-within {
-		border-color: var(--main-color);
-		box-shadow: 0 4px 16px -8px rgb(0 0 0 / 15%);
-	}
+	gap: 0.9rem;
+	padding: 0;
+	color: var(--font-color);
 }
 
 .reply-to {
 	display: flex;
 	align-items: center;
-	gap: 0.4rem;
-	font-size: 0.8rem;
+	gap: 0.45rem;
+	padding: 0.55rem 0.75rem;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius);
+	background: var(--main-color-bg);
+	font-size: 0.82rem;
 	color: var(--font-color-2);
 
 	.cancel-reply {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.65rem;
+		height: 1.65rem;
 		margin-left: auto;
-		padding: 0.1rem 0.4rem;
-		border: none;
+		padding: 0;
 		border-radius: var(--radius-sm);
-		background: transparent;
-		font-size: 0.75rem;
 		color: var(--font-color-3);
-		cursor: pointer;
 
-		&:hover { color: var(--main-color); }
+		&:hover {
+			background: var(--card-bg);
+			color: var(--main-color);
+		}
 	}
 }
 
-.fields {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 0.5rem;
-
-	@media (max-width: 640px) {
-		grid-template-columns: 1fr;
-	}
-}
-
-.input {
-	padding: 0.5rem 0.75rem;
-	border: 1px solid var(--border-color);
+.composer-card {
+	position: relative;
+	overflow: visible;
 	border-radius: var(--radius);
-	outline: none;
-	background: var(--c-bg);
-	font-size: 0.85rem;
-	color: var(--font-color);
-	transition: border-color 0.15s;
+	box-shadow: 0 10px 28px rgb(15 23 42 / 4%);
+	background: transparent;
 
-	&:focus { border-color: var(--main-color); }
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border: 1px solid color-mix(in srgb, var(--border-color) 90%, transparent);
+		border-radius: inherit;
+		pointer-events: none;
+		z-index: 2;
+	}
+}
+
+.editor-shell {
+	background: transparent;
 }
 
 .editor-body {
 	position: relative;
+	min-height: 9.5rem;
 }
 
 .textarea {
+	display: block;
 	width: 100%;
-	min-height: 6rem;
-	padding: 0.75rem;
-	border: 1px solid var(--border-color);
-	border-radius: var(--radius);
-	outline: none;
-	background: var(--c-bg);
-	font-family: var(--font-monospace, inherit);
-	font-size: 0.9rem;
-	line-height: 1.6;
+	min-height: 9.5rem;
+	padding: 1.05rem 1.1rem 3.9rem;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	font-family: var(--font-family);
+	font-size: 0.95rem;
+	line-height: 1.75;
 	color: var(--font-color);
-	transition: border-color 0.15s;
 	resize: vertical;
 
-	&:focus { border-color: var(--main-color); }
+	&::placeholder {
+		color: var(--font-color-3);
+	}
 }
 
-.preview {
-	min-height: 6rem;
-	padding: 0.75rem;
-	border: 1px dashed var(--border-color);
-	border-radius: var(--radius);
-	background: var(--c-bg-2);
-	font-size: 0.9rem;
-	line-height: 1.6;
-	color: var(--font-color);
-}
-
-.toolbar {
+.editor-inline-bar {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	justify-content: space-between;
+	gap: 0.65rem;
+	position: absolute;
+	right: 0.85rem;
+	bottom: 0.7rem;
+	left: 0.85rem;
+	min-height: 2.25rem;
+	pointer-events: none;
+
+	@media (max-width: 560px) {
+		align-items: center;
+	}
 }
 
-.toolbar-left,
-.toolbar-right {
+.tool-group {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
-}
-
-.toolbar-right {
-	margin-left: auto;
+	gap: 0.18rem;
+	position: relative;
+	min-width: 0;
+	pointer-events: auto;
 }
 
 .tool-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 2rem;
-	height: 2rem;
+	width: 2.05rem;
+	height: 2.05rem;
 	padding: 0;
-	border: 1px solid transparent;
-	border-radius: var(--radius-sm);
-	background: transparent;
+	border-radius: var(--radius);
+	font-size: 1.05rem;
 	color: var(--font-color-2);
-	transition: all 0.15s;
-	cursor: pointer;
+	transition: background-color var(--transition-fast), color var(--transition-fast);
 
 	&:hover,
 	&.active {
-		border-color: var(--border-color);
-		background: var(--c-bg-2);
+		background: var(--main-color-bg);
 		color: var(--main-color);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--main-color);
+		outline-offset: 2px;
 	}
 }
 
-.counter {
-	font-size: 0.75rem;
-	color: var(--font-color-3);
+.editor-meta {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	min-width: fit-content;
+	margin-left: auto;
+	pointer-events: auto;
 
-	&.warn { color: var(--warning-color, orange); }
-	&.over { color: var(--error-color, red); }
+	@media (max-width: 560px) {
+		min-width: 0;
+	}
 }
 
-.err {
-	font-size: 0.8rem;
-	color: var(--error-color, #EF4444);
+.counter,
+.draft-state {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	font-size: 0.76rem;
+	color: var(--font-color-3);
+}
+
+.draft-state {
+	padding: 0.18rem 0.46rem;
+	border-radius: var(--radius-pill);
+	background: color-mix(in srgb, var(--main-color-bg) 70%, transparent);
+	color: var(--font-color-2);
+}
+
+.counter {
+	font-family: var(--font-monospace);
+	font-variant-numeric: tabular-nums;
+
+	&.warn {
+		color: var(--warning, #F59E0B);
+	}
+
+	&.over {
+		color: var(--error, #EF4444);
+	}
+}
+
+.picker {
+	position: absolute;
+	top: calc(100% + 0.55rem);
+	left: -0.1rem;
+	width: min(24rem, calc(100vw - 2rem));
+	max-width: calc(100vw - 2rem);
+	z-index: var(--z-dropdown, 30);
+}
+
+.owo-popover-enter-active,
+.owo-popover-leave-active {
+	transition: opacity var(--transition-fast);
+}
+
+.owo-popover-enter-from,
+.owo-popover-leave-to {
+	opacity: 0;
+}
+
+.identity-row {
+	display: grid;
+	grid-template-columns: 0.8fr 1.1fr 1fr;
+	gap: 0.7rem;
+	padding: 0.85rem;
+	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+	background: transparent;
+
+	@media (max-width: 860px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.identity-field {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: center;
+	gap: 0.55rem;
+	min-width: 0;
+	min-height: 2.5rem;
+	padding: 0.28rem 0.42rem 0.28rem 0.72rem;
+	border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+	border-radius: var(--radius);
+	background: color-mix(in srgb, var(--card-bg) 98%, var(--font-color) 2%);
+	transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+
+	&:focus-within {
+		border-color: color-mix(in srgb, var(--main-color) 65%, var(--border-color));
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--main-color-bg) 70%, transparent);
+		background: var(--card-bg);
+	}
+}
+
+.identity-label {
+	padding-right: 0.55rem;
+	border-right: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+	font-size: 0.76rem;
+	font-weight: 800;
+	line-height: 1.2;
+	white-space: nowrap;
+	color: var(--font-color-3);
+}
+
+.input {
+	width: 100%;
+	min-width: 0;
+	min-height: 1.95rem;
+	padding: 0.28rem 0.3rem;
+	border: 0;
+	border-radius: 0;
+	outline: 0;
+	background: transparent;
+	font-size: 0.88rem;
+	line-height: 1.3;
+	color: var(--font-color);
+
+	&::placeholder {
+		color: color-mix(in srgb, var(--font-color-3) 78%, transparent);
+	}
+}
+
+.action-row {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.75rem;
+
+	@media (max-width: 760px) {
+		flex-direction: column;
+		align-items: flex-end;
+	}
 }
 
 .submit-btn {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.4rem;
-	padding: 0.5rem 1rem;
-	border: none;
-	border-radius: var(--radius);
-	background: var(--main-color);
-	font-size: 0.85rem;
-	color: #FFF;
-	transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-	cursor: pointer;
+	justify-content: center;
+	gap: 0.42rem;
+	min-height: 2.5rem;
+	padding: 0.62rem 1.05rem;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	font-size: 0.86rem;
+	font-weight: 700;
+	line-height: 1.1;
+	white-space: nowrap;
+	transition: border-color var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast), opacity var(--transition-fast);
+
+	&.primary {
+		border-color: var(--main-color);
+		box-shadow: 0 8px 18px color-mix(in srgb, var(--main-color) 26%, transparent);
+		background: var(--main-color);
+		color: #FFF;
+	}
 
 	&:hover:not(:disabled) {
-		box-shadow: 0 6px 14px -6px color-mix(in srgb, var(--main-color) 60%, transparent);
-		transform: translateY(-1px);
+		border-color: var(--main-color);
+		box-shadow: 0 6px 16px rgb(15 23 42 / 6%);
+		color: var(--main-color);
+	}
+
+	&.primary:hover:not(:disabled) {
+		box-shadow: 0 10px 22px color-mix(in srgb, var(--main-color) 30%, transparent);
+		background: var(--main-color-hover, var(--main-color));
+		color: #FFF;
 	}
 
 	&:disabled {
-		opacity: 0.6;
+		opacity: 0.56;
 		cursor: not-allowed;
 	}
 
-	.spin {
-		animation: spin 1s linear infinite;
+	&:focus-visible {
+		outline: 2px solid var(--main-color);
+		outline-offset: 2px;
+	}
+
+	@media (max-width: 520px) {
+		width: 100%;
+		white-space: normal;
 	}
 }
 
-@keyframes spin {
+.err {
+	margin-right: auto;
+	font-size: 0.8rem;
+	color: var(--error, #EF4444);
+
+	@media (max-width: 760px) {
+		align-self: stretch;
+		margin-right: 0;
+	}
+}
+
+.spin {
+	animation: comment-editor-spin 1s linear infinite;
+}
+
+@keyframes comment-editor-spin {
 	to { transform: rotate(360deg); }
 }
 </style>

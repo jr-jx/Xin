@@ -5,6 +5,8 @@ export {
 	handleKvHealth,
 } from './admin.js'
 export {
+	handleAdminCommentList,
+	handleAdminCommentSettings,
 	handleCommentLike,
 	handleComments,
 	handleDeleteComment,

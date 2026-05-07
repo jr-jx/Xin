@@ -46,6 +46,7 @@ export function runtime(context) {
 		commentAdminPassword: env(context, 'NUXT_COMMENT_ADMIN_PASSWORD'),
 		commentJwtSecret: env(context, 'NUXT_COMMENT_JWT_SECRET', 'xin-comment-jwt-dev-secret-change-me'),
 		commentKeywordBlacklist: env(context, 'NUXT_COMMENT_KEYWORD_BLACKLIST'),
+		commentAvatarProxy: env(context, 'NUXT_COMMENT_AVATAR_PROXY', 'https://weavatar.com/avatar'),
 	}
 }
 

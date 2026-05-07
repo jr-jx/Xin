@@ -160,10 +160,8 @@ const blogConfig = {
 		pageSize: 20,
 		/** 评论最大长度 */
 		maxLength: 2000,
-		/** Gravatar 镜像（支持 cravatar.cn / gravatar.com / weavatar.com 等） */
-		gravatarMirror: 'https://cravatar.cn/avatar',
-		/** 默认头像样式：identicon / mp / monsterid / retro / robohash / wavatar */
-		gravatarDefault: 'identicon',
+		/** 评论头像代理地址，默认格式为 `${avatarProxy}/${emailMd5}`，也支持包含 `HASH` 的模板 */
+		avatarProxy: 'https://weavatar.com/avatar',
 		/** OWO 表情资源路径 */
 		owoPath: '/assets/owo.json',
 		/** 是否允许匿名（未填邮箱）评论 */

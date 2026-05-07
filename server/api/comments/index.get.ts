@@ -1,5 +1,7 @@
 import blogConfig from '../../../blog.config'
+import { isAdmin } from '../../utils/adminAuth'
 import {
+	getCommentAvatarProxy,
 	hasLiked,
 	listBySlug,
 	normalizeSlug,
@@ -15,8 +17,10 @@ export default defineEventHandler(async (event) => {
 
 	const page = Math.max(1, Number(query.page) || 1)
 	const pageSize = Math.min(100, Math.max(1, Number(query.pageSize) || blogConfig.comment.pageSize))
+	const admin = isAdmin(event)
+	const includeHidden = admin && (query.includeHidden === '1' || query.includeHidden === 'true')
 
-	const { parents, children, total, parentTotal, hasMore } = await listBySlug(slug, page, pageSize, false)
+	const { parents, children, total, parentTotal, hasMore } = await listBySlug(slug, page, pageSize, includeHidden)
 
 	const { ipHashSalt } = useRuntimeConfig()
 	const ipHash = hashIp(getClientIp(event), ipHashSalt as string)
@@ -27,12 +31,18 @@ export default defineEventHandler(async (event) => {
 			liked.add(c.id)
 	}))
 
-	// 构建树：父 + 挂载 children
+	const childrenByRoot = new Map<string, typeof children>()
+	for (const child of children) {
+		const rootId = child.rid || child.pid
+		if (!rootId)
+			continue
+		childrenByRoot.set(rootId, [...(childrenByRoot.get(rootId) || []), child])
+	}
+
+	const avatarProxy = await getCommentAvatarProxy()
 	const items = parents.map(p => ({
-		...toPublicComment(p, liked.has(p.id)),
-		children: children
-			.filter(c => c.rid === p.id)
-			.map(c => toPublicComment(c, liked.has(c.id))),
+		...toPublicComment(p, liked.has(p.id), avatarProxy),
+		children: (childrenByRoot.get(p.id) || []).map(c => toPublicComment(c, liked.has(c.id), avatarProxy)),
 	}))
 
 	return {

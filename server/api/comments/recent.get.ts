@@ -1,11 +1,12 @@
-import { recentComments, toPublicComment } from '../../utils/comments'
+import { getCommentAvatarProxy, recentComments, toPublicComment } from '../../utils/comments'
 
 export default defineEventHandler(async (event) => {
 	const query = getQuery(event)
 	const limit = Math.min(50, Math.max(1, Number(query.limit) || 9))
 	const includeReply = query.includeReply === '1' || query.includeReply === 'true'
 	const list = await recentComments(limit, includeReply)
+	const avatarProxy = await getCommentAvatarProxy()
 	return {
-		items: list.map(c => toPublicComment(c, false)),
+		items: list.map(c => toPublicComment(c, false, avatarProxy)),
 	}
 })

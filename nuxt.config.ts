@@ -147,6 +147,7 @@ export default defineNuxtConfig({
 		commentJwtSecret: process.env.NUXT_COMMENT_JWT_SECRET || 'xin-comment-jwt-dev-secret-change-me',
 		commentNotifyTo: process.env.NUXT_COMMENT_NOTIFY_TO || '',
 		commentKeywordBlacklist: process.env.NUXT_COMMENT_KEYWORD_BLACKLIST || '',
+		commentAvatarProxy: process.env.NUXT_COMMENT_AVATAR_PROXY || blogConfig.comment.avatarProxy,
 		smtp: {
 			host: process.env.SMTP_HOST || '',
 			port: Number(process.env.SMTP_PORT || 465),
