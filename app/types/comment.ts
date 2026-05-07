@@ -3,7 +3,7 @@ import type { BaseEntity } from './common'
 export interface Comment extends BaseEntity {
 	/** 昵称 */
 	nick: string
-	/** 邮箱 MD5（用于生成评论头像） */
+	/** 邮箱 MD5 32 位小写（用于生成评论头像） */
 	mailMd5: string
 	/** 头像 URL */
 	avatar: string

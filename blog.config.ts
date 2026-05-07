@@ -160,7 +160,7 @@ const blogConfig = {
 		pageSize: 20,
 		/** 评论最大长度 */
 		maxLength: 2000,
-		/** 评论头像代理地址，默认格式为 `${avatarProxy}/${emailMd5}`，也支持包含 `HASH` 的模板 */
+		/** 评论头像代理地址，默认格式为 `${avatarProxy}/${emailMd5}`，emailMd5 为邮箱 MD5 32 位小写，也支持包含 `HASH` 的模板 */
 		avatarProxy: 'https://weavatar.com/avatar',
 		/** OWO 表情资源路径 */
 		owoPath: '/assets/owo.json',

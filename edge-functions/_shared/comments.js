@@ -52,6 +52,10 @@ async function slugIndexKey(slug) {
 	return `slug-index:v${COMMENT_INDEX_VERSION}:${await slugKey(slug)}`
 }
 
+function emailMd5(mail) {
+	return md5(String(mail || '').trim().toLowerCase()).toLowerCase()
+}
+
 async function readIndex(context, slug) {
 	const list = await storeGet(context, 'comments', 'comment:meta', await indexKey(slug))
 	return Array.isArray(list) ? list : []
@@ -664,7 +668,7 @@ export const handleComments = withErrorHandling(async (context) => {
 	}
 
 	const { html, text } = renderMarkdown(content)
-	const mailMd5 = mail ? md5(mail) : md5(`${nick}@anonymous`)
+	const mailMd5 = mail ? emailMd5(mail) : md5(`${nick}@anonymous`)
 	const now = Date.now()
 	const rec = {
 		id: newCommentId(),

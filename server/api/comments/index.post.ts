@@ -1,6 +1,7 @@
 import type { CommentRecord } from '../../utils/comments'
 import { isAdmin } from '../../utils/adminAuth'
 import {
+	emailMd5,
 	getComment,
 	getCommentAvatarProxy,
 	md5,
@@ -79,7 +80,7 @@ export default defineEventHandler(async (event) => {
 	}
 
 	const { html, text } = renderMarkdown(content)
-	const mailMd5 = mail ? md5(mail) : md5(`${nick}@anonymous`)
+	const mailMd5 = mail ? emailMd5(mail) : md5(`${nick}@anonymous`)
 	const ua = String(event.node.req.headers['user-agent'] || '').slice(0, 300)
 	const now = Date.now()
 

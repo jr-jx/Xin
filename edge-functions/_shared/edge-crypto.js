@@ -169,14 +169,14 @@ export function md5(input) {
 		md5cycle(state, md5blk(tail))
 		tail.fill(0)
 	}
-	const bitLen = bytes.length * 8
+	const bitLen = BigInt(bytes.length) * 8n
 	for (let j = 0; j < 8; j++)
-		tail[56 + j] = (bitLen >>> (j * 8)) & 0xFF
+		tail[56 + j] = Number((bitLen >> BigInt(j * 8)) & 0xFFn)
 	md5cycle(state, md5blk(tail))
 	const out = []
 	for (const word of state) {
 		for (let j = 0; j < 4; j++)
 			out.push((word >>> (j * 8)) & 0xFF)
 	}
-	return bytesToHex(out)
+	return bytesToHex(out).toLowerCase()
 }

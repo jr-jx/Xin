@@ -92,8 +92,14 @@ export function slugKey(slug: string): string {
 	return createHash('sha1').update(normalizeSlug(slug)).digest('base64url').slice(0, 16)
 }
 
+/** MD5 32 位小写十六进制 */
 export function md5(input: string): string {
-	return createHash('md5').update(input).digest('hex')
+	return createHash('md5').update(input).digest('hex').toLowerCase()
+}
+
+/** 邮箱统一用 trim + 小写后生成 MD5 32 位小写哈希 */
+export function emailMd5(mail: string): string {
+	return md5(mail.trim().toLowerCase())
 }
 
 const AVATAR_HASH_TOKEN = /\{hash\}|\{HASH\}|HASH/g
